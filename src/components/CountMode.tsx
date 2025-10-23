@@ -1,8 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CountQuestion } from "../types/game";
 import { GameGenerator } from "../utils/gameGenerator";
 import { Button } from "./ui/button";
 import { motion } from "motion/react";
+
+const FPT_API_KEY = "Y6cOAzkF6ac0DlD4STe1BqAukfwpieDk";
+const FPT_VOICE = "thuminh";
 
 interface CountModeProps {
   question: CountQuestion;
@@ -22,104 +25,73 @@ export function CountMode({
   const [objectPositions, setObjectPositions] = useState<
     Array<{ x: number; y: number; rotation: number }>
   >([]);
-  const [femaleVoice, setFemaleVoice] = useState<SpeechSynthesisVoice | null>(
-    null
-  );
-
-  // Get female Vietnamese voice
-  useEffect(() => {
-    const loadVoices = () => {
-      const voices = window.speechSynthesis.getVoices();
-
-      // Try to find Vietnamese female voice
-      let selectedVoice = voices.find(
-        (voice) =>
-          voice.lang.includes("vi") &&
-          voice.name.toLowerCase().includes("female")
-      );
-
-      // Fallback: any Vietnamese voice
-      if (!selectedVoice) {
-        selectedVoice = voices.find((voice) => voice.lang.includes("vi"));
-      }
-
-      // Fallback: any female voice
-      if (!selectedVoice) {
-        selectedVoice = voices.find(
-          (voice) =>
-            voice.name.toLowerCase().includes("female") ||
-            voice.name.toLowerCase().includes("nữ")
-        );
-      }
-
-      setFemaleVoice(selectedVoice || null);
-    };
-
-    loadVoices();
-
-    // Some browsers load voices asynchronously
-    if (window.speechSynthesis.onvoiceschanged !== undefined) {
-      window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
-  }, []);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Generate random positions for objects
     const positions = [];
     for (let i = 0; i < question.objectCount; i++) {
       positions.push({
-        x: Math.random() * 80 + 10, // 10% to 90%
-        y: Math.random() * 70 + 10, // 10% to 80%
-        rotation: Math.random() * 40 - 20, // -20deg to 20deg
+        x: Math.random() * 80 + 10, // 10% - 90%
+        y: Math.random() * 70 + 10, // 10% - 80%
+        rotation: Math.random() * 40 - 20, // -20° - 20°
       });
     }
     setObjectPositions(positions);
     setSelectedAnswer(null);
 
-    // Auto-play instruction after a short delay
     const timer = setTimeout(() => {
       playInstruction();
-    }, 800);
+    }, 600);
     return () => clearTimeout(timer);
-  }, [question.objectCount]);
+  }, [question]);
 
-  const playInstruction = () => {
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const instructionText = "Bé ơi, ở đây có bao nhiêu đồ vật thế nhỉ";
-      const utterance = new SpeechSynthesisUtterance(instructionText);
-      utterance.lang = "vi-VN";
-      utterance.rate = 0.9;
-      utterance.pitch = 1.1;
-      if (femaleVoice) {
-        utterance.voice = femaleVoice;
+  const speakWithFPT = async (text: string) => {
+    try {
+      const response = await fetch("https://api.fpt.ai/hmi/tts/v5", {
+        method: "POST",
+        headers: {
+          "api-key": FPT_API_KEY,
+          speed: "",
+          voice: FPT_VOICE,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: text,
+      });
+
+      const result = await response.json();
+      const audioUrl = result?.async;
+
+      if (audioUrl) {
+        // Dừng nếu đang phát
+        if (audioRef.current) {
+          audioRef.current.pause();
+        }
+
+        const audio = new Audio(audioUrl);
+        audioRef.current = audio;
+        audio.play();
+      } else {
+        console.error("Không lấy được URL âm thanh từ FPT:", result);
       }
-      window.speechSynthesis.speak(utterance);
+    } catch (error) {
+      console.error("FPT AI TTS error:", error);
     }
   };
 
+  const playInstruction = () => {
+    speakWithFPT("Bé ơi, ở đây có bao nhiêu đồ vật thế nhỉ?");
+  };
+
   const playFeedback = (isCorrect: boolean) => {
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const feedbackText = isCorrect
-        ? "Đúng rồi! Giỏi quá!"
-        : "Chưa đúng! Cố gắng lên!";
-      const utterance = new SpeechSynthesisUtterance(feedbackText);
-      utterance.lang = "vi-VN";
-      utterance.rate = 0.9;
-      utterance.pitch = 1.1;
-      if (femaleVoice) {
-        utterance.voice = femaleVoice;
-      }
-      window.speechSynthesis.speak(utterance);
-    }
+    const feedbackText = isCorrect
+      ? "Đúng rồi! Giỏi quá!"
+      : "Chưa đúng! Cố gắng lên!";
+    speakWithFPT(feedbackText);
   };
 
   const handleAnswer = (answer: number) => {
     const isCorrect = answer === question.correctAnswer;
     setSelectedAnswer(answer);
-
-    // Play audio feedback
     playFeedback(isCorrect);
 
     setTimeout(() => {
@@ -127,6 +99,9 @@ export function CountMode({
       setSelectedAnswer(null);
     }, 1500);
   };
+
+  const containerClass =
+    "relative w-full h-96 bg-linear-to-br from-blue-50 to-purple-50 rounded-3xl shadow-lg border-4 border-white overflow-hidden";
 
   return (
     <div className="flex flex-col items-center gap-8 w-full max-w-4xl mx-auto p-6">
@@ -138,8 +113,8 @@ export function CountMode({
         <h2 className="text-blue-600 mt-2">Đếm số vật và chọn đáp án đúng</h2>
       </div>
 
-      {/* Objects Display Area */}
-      <div className="relative w-full h-96 bg-linear-to-br from-blue-50 to-purple-50 rounded-3xl shadow-lg border-4 border-white overflow-hidden">
+      {/* Khu vực hiển thị vật thể */}
+      <div className={containerClass}>
         {objectPositions.map((pos, index) => (
           <motion.div
             key={index}
@@ -163,7 +138,7 @@ export function CountMode({
         ))}
       </div>
 
-      {/* Answer Options */}
+      {/* Các lựa chọn đáp án */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full">
         {question.options.map((option) => {
           const isSelected = selectedAnswer === option;

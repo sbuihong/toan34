@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { QuizQuestion } from "../types/game";
 import { Button } from "./ui/button";
 import { Volume2 } from "lucide-react";
@@ -10,6 +10,9 @@ interface QuizModeProps {
   totalQuestions: number;
 }
 
+const FPT_API_KEY = "Y6cOAzkF6ac0DlD4STe1BqAukfwpieDk";
+const FPT_VOICE = "thuminh";
+
 export function QuizMode({
   question,
   onAnswer,
@@ -17,94 +20,63 @@ export function QuizMode({
   totalQuestions,
 }: QuizModeProps) {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [femaleVoice, setFemaleVoice] = useState<SpeechSynthesisVoice | null>(
-    null
-  );
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Get female Vietnamese voice
-  useEffect(() => {
-    const loadVoices = () => {
-      const voices = window.speechSynthesis.getVoices();
-
-      // Try to find Vietnamese female voice
-      let selectedVoice = voices.find(
-        (voice) =>
-          voice.lang.includes("vi") &&
-          voice.name.toLowerCase().includes("female")
-      );
-
-      // Fallback: any Vietnamese voice
-      if (!selectedVoice) {
-        selectedVoice = voices.find((voice) => voice.lang.includes("vi"));
-      }
-
-      // Fallback: any female voice
-      if (!selectedVoice) {
-        selectedVoice = voices.find(
-          (voice) =>
-            voice.name.toLowerCase().includes("female") ||
-            voice.name.toLowerCase().includes("nữ")
-        );
-      }
-
-      setFemaleVoice(selectedVoice || null);
-    };
-
-    loadVoices();
-
-    // Some browsers load voices asynchronously
-    if (window.speechSynthesis.onvoiceschanged !== undefined) {
-      window.speechSynthesis.onvoiceschanged = loadVoices;
-    }
-  }, []);
-
-  // Auto-play question when it changes
   useEffect(() => {
     setSelectedAnswer(null);
-    // Auto-play question after a short delay
     const timer = setTimeout(() => {
       playQuestion();
     }, 500);
     return () => clearTimeout(timer);
   }, [question]);
 
-  const playQuestion = () => {
-    // Text-to-speech for the question
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(question.question);
-      utterance.lang = "vi-VN";
-      utterance.rate = 0.9;
-      utterance.pitch = 1.1; // Slightly higher pitch for female voice
-      if (femaleVoice) {
-        utterance.voice = femaleVoice;
+  const speakWithFPT = async (text: string) => {
+    try {
+      const response = await fetch("https://api.fpt.ai/hmi/tts/v5", {
+        method: "POST",
+        headers: {
+          "api-key": FPT_API_KEY,
+          speed: "",
+          voice: FPT_VOICE,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: text,
+      });
+
+      const result = await response.json();
+      const audioUrl = result?.async; // URL file mp3 trả về
+
+      if (audioUrl) {
+        // Dừng nếu đang phát
+        if (audioRef.current) {
+          audioRef.current.pause();
+        }
+
+        const audio = new Audio(audioUrl);
+        audioRef.current = audio;
+        audio.play();
+      } else {
+        console.error("Không lấy được URL âm thanh từ FPT:", result);
       }
-      window.speechSynthesis.speak(utterance);
+    } catch (error) {
+      console.error("FPT AI TTS error:", error);
     }
   };
 
+  const playQuestion = () => {
+    speakWithFPT(question.question);
+  };
+
   const playFeedback = (isCorrect: boolean) => {
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel();
-      const feedbackText = isCorrect
-        ? "Đúng rồi! Giỏi quá!"
-        : "Chưa đúng! Cố gắng lên!";
-      const utterance = new SpeechSynthesisUtterance(feedbackText);
-      utterance.lang = "vi-VN";
-      utterance.rate = 0.9;
-      utterance.pitch = 1.1; // Slightly higher pitch for female voice
-      if (femaleVoice) {
-        utterance.voice = femaleVoice;
-      }
-      window.speechSynthesis.speak(utterance);
-    }
+    const feedbackText = isCorrect
+      ? "Đúng rồi! Giỏi quá!"
+      : "Chưa đúng! Cố gắng lên!";
+    speakWithFPT(feedbackText);
   };
 
   const handleAnswer = (answer: number) => {
     const isCorrect = answer === question.correctAnswer;
     setSelectedAnswer(answer);
-
-    // Play audio feedback
     playFeedback(isCorrect);
 
     setTimeout(() => {
@@ -113,8 +85,9 @@ export function QuizMode({
     }, 1500);
   };
 
-  const newLocal =
+  const containerClass =
     "flex flex-col items-center gap-4 bg-linear-to-br from-purple-50 to-pink-50 rounded-3xl p-8 shadow-lg border-4 border-white min-h-48 justify-center w-full";
+
   return (
     <div className="flex flex-col items-center gap-8 w-full max-w-4xl mx-auto p-6">
       {/* Header */}
@@ -126,7 +99,7 @@ export function QuizMode({
       </div>
 
       {/* Question Display */}
-      <div className={newLocal}>
+      <div className={containerClass}>
         <Button
           onClick={playQuestion}
           className="bg-blue-500 hover:bg-blue-600 text-white rounded-full h-20 w-20 flex items-center justify-center shadow-xl"
