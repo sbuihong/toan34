@@ -157,7 +157,7 @@ export default class GameScene extends Phaser.Scene {
     speakWithFPT(q.question);
     // Câu hỏi
     this.questionText = this.add
-      .text(width / 2, height / 4 - 20, q.question, {
+      .text(width / 2, height / 4, q.question, {
         fontSize: "36px",
         fontFamily: "Comic Sans MS",
         color: "#000",
