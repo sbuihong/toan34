@@ -1,6 +1,6 @@
 import * as Phaser from "phaser";
 
-export default class MainMenu extends Phaser.Scene {
+export default class MainMenuScene extends Phaser.Scene {
   constructor() {
     super("MainMenu");
   }
