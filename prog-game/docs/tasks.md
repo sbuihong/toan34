@@ -4,19 +4,19 @@
 
 - [x] Cấu hình Phaser + init game.
 - [x] IntroScene + MainMenu.
-- [ ] MapScene: map cuộn vô tận.
-- [ ] GameScene: gameplay ếch, lá sen, âm thanh.
+- [x] MapScene: map cuộn vô tận, gameplay ếch, lá sen, âm thanh.
+- [x] WinScene: Màn hình kết thúc game.
 
 ## 🖼️ Giao diện
 
-- [ ] Overlay xoay ngang khi mobile.
-- [ ] Hiệu ứng chuyển cảnh.
+- [x] Overlay xoay ngang khi mobile.
+- [x] Hiệu ứng chuyển cảnh.
 
 ## 🔊 Âm thanh
 
-- [ ] Thêm âm thanh khi ăn các chữ số.
-- [ ] Nhạc nền game.
-- [ ] Âm thanh khi chiến thắng
+- [x] Thêm âm thanh khi ăn các chữ số.
+- [x] Nhạc nền game.
+- [x] Âm thanh khi chiến thắng
 
 ## 🧪 Kiểm thử
 
