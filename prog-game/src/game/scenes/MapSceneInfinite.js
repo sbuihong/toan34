@@ -73,7 +73,7 @@ export default class MapSceneInfinite extends Phaser.Scene {
         cam.scrollX - 200,
         cam.scrollX + cam.width + 200
       );
-      const spawnY = Phaser.Math.Between(320, 500);
+      const spawnY = Phaser.Math.Between(320, 400);
       const direction = Phaser.Math.Between(0, 1) === 0 ? 1 : -1;
 
       const fish = this.add.graphics();
@@ -245,37 +245,59 @@ export default class MapSceneInfinite extends Phaser.Scene {
     });
   }
 
-  jumpToLotus(target, onComplete) {
+ jumpToLotus(target, onComplete) {
     const startX = this.frog.x;
     const startY = this.frog.y;
     const targetX = target.x;
-    const targetY = target.y - 25;
+    const targetY = target.y - 25; // Điều chỉnh đích y
 
-    const jumpDuration = 600; // ms
-    const v0y = 700; // tốc độ bật lên
-    const g = 2000; // trọng lực
+    // --- Cải Tiến Tính Toán Ban Đầu ---
+    const jumpDuration_ms = 600; // Thời gian nhảy mong muốn (ms)
+    const T = jumpDuration_ms / 1000; // Thời gian nhảy mong muốn (giây)
+    const g = 2000; // Trọng lực (pixel/s^2)
+
+    // Khoảng cách cần di chuyển
+    const deltaX = targetX - startX;
+    const deltaY = targetY - startY;
+
+    // Tính Tốc độ Ban đầu (để đảm bảo đáp xuống đích sau thời gian T)
+    // 1. Tốc độ ngang: v0x = deltaX / T
+    const v0x = deltaX / T; 
+
+    // 2. Tốc độ dọc: v0y = (deltaY + 0.5 * g * T^2) / T
+    const v0y = (deltaY - 0.5 * g * T * T) / T; 
+    // Nếu bạn muốn dùng một v0y cố định (ví dụ 700) như ban đầu, 
+    // bạn phải chấp nhận rằng con ếch sẽ đáp xuống y khác targetY hoặc thời gian T sẽ khác.
+    // **Để tối ưu, chúng ta nên dùng v0y được tính toán này.**
+
     const startTime = this.time.now;
 
     const event = this.time.addEvent({
-      delay: 16,
-      loop: true,
-      callback: () => {
-        const t = (this.time.now - startTime) / 1000;
-        const progress = Math.min(t / (jumpDuration / 1000), 1);
+        delay: 16, // Khoảng thời gian cập nhật
+        loop: true,
+        callback: () => {
+            const t = (this.time.now - startTime) / 1000; // Thời gian đã trôi qua (giây)
 
-        const x = Phaser.Math.Linear(startX, targetX, progress);
-        const y = startY - (v0y * t - 0.5 * g * t * t);
+            // Kiểm tra kết thúc
+            if (t >= T) {
+                this.frog.setPosition(targetX, targetY);
+                event.remove();
+                if (onComplete) onComplete();
+                return;
+            }
 
-        this.frog.setPosition(x, y);
+            // --- Tính toán vị trí theo vật lý ---
+            
+            // Vị trí ngang: x(t) = x_start + v0x * t
+            const x = startX + v0x * t; 
 
-        if (progress >= 1) {
-          this.frog.setPosition(targetX, targetY);
-          event.remove();
-          if (onComplete) onComplete();
-        }
-      },
+            // Vị trí dọc: y(t) = y_start + v0y * t - 0.5 * g * t^2
+            const y = startY + v0y * t + 0.5 * g * t * t; 
+
+            this.frog.setPosition(x, y);
+        },
     });
-  }
+}
 
   extendMap() {
     const lastPad = this.lotuses[this.lotuses.length - 1];
