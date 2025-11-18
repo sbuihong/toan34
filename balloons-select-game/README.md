@@ -8,10 +8,11 @@
 * Tạo cấu trúc:
 
 ```
-src/
+public/
   assets/
     images/
     audio/
+src/
   scenes/
     GameScene.ts
     NextScene.ts
