@@ -1,15 +1,54 @@
 import Phaser from "phaser";
 
+interface LevelData {
+  correctNumber: number;
+  options: number[];
+}
+
+const levels: LevelData[] = [
+  { correctNumber: 1, options: [1, 2, 3, 4] },
+  { correctNumber: 2, options: [1, 2, 3, 4] },
+  { correctNumber: 3, options: [1, 2, 3, 4] },
+  { correctNumber: 4, options: [1, 2, 3, 4] },
+];
+
 export default class GameScene extends Phaser.Scene {
     rabbit!: Phaser.GameObjects.Image;
     promptText!: Phaser.GameObjects.Text;
     balloons: Phaser.GameObjects.Container[] = [];
 
-    levelData = {
-    prompt: "Chạm vào số 4",
-    correctNumber: 4,
-    options: [1, 2, 3, 4],
-    };
+    // levelData = {
+    // prompt: "Chạm vào số 4",
+    // correctNumber: 4,
+    // options: [1, 2, 3, 4],
+    // };
+
+    currentLevel = 0;
+    levels: LevelData[] = [
+        { correctNumber: 1, options: [1,2,3,4] },
+        { correctNumber: 2, options: [1,2,3,4] },
+        { correctNumber: 3, options: [1,2,3,4] },
+        { correctNumber: 4, options: [1,2,3,4] },
+    ];
+
+    get levelData() {
+        return this.levels[this.currentLevel];
+    }
+
+    getPromptText(): string {
+        return `Chạm vào số ${this.levelData.correctNumber}`;
+    }
+
+    playPromptAudio() {
+        const num = this.levelData.correctNumber;
+        // key audio theo số
+        const audioKey = `vo_prompt_${num}`;
+        
+        // play audio
+        this.sound.play(audioKey);
+    }
+
+
     constructor() {
         super("GameScene");
     }
@@ -31,13 +70,19 @@ export default class GameScene extends Phaser.Scene {
         this.load.image("carrot", "assets/images/carrot.png");
         this.load.image("leaf", "assets/images/leaf.png");
 
+        this.load.image("icon_next", "assets/images/icon_next.png");
+
         // AUDIO
-        // this.load.audio("vo_prompt_1", "assets/audio/vo_prompt_1.mp3");
-        // this.load.audio("sfx_correct", "assets/audio/sfx_correct.mp3");
-        // this.load.audio("sfx_wrong", "assets/audio/sfx_wrong.mp3");
+        this.load.audio("vo_prompt_1", "assets/audio/vo_prompt_1.mp3");
+        this.load.audio("vo_prompt_2", "assets/audio/vo_prompt_2.mp3");
+        this.load.audio("vo_prompt_3", "assets/audio/vo_prompt_3.mp3");
+        this.load.audio("vo_prompt_4", "assets/audio/vo_prompt_4.mp3");
+        this.load.audio("sfx_correct", "assets/audio/sfx_correct.wav");
+        this.load.audio("sfx_wrong", "assets/audio/sfx_wrong.wav");
+        this.load.audio("sfx_click", "assets/audio/sfx_click.wav");
         // this.load.audio("sfx_pop", "assets/audio/sfx_pop.mp3");
         // this.load.audio("sfx_flyaway", "assets/audio/sfx_flyaway.mp3");
-        }
+    }
 
 
     create() {
@@ -57,10 +102,11 @@ export default class GameScene extends Phaser.Scene {
             color: "#ffffff",
         }).setOrigin(0.5);
 
-        this.promptText.setText(this.levelData.prompt);
+        this.promptText.setText(this.getPromptText());
 
-        // Play voice instruction
-        // this.sound.play("vo_prompt_1");
+        // phát giọng đọc
+        this.playPromptAudio();
+
         this.createBalloons();
     }
 
@@ -71,6 +117,7 @@ export default class GameScene extends Phaser.Scene {
             { x: 750, y: 300 },
             { x: 950, y: 300 },
         ];
+        const shuffledPositions = Phaser.Utils.Array.Shuffle(positions);
 
         const colors = [
             "balloon_red",
@@ -78,10 +125,11 @@ export default class GameScene extends Phaser.Scene {
             "balloon_blue",
             "balloon_purple",
         ];
+        const shuffledColors = Phaser.Utils.Array.Shuffle(colors);
 
         this.levelData.options.forEach((num, index) => {
-            const pos = positions[index];
-            const colorKey = colors[index];
+            const pos = shuffledPositions[index];
+            const colorKey = shuffledColors[index];
 
             // Tạo container gồm: balloon sprite + text số
             const balloon = this.add.container(pos.x, pos.y);
@@ -121,7 +169,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     onWrong(balloon: Phaser.GameObjects.Container) {
-        // this.sound.play("sfx_wrong");
+        this.sound.play("sfx_wrong");
 
         // Lấy sprite bên trong container (child đầu tiên)
         const img = balloon.getAt(0) as Phaser.GameObjects.Image;
@@ -137,13 +185,15 @@ export default class GameScene extends Phaser.Scene {
     }
 
     onCorrect(balloon: Phaser.GameObjects.Container) {
-        // this.sound.play("sfx_correct");
+        this.sound.play("sfx_correct");
 
         // Disable toàn bộ bóng
-        this.balloons.forEach(b => {
-            const img = b.getAt(0) as Phaser.GameObjects.Image;
-            img.disableInteractive();
-        });
+        if (this.balloons && this.balloons.length > 0) {
+            this.balloons.forEach(b => {
+                const img = b.getAt(0) as Phaser.GameObjects.Image;
+                if (img) img.disableInteractive();
+            });
+        }
 
         // Pop bóng đúng
         const img = balloon.getAt(0) as Phaser.GameObjects.Image;
@@ -183,10 +233,36 @@ export default class GameScene extends Phaser.Scene {
         // Rabbit cheer
         this.rabbit.setTexture("rabbit_cheer");
 
-        // Chờ 1.5s → chuyển màn
-        // this.time.delayedCall(1500, () => {
-        //     this.scene.start("NextScene");
-        // });
+        // tạo button mũi tên ở dưới phải
+        const nextButton = this.add.image(1100, 600, "icon_next")
+            .setInteractive({ useHandCursor: true }) // có cursor tay khi hover
+            .setScale(0.5) // chỉnh kích thước nếu cần
+            .setAlpha(0); // ẩn ban đầu, chỉ hiện khi cần
+
+        // Hiển thị nút next
+        nextButton.setAlpha(1);
+
+        this.tweens.add({
+            targets: nextButton,
+            scale: 0.6,
+            yoyo: true,
+            repeat: -1,
+            duration: 500
+        });
+
+        // Khi người chơi nhấn nút
+        nextButton.once('pointerdown', () => {
+            this.sound.play("sfx_click");
+            this.time.delayedCall(1000, () => {
+                this.currentLevel++;
+                if (this.currentLevel >= this.levels.length) {
+                    this.scene.start("EndScene");
+                } else {
+                    this.scene.restart();
+                }
+            });
+        });
+
     }
 
     showNumberBoard(number: number, itemKey: string) {
