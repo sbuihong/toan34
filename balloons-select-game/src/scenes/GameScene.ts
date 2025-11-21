@@ -48,7 +48,7 @@ export default class GameScene extends Phaser.Scene {
     }
 
     getPromptText(): string {
-        return `Chạm vào số ${this.levelData.correctNumber}`;
+        return `${this.levelData.correctNumber}`;
     }
 
     playPromptAudio() {
@@ -65,6 +65,7 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('rabbit_idle', '/assets/images/rabbit_idle.png');
         this.load.image('rabbit_cheer', '/assets/images/rabbit_cheer.png');
         this.load.image('banner_top', '/assets/images/banner_top.png');
+        this.load.image('banner_no_text', '/assets/images/banner_no_text.png');
 
         this.load.image('balloon_red', 'assets/images/balloon_red.png');
         this.load.image('balloon_blue', 'assets/images/balloon_blue.png');
@@ -134,17 +135,20 @@ export default class GameScene extends Phaser.Scene {
         // banner top
         this.banner = this.add.image(
             this.pctX(0.5),
-            this.pctY(0.14),
+            this.pctY(0.11),
             'banner_top'
         );
-        this.banner.setDisplaySize(w * 0.55, h * 0.2);
+        this.banner.setDisplaySize(w * 0.55, h * 1.3);
 
         // prompt text
         this.promptText = this.add
-            .text(this.pctX(0.5), this.pctY(0.09), this.getPromptText(), {
-                fontSize: `${Math.round(this.getH() * 0.06)}px`,
-                fontFamily: 'Arial',
-                color: '#ffffff',
+            .text(this.pctX(0.65), this.pctY(0.115), this.getPromptText(), {
+                fontSize: `${Math.round(this.getH() * 0.1)}px`,
+                fontFamily: 'sv-dumlings',
+                color: '#FFFF00',
+                fontStyle: 'bold',
+                stroke: '#FFFF00',
+                strokeThickness: 4,
             })
             .setOrigin(0.5);
 
@@ -196,9 +200,12 @@ export default class GameScene extends Phaser.Scene {
         this.levelData.options.forEach((num, index) => {
             const pos = shuffledPositions[index];
             const x = this.pctX(pos.x);
-            const y = this.pctY(pos.y);
+            const endY = this.pctY(pos.y);
 
-            const balloon = this.add.container(x, y);
+            // 🟢 Đặt balloon ở trên màn hình
+            const startY = endY - h * 1.2;
+
+            const balloon = this.add.container(x, startY);
 
             const img = this.add
                 .image(0, 0, shuffledColors[index])
@@ -223,7 +230,6 @@ export default class GameScene extends Phaser.Scene {
 
             balloon.add([img, text]);
             (balloon as any).value = num;
-            // (balloon as any).color = color;
 
             img.setInteractive({ useHandCursor: true });
             img.on('pointerdown', () => this.handleSelect(balloon));
@@ -233,8 +239,8 @@ export default class GameScene extends Phaser.Scene {
             // Tween rơi xuống + pulse nhỏ
             this.tweens.add({
                 targets: balloon,
-                y: y,
-                duration: 700,
+                y: endY,
+                duration: 1500,
                 ease: 'Bounce.easeOut',
                 onComplete: () => {
                     this.tweens.add({
@@ -279,7 +285,6 @@ export default class GameScene extends Phaser.Scene {
     }
 
     onCorrect(balloon: Phaser.GameObjects.Container) {
-        // Nếu đang xử lý rồi thì return
         if ((this as any).isProcessing) return;
         (this as any).isProcessing = true;
 
@@ -288,51 +293,67 @@ export default class GameScene extends Phaser.Scene {
         const w = this.scale.width;
         const h = this.scale.height;
 
-        // đánh dấu bóng đúng
         (balloon as any).isCorrect = true;
 
-        // Disable tất cả bóng để tránh nhấn liên tục
+        // Disable tất cả bóng
         this.balloons.forEach((b) => b.disableInteractive());
 
-        const img = balloon.getAt(0) as Phaser.GameObjects.Image;
+        // Lấy image + text trong bóng
+        const balloonImg = balloon.getAt(0) as Phaser.GameObjects.Image;
+        const balloonText = balloon.getAt(1) as Phaser.GameObjects.Text;
+
         const baseScale = (Math.min(w, h) / 1280) * 2;
 
+        // ================================
+        // 1) ĐƯA BÓNG ĐÚNG LÊN TRƯỚC TẤT CẢ
+        // ================================
+        this.children.bringToTop(balloon);
+
+        // ================================
+        // 2) Tween bóng đúng → bay vào giữa
+        //    Phóng to cả container → ảnh + chữ cùng lớn
+        // ================================
         this.tweens.add({
-            targets: img,
-            scaleX: baseScale,
-            scaleY: baseScale,
-            duration: 3000,
-            ease: 'Power2',
-            onComplete: () => {
-                balloon.destroy();
-
-                // chọn 1 item random
-                const items = ['apple', 'flower', 'carrot', 'leaf'];
-                const itemKey = items[Math.floor(Math.random() * items.length)];
-
-                // 🟢 Nhận tổng thời gian đọc số
-                const waitTime = this.showNumberBoard(
-                    this.levelData.correctNumber,
-                    itemKey,
-                    'board_bg'
-                );
-
-                // 🟢 Chờ đọc xong rồi mới hiện Next
-                this.time.delayedCall(waitTime, () => {
-                    this.showNextButton();
-                });
-            },
+            targets: balloon,
+            x: w / 2,
+            y: h / 2,
+            scaleX: 1.4,
+            scaleY: 1.4,
+            duration: 600,
+            ease: 'Back.Out',
         });
 
-        // ------- Animation bóng sai: nổ -------
+        // Tăng scale riêng của ảnh bóng (cho đẹp hơn)
+        this.tweens.add({
+            targets: balloonImg,
+            scaleX: baseScale,
+            scaleY: baseScale,
+            duration: 1500,
+            delay: 300,
+            ease: 'Quad.easeOut',
+        });
+
+        // Tăng scale chữ số
+        this.tweens.add({
+            targets: balloonText,
+            scaleX: 1.4,
+            scaleY: 1.4,
+            duration: 1500,
+            delay: 300,
+            ease: 'Quad.easeOut',
+        });
+
+        // ===== Xử lý bóng sai nổ lần lượt =====
+        let poppedCount = 0;
+        const totalWrong = this.balloons.length - 1;
+
         this.balloons.forEach((b, index) => {
-            if ((b as any).isCorrect) return; // không nổ bóng đúng
+            if ((b as any).isCorrect) return; // bỏ bóng đúng
 
             const imgB = b.getAt(0) as Phaser.GameObjects.Image;
-            const popKey = imgB.getData('popKey'); // đúng theo từng màu
+            const popKey = imgB.getData('popKey');
 
-            // b.setVisible(false);
-
+            // Tạo sprite nổ
             const pop = this.add
                 .image(b.x, b.y, popKey)
                 .setDisplaySize(
@@ -341,37 +362,57 @@ export default class GameScene extends Phaser.Scene {
                 )
                 .setAlpha(0);
 
-            this.time.delayedCall(300, () => {
-                // Delay tăng dần theo index → nổ lần lượt
-                this.time.delayedCall(index * 500, () => {
-                    b.destroy();
+            // Hẹn giờ nổ lần lượt
+            this.time.delayedCall(500 + index * 500, () => {
+                this.tweens.add({
+                    targets: pop,
+                    alpha: 1,
+                    scaleX: 1.3,
+                    scaleY: 1.3,
+                    duration: 500,
+                    ease: 'Quad.easeOut',
+                    onStart: () => {
+                        this.sound.play('sfx_pop');
+                        b.destroy();
+                    },
+                    onComplete: () => {
+                        poppedCount++;
 
-                    // 500ms giữa các bóng
-                    this.tweens.add({
-                        targets: pop,
-                        alpha: 1,
-                        scaleX: 1.3,
-                        scaleY: 1.3,
-                        duration: 500,
-                        ease: 'Quad.easeOut',
-                        onComplete: () => {
-                            this.tweens.add({
-                                targets: pop,
-                                alpha: 0,
-                                duration: 250,
-                                onComplete: () => {
-                                    pop.destroy();
-                                    // b.destroy();
-                                },
+                        // Sau khi pop hiện xong thì fade-out
+                        this.tweens.add({
+                            targets: pop,
+                            alpha: 0,
+                            duration: 250,
+                            onComplete: () => pop.destroy(),
+                        });
+
+                        // ⭕ Nếu tất cả bóng sai đã nổ xong
+                        if (poppedCount === totalWrong) {
+                            // Destroy bóng đúng
+                            balloon.destroy();
+
+                            // Chọn item random
+                            const items = ['apple', 'flower', 'carrot', 'leaf'];
+                            const itemKey =
+                                items[Math.floor(Math.random() * items.length)];
+
+                            // Hiện bảng số
+                            const waitTime = this.showNumberBoard(
+                                this.levelData.correctNumber,
+                                itemKey,
+                                'board_bg'
+                            );
+
+                            // Chờ đọc xong rồi hiện next
+                            this.time.delayedCall(waitTime, () => {
+                                this.showNextButton();
                             });
-                            this.sound.play('sfx_pop');
-                        },
-                    });
+                        }
+                    },
                 });
             });
         });
 
-        // rabbit cheer
         this.rabbit.setTexture('rabbit_cheer').setScale(1.2);
     }
 
@@ -449,7 +490,10 @@ export default class GameScene extends Phaser.Scene {
         }
 
         // **Cập nhật banner trên cùng** (hiển thị số)
-        this.promptText.setText(`${number}`);
+        this.banner.setTexture('banner_no_text');
+        this.promptText
+            .setText(`${number}`)
+            .setPosition(this.pctX(0.5), this.pctY(0.1));
 
         const totalTime = number * delayPerItem + voiceDuration;
         return totalTime;
