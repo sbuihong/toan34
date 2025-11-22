@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { hideGameButtons } from '../main';
 
 export class EndScene extends Phaser.Scene {
     constructor() {
@@ -17,11 +18,26 @@ export class EndScene extends Phaser.Scene {
 
         // Âm thanh click
         this.load.audio('sfx_click', 'assets/audio/sfx_click.wav');
+
+        // Âm thanh chúc mừng
+        this.load.audio('complete', 'assets/audio/complete.mp3');
+
+        // Âm thanh chiến thắng
+        this.load.audio('sfx_congrat', 'assets/audio/sfx_congrat.mp3');
     }
 
     create() {
         const w = this.scale.width;
         const h = this.scale.height;
+
+        // Phát âm thanh chúc mừng khi vào màn hình
+        this.sound.play('complete');
+
+        // Phát âm thanh chiến thắng
+        // this.sound.play('sfx_congrat');
+        this.time.delayedCall(2000, () => {
+            this.sound.play('sfx_congrat');
+        });
 
         // ==== Banner ảnh chúc mừng ====
         const banner = this.add
@@ -62,5 +78,7 @@ export class EndScene extends Phaser.Scene {
             btn.on('pointerover', () => btn.setScale(btnScale * 1.1));
             btn.on('pointerout', () => btn.setScale(btnScale));
         });
+
+        hideGameButtons();
     }
 }

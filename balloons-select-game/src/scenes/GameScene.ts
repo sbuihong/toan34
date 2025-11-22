@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { showGameButtons } from '../main';
 
 interface LevelData {
     correctNumber: number;
@@ -121,43 +122,11 @@ export default class GameScene extends Phaser.Scene {
     }
 
     create() {
+        // Cho phép html-button gọi vào GameScene qua global
+        (window as any).gameScene = this;
+
         const w = this.getW();
         const h = this.getH();
-
-        // Tỉ lệ khoảng cách so với cạnh màn hình
-        const offsetX = 0.05; // 5% chiều ngang
-        const offsetY = 0.03; // 3% chiều cao
-        const btnScale = Math.min(w, h) / 1280; // scale nút theo màn hình
-
-        // Nút reset (góc trên trái)
-        const resetBtn = this.add
-            .image(w * offsetX, h * offsetY, 'btn_reset')
-            .setOrigin(0, 0)
-            .setScale(btnScale)
-            .setInteractive({ useHandCursor: true });
-
-        resetBtn.on('pointerdown', () => {
-            this.sound.play('sfx_click');
-            this.scene.restart({ level: 0 });
-        });
-
-        // Nút exit (góc trên phải)
-        const exitBtn = this.add
-            .image(w * (1 - offsetX), h * offsetY, 'btn_exit')
-            .setOrigin(1, 0)
-            .setScale(btnScale)
-            .setInteractive({ useHandCursor: true });
-
-        exitBtn.on('pointerdown', () => {
-            this.sound.play('sfx_click');
-            this.scene.start('MenuScene'); // scene muốn chuyển tới
-        });
-
-        // ==== Optional: hover effect ====
-        [resetBtn, exitBtn].forEach((btn) => {
-            btn.on('pointerover', () => btn.setScale(btnScale * 1.1));
-            btn.on('pointerout', () => btn.setScale(btnScale));
-        });
 
         this.balloons = []; // reset balloons
 
@@ -215,6 +184,21 @@ export default class GameScene extends Phaser.Scene {
                 });
             }
         });
+
+        showGameButtons();
+    }
+
+    restartLevel() {
+        this.scene.restart({ level: 0 });
+    }
+
+    exitGame() {
+        this.scene.start('MenuScene');
+    }
+
+    shutdown() {
+        // Xóa tham chiếu khi rời scene để tránh lỗi
+        delete (window as any).gameScene;
     }
 
     createBalloons() {
