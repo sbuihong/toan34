@@ -8,23 +8,23 @@ export class EndScene extends Phaser.Scene {
 
     preload() {
         // Banner chúc mừng (có chữ sẵn)
-        this.load.image('banner_congrat', 'assets/images/banner_congrat.png');
+        this.load.image('banner_congrat', 'assets/images/banner_congrat.webp');
 
         // Nút chơi lại
-        this.load.image('btn_reset', 'assets/images/btn_reset.png');
+        this.load.image('btn_reset', 'assets/images/btn_reset.webp');
 
         // Nút thoát
-        this.load.image('btn_exit', 'assets/images/btn_exit.png');
+        this.load.image('btn_exit', 'assets/images/btn_exit.webp');
 
         // Âm thanh click
-        this.load.audio('sfx_click', 'assets/audio/sfx_click.wav');
+        this.load.audio('sfx_click', 'assets/audio/sfx_click.ogg');
 
         // Âm thanh chúc mừng
-        this.load.audio('complete', 'assets/audio/complete.mp3');
+        this.load.audio('complete', 'assets/audio/complete.ogg');
 
         // Âm thanh chiến thắng
-        this.load.audio('fireworks', 'assets/audio/fireworks.mp3');
-        this.load.audio('applause', 'assets/audio/applause.mp3');
+        this.load.audio('fireworks', 'assets/audio/fireworks.ogg');
+        this.load.audio('applause', 'assets/audio/applause.ogg');
     }
 
     create() {
