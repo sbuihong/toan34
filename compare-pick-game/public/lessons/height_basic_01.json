@@ -3,11 +3,47 @@
     "title": "Cao hơn / Thấp hơn",
     "concept": "HEIGHT",
     "defaultMode": "BINARY_PICK",
-    "defaultPromptText": "Con hãy chạm vào bức tranh có cây cao hơn.",
+    "defaultPromptText": "Bé hãy chạm vào bức tranh có đồ vật cao hơn.",
     "defaultPromptAudio": "audio/height/default_prompt.mp3",
     "items": [
         {
             "id": "q1",
+            "promptText": "CHÚ HƯƠU NÀO CAO HƠN?",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/height/giraffe_short.png",
+                    "value": 1
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/height/giraffe_high.png",
+                    "value": 3
+                }
+            ],
+            "correctOptionId": "opt2",
+            "difficulty": 1
+        },
+        {
+            "id": "q2",
+            "promptText": "CÂY HOA NÀO CAO HƠN?",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/height/flower_high.png",
+                    "value": 3
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/height/flower_short.png",
+                    "value": 1
+                }
+            ],
+            "correctOptionId": "opt1",
+            "difficulty": 1
+        },
+        {
+            "id": "q3",
             "promptText": "Chọn cái cây cao hơn.",
             "options": [
                 {
@@ -19,37 +55,19 @@
                     "id": "opt2",
                     "image": "assets/height/tree_tall.png",
                     "value": 3
-                }
-            ],
-            "correctOptionId": "opt2",
-            "difficulty": 1
-        },
-        {
-            "id": "q2",
-            "promptText": "Chọn tòa nhà cao hơn.",
-            "options": [
-                {
-                    "id": "opt1",
-                    "image": "assets/height/building_low.png",
-                    "value": 2
-                },
-                {
-                    "id": "opt2",
-                    "image": "assets/height/building_high.png",
-                    "value": 3
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/height/building_high.png",
-                    "value": 4
+                    "image": "assets/height/tree_tall.png",
+                    "value": 3
                 }
             ],
-            "correctOptionId": "opt3",
-            "difficulty": 1
+            "correctOptionId": "opt2",
+            "difficulty": 2
         },
         {
-            "id": "q2",
-            "promptText": "Chọn tòa nhà cao hơn.",
+            "id": "q4",
+            "promptText": "Chọn tòa nhà cao nhất.",
             "options": [
                 {
                     "id": "opt1",
@@ -73,7 +91,7 @@
                 }
             ],
             "correctOptionId": "opt3",
-            "difficulty": 1
+            "difficulty": 3
         }
     ]
 }

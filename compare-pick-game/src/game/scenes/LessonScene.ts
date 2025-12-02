@@ -4,6 +4,8 @@ import type { LessonPackage, LessonItem } from '../types/lesson';
 import { GAME_WIDTH, GAME_HEIGHT } from '../config';
 import { domBackgroundManager } from '../domBackground';
 
+type DifficultyLevel = 1 | 2 | 3;
+
 type AnswerLog = {
     lessonId: string;
     itemId: string;
@@ -19,12 +21,15 @@ export class LessonScene extends Phaser.Scene {
     private index = 0;
     private score = 0;
 
+    private currentDifficulty: DifficultyLevel = 3;
+
     private boy?: Phaser.GameObjects.Image;
 
     private promptText!: Phaser.GameObjects.Text;
     private speakerIcon!: Phaser.GameObjects.Image;
     private progressText!: Phaser.GameObjects.Text;
     private questionBar?: Phaser.GameObjects.Image;
+    private questionBarBaseLength = 0;
 
     private optionImages: Phaser.GameObjects.Image[] = [];
     private optionPanels: Phaser.GameObjects.Image[] = [];
@@ -38,8 +43,22 @@ export class LessonScene extends Phaser.Scene {
         super('LessonScene');
     }
 
-    init(data: { lesson: LessonPackage }) {
+    init(data: { lesson: LessonPackage; difficulty?: DifficultyLevel }) {
         this.lesson = data.lesson;
+        this.currentDifficulty = data.difficulty ?? 3;
+
+        // 🔥 Quan trọng: reset state mỗi lần vào lesson
+        this.index = 0;
+        this.score = 0;
+        this.answerLogs = [];
+        this.lockInput = false;
+        this.currentPromptAudioKey = null;
+
+        // nếu muốn chắc ăn, clear luôn mảng option (chỉ để an toàn)
+        this.optionImages.forEach((img) => img.destroy());
+        this.optionPanels.forEach((p) => p.destroy());
+        this.optionImages = [];
+        this.optionPanels = [];
     }
 
     create() {
@@ -47,8 +66,9 @@ export class LessonScene extends Phaser.Scene {
 
         // ===== HEADER =====
 
-        // Thanh câu hỏi (khung)
-        // dùng chung cho tất cả câu trong bài này
+        const centerX = GAME_WIDTH / 2 + 60;
+        const centerY = 60;
+
         if (this.textures.exists('question_bar')) {
             const barWidth = GAME_WIDTH * 0.4;
             this.questionBar = this.add
@@ -59,15 +79,18 @@ export class LessonScene extends Phaser.Scene {
             this.questionBar.setDisplaySize(barWidth, barWidth * ratio);
         }
 
-        // Prompt text nằm ngay dưới thanh câu hỏi
+        // Tạo prompt text, luôn nằm trên thanh
         this.promptText = this.add
-            .text(GAME_WIDTH / 2 + 60, 60, '', {
-                fontSize: '26px',
-                color: '#000',
+            .text(centerX, centerY, '', {
+                fontSize: '35px',
+                color: '#ffffff',
                 align: 'center',
-                wordWrap: { width: GAME_WIDTH - 120 },
+                fontFamily: '"Baloo 2"',
+                fontStyle: '700',
+                // wordWrap: { width: GAME_WIDTH * 0.5 },
             })
-            .setOrigin(0.5);
+            .setOrigin(0.5)
+            .setDepth(1); // chữ ở trên
 
         // Icon loa
         this.speakerIcon = this.add
@@ -106,20 +129,46 @@ export class LessonScene extends Phaser.Scene {
             this.showQuestion();
         }
 
-        // Nhân vật boy đứng ở góc trái
-        if (this.textures.exists('boy')) {
-            this.boy = this.add
-                .image(120, GAME_HEIGHT - 40, 'boy')
-                .setOrigin(0.5, 1); // chân boy trùng đáy
+        // Nhân vật đồng hành random: boy hoặc squirrel
+        const characterKeys = ['boy', 'squirrel'];
 
-            // Scale nhẹ cho phù hợp canvas, tuỳ kích thước gốc
-            const targetHeight = 350;
-            const scale = targetHeight / this.boy.height;
+        // Lọc những key có texture thật
+        const availableKeys = characterKeys.filter((key) =>
+            this.textures.exists(key)
+        );
+
+        if (availableKeys.length > 0) {
+            const randomIndex = Math.floor(
+                Math.random() * availableKeys.length
+            );
+            const chosenKey = availableKeys[randomIndex];
+
+            // Vị trí "mặt đất" góc trái
+            const baseX = 140;
+            const baseY = GAME_HEIGHT - 40;
+
+            this.boy = this.add
+                .image(baseX, baseY, chosenKey)
+                .setOrigin(0.5, 1); // chân trùng đáy
+
+            // Khung tối đa cho nhân vật
+            const MAX_H = 350; // chiều cao tối đa trên canvas
+            const MAX_W = 220; // chiều ngang tối đa
+
+            const texW = this.boy.width || 1;
+            const texH = this.boy.height || 1;
+
+            const scale = Math.min(MAX_H / texH, MAX_W / texW);
             this.boy.setScale(scale);
+
+            // Nếu squirrel hơi bè, có thể dịch vô trong tí cho cân bố cục
+            if (chosenKey === 'squirrel') {
+                this.boy.x = baseX + 10; // đẩy nhẹ sang phải, tuỳ bạn chỉnh
+            }
 
             this.boy.setDepth(-1);
 
-            // Idle tween: nhún lên xuống nhẹ
+            // Idle tween
             this.tweens.add({
                 targets: this.boy,
                 y: this.boy.y - 10,
@@ -250,36 +299,96 @@ export class LessonScene extends Phaser.Scene {
 
     // ===== Vẽ panel + hình cho mỗi lựa chọn =====
 
+    private computeItemScale(
+        opts: LessonItem['options'],
+        panelWidth: number,
+        panelHeight: number,
+        padding: number = 40
+    ): number {
+        // vùng tối đa cho ảnh bên trong panel
+        const maxW = panelWidth - padding;
+        const maxH = panelHeight - padding;
+
+        let maxOriginalW = 0;
+        let maxOriginalH = 0;
+
+        opts.forEach((opt) => {
+            const tex = this.textures.get(opt.image);
+            if (!tex) return;
+
+            const frame = tex.getSourceImage() as HTMLImageElement;
+            const w = frame.width;
+            const h = frame.height;
+
+            if (!w || !h) return;
+
+            if (w > maxOriginalW) maxOriginalW = w;
+            if (h > maxOriginalH) maxOriginalH = h;
+        });
+
+        if (maxOriginalW === 0 || maxOriginalH === 0) {
+            return 1; // không tính được thì để scale = 1
+        }
+
+        const scaleToFit = Math.min(maxW / maxOriginalW, maxH / maxOriginalH);
+
+        // CHỈ DOWNSCALE, KHÔNG UPSCALE
+        return Math.min(1, scaleToFit);
+    }
+
+    private alignImageBottomInPanel(
+        img: Phaser.GameObjects.Image,
+        panelCenterY: number,
+        panelHeight: number,
+        paddingBottom: number = 30
+    ) {
+        const scaledHeight = img.height * img.scaleY; // height sau scale
+        const panelBottom = panelCenterY + panelHeight / 2;
+        const bottomY = panelBottom - paddingBottom;
+
+        img.setY(bottomY - scaledHeight / 2);
+    }
+
     private renderOptions(item: LessonItem) {
         const opts = item.options;
         const count = opts.length;
 
-        // toạ độ trung tâm vùng hiển thị chọn đáp án
         const centerY = GAME_HEIGHT / 2 + 40;
 
-        // Clear cũ nếu bạn chưa clear ở ngoài (an toàn thêm)
+        // clear cũ
         this.optionImages.forEach((img) => img.destroy());
         this.optionPanels.forEach((p) => p.destroy());
         this.optionImages = [];
         this.optionPanels = [];
 
+        // flag: concept này có cần căn chân không?
+        const alignByHeight = this.lesson.concept === 'HEIGHT';
+
         if (count === 2) {
-            // 2 đáp án: panel to, đặt trái – phải
             const spacing = 460;
             const startX = GAME_WIDTH / 2 - ((count - 1) * spacing) / 2 + 60;
-            const y = centerY + 20;
+            const panelY = centerY + 20;
+            const panelW = 420;
+            const panelH = 500;
+
+            const scale = this.computeItemScale(opts, panelW, panelH, 60);
 
             opts.forEach((opt, idx) => {
                 const x = startX + idx * spacing;
 
                 const panel = this.add
-                    .image(x, y, 'panel_bg')
+                    .image(x, panelY, 'panel_bg')
                     .setOrigin(0.5)
-                    .setDisplaySize(420, 500);
+                    .setDisplaySize(panelW, panelH);
 
-                const img = this.add.image(x, y, opt.image).setOrigin(0.5);
-                img.setDisplaySize(250, 250);
+                const img = this.add.image(x, panelY, opt.image).setOrigin(0.5);
+                img.setScale(scale);
                 img.setInteractive({ useHandCursor: true });
+
+                // nếu là bài so sánh cao/thấp → chân ảnh cùng nằm dưới
+                if (alignByHeight) {
+                    this.alignImageBottomInPanel(img, panelY, panelH, 40);
+                }
 
                 img.on('pointerdown', () =>
                     this.onSelect(item, opt.id, img, panel)
@@ -289,22 +398,29 @@ export class LessonScene extends Phaser.Scene {
                 this.optionPanels.push(panel);
             });
         } else if (count === 3) {
-            // 3 đáp án: 3 panel ngang hàng, nhỏ hơn
-            const spacing = 320; // hẹp hơn để fit 3 cái
-            const startX = GAME_WIDTH / 2 - spacing + 80; // 3 ô: -1, 0, +1
-            const y = centerY + 10;
+            const spacing = 320;
+            const startX = GAME_WIDTH / 2 - spacing + 80;
+            const panelY = centerY + 10;
+            const panelW = 300;
+            const panelH = 400;
+
+            const scale = this.computeItemScale(opts, panelW, panelH, 50);
 
             opts.forEach((opt, idx) => {
                 const x = startX + idx * spacing;
 
                 const panel = this.add
-                    .image(x, y, 'panel_bg')
+                    .image(x, panelY, 'panel_bg')
                     .setOrigin(0.5)
-                    .setDisplaySize(300, 400);
+                    .setDisplaySize(panelW, panelH);
 
-                const img = this.add.image(x, y, opt.image).setOrigin(0.5);
-                img.setDisplaySize(200, 200);
+                const img = this.add.image(x, panelY, opt.image).setOrigin(0.5);
+                img.setScale(scale);
                 img.setInteractive({ useHandCursor: true });
+
+                if (alignByHeight) {
+                    this.alignImageBottomInPanel(img, panelY, panelH, 35);
+                }
 
                 img.on('pointerdown', () =>
                     this.onSelect(item, opt.id, img, panel)
@@ -314,7 +430,6 @@ export class LessonScene extends Phaser.Scene {
                 this.optionPanels.push(panel);
             });
         } else if (count === 4) {
-            // 4 đáp án: layout 2x2
             const colSpacing = 420;
             const rowSpacing = 300;
 
@@ -322,7 +437,6 @@ export class LessonScene extends Phaser.Scene {
             const topY = centerY - rowSpacing / 2;
             const bottomY = centerY + rowSpacing / 2;
 
-            // vị trí 4 ô: [ (left, top), (right, top), (left, bottom), (right, bottom) ]
             const positions = [
                 { x: centerX - colSpacing / 2, y: topY },
                 { x: centerX + colSpacing / 2, y: topY },
@@ -330,19 +444,29 @@ export class LessonScene extends Phaser.Scene {
                 { x: centerX + colSpacing / 2, y: bottomY },
             ];
 
+            const panelW = 380;
+            const panelH = 280;
+
+            const scale = this.computeItemScale(opts, panelW, panelH, 40);
+
             opts.forEach((opt, idx) => {
                 const pos = positions[idx] ?? positions[positions.length - 1];
 
                 const panel = this.add
                     .image(pos.x, pos.y, 'panel_bg')
                     .setOrigin(0.5)
-                    .setDisplaySize(380, 280);
+                    .setDisplaySize(panelW, panelH);
 
                 const img = this.add
                     .image(pos.x, pos.y, opt.image)
                     .setOrigin(0.5);
-                img.setDisplaySize(200, 200);
+                img.setScale(scale);
                 img.setInteractive({ useHandCursor: true });
+
+                if (alignByHeight) {
+                    // căn chân theo từng hàng riêng (top/bottom), panelH chung
+                    this.alignImageBottomInPanel(img, pos.y, panelH, 30);
+                }
 
                 img.on('pointerdown', () =>
                     this.onSelect(item, opt.id, img, panel)
@@ -352,22 +476,30 @@ export class LessonScene extends Phaser.Scene {
                 this.optionPanels.push(panel);
             });
         } else {
-            // Fallback: mọi trường hợp khác (1, 5, ...) cứ xếp ngang cho an toàn
+            // fallback: xếp ngang
             const spacing = 240;
             const startX = GAME_WIDTH / 2 - ((count - 1) * spacing) / 2;
-            const y = centerY + 10;
+            const panelY = centerY + 10;
+            const panelW = 320;
+            const panelH = 380;
+
+            const scale = this.computeItemScale(opts, panelW, panelH, 40);
 
             opts.forEach((opt, idx) => {
                 const x = startX + idx * spacing;
 
                 const panel = this.add
-                    .image(x, y, 'panel_bg')
+                    .image(x, panelY, 'panel_bg')
                     .setOrigin(0.5)
-                    .setDisplaySize(320, 380);
+                    .setDisplaySize(panelW, panelH);
 
-                const img = this.add.image(x, y, opt.image).setOrigin(0.5);
-                img.setDisplaySize(200, 200);
+                const img = this.add.image(x, panelY, opt.image).setOrigin(0.5);
+                img.setScale(scale);
                 img.setInteractive({ useHandCursor: true });
+
+                if (alignByHeight) {
+                    this.alignImageBottomInPanel(img, panelY, panelH, 35);
+                }
 
                 img.on('pointerdown', () =>
                     this.onSelect(item, opt.id, img, panel)
@@ -459,6 +591,7 @@ export class LessonScene extends Phaser.Scene {
             lessonId: this.lesson.lessonId,
             score: this.score,
             total: this.lesson.items.length,
+            difficulty: this.currentDifficulty,
         });
     }
 }

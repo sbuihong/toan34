@@ -2,12 +2,16 @@
 import Phaser from 'phaser';
 import type { LessonPackage } from '../types/lesson';
 
+type DifficultyLevel = 1 | 2 | 3;
+
 type PreloadData = {
     lessonId: string;
+    difficulty?: DifficultyLevel; // nhận thêm từ LessonSelectScene
 };
 
 export class PreloadScene extends Phaser.Scene {
     private lessonId!: string;
+    private selectedDifficulty: DifficultyLevel = 3; // mặc định: chơi full nếu không truyền
     private lessonData!: LessonPackage;
 
     constructor() {
@@ -16,6 +20,8 @@ export class PreloadScene extends Phaser.Scene {
 
     init(data: PreloadData) {
         this.lessonId = data.lessonId;
+        // nếu không truyền difficulty (ví dụ replay từ SummaryScene) thì cho = 3
+        this.selectedDifficulty = data.difficulty ?? 3;
     }
 
     preload() {
@@ -29,18 +35,37 @@ export class PreloadScene extends Phaser.Scene {
 
         // Thanh câu hỏi (khung câu hỏi)
         this.load.image('question_bar', 'assets/ui/question_bar.webp');
-        // nếu bạn đã có question_more/question_less thì có thể dùng lại key đó
 
         this.load.image('boy', 'assets/characters/boy.webp');
+        this.load.image('squirrel', 'assets/characters/squirrel.webp');
 
         // === JSON BÀI HỌC ===
+        // XÓA JSON CŨ TRƯỚC
+        if (this.cache.json.exists('lessonData')) {
+            this.cache.json.remove('lessonData');
+        }
         this.load.json('lessonData', `lessons/${this.lessonId}.json`);
     }
 
     create() {
-        this.lessonData = this.cache.json.get('lessonData') as LessonPackage;
-        this.preloadLessonAssets(this.lessonData).then(() => {
-            this.scene.start('LessonScene', { lesson: this.lessonData });
+        const rawLesson = this.cache.json.get('lessonData') as LessonPackage;
+        const filteredItems = rawLesson.items.filter((item) => {
+            const d = (item as any).difficulty ?? 1;
+            return d === this.selectedDifficulty;
+        });
+
+        const lessonForPlay: LessonPackage = {
+            ...rawLesson,
+            items: filteredItems,
+        };
+
+        // preload asset cho bộ câu đã lọc
+        this.preloadLessonAssets(lessonForPlay).then(() => {
+            this.lessonData = lessonForPlay;
+            this.scene.start('LessonScene', {
+                lesson: this.lessonData,
+                difficulty: this.selectedDifficulty, // ⬅️ truyền xuống
+            });
         });
     }
 
