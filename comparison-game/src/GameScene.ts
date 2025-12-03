@@ -340,10 +340,14 @@ export default class GameScene extends Phaser.Scene {
           mode === 'MORE' ? QUESTION_FLOWER_MORE : QUESTION_FLOWER_LESS;
       }
 
+      // 1 và 2 bóng/hoa: cô bé (trái) luôn ít hơn cậu bé (phải)
+      const leftCount = 1;
+      const rightCount = 2;
+
       levels.push({
         id: i + 1,
-        leftCount: 1,
-        rightCount: 2,
+        leftCount,
+        rightCount,
         mode
       });
 
@@ -435,6 +439,11 @@ export default class GameScene extends Phaser.Scene {
         (window as any).setGameButtonsVisible(true);
       }
 
+      // nhân vật nào đang cầm ÍT đồ hơn trong màn chính?
+      // GameScene luôn: cô bé ở trái, cậu bé ở phải
+      const lessIsLeft = level.leftCount < level.rightCount;
+      const lessCharacter: 'GIRL' | 'BOY' = lessIsLeft ? 'GIRL' : 'BOY';
+
       // ❗ CHỈ GỬI levelIndex HIỆN TẠI, KHÔNG +1
       // Tăng delay để âm thanh đúng được phát hết trước khi chuyển màn
       this.time.delayedCall(2000, () => {
@@ -444,7 +453,8 @@ export default class GameScene extends Phaser.Scene {
           nextScene: 'GameScene',
           score: this.score,
           levelIndex: this.levelIndex,
-          subject: this.levelSubjects[this.levelIndex] // 👈 BẮT BUỘC
+          subject: this.levelSubjects[this.levelIndex], // 👈 BẮT BUỘC
+          lessCharacter, // cho BalanceScene biết ai là người cần được thêm bóng/hoa
         });
       });
     } else {
