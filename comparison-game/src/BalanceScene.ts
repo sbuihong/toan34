@@ -189,14 +189,18 @@ export default class BalanceScene extends Phaser.Scene {
     const maxCharHeight = actorPanelHeight * 0.8;
     const maxCharWidth = actorPanelWidth * 0.3;
 
-    const girlScale = Math.min(
+    // Tính scale cho từng ảnh rồi lấy scale chung nhỏ nhất
+    const girlScaleRaw = Math.min(
       maxCharHeight / girlTex.height,
       maxCharWidth / girlTex.width
     );
-    const boyScale = Math.min(
+    const boyScaleRaw = Math.min(
       maxCharHeight / boyTex.height,
       maxCharWidth / boyTex.width
     );
+    const charScale = Math.min(girlScaleRaw, boyScaleRaw);
+    const girlScale = charScale;
+    const boyScale = charScale;
 
     const girlUpKeyCandidate = GIRL_UPGRADE_TEXTURE[this.subject];
     const boyUpKeyCandidate = BOY_UPGRADE_TEXTURE[this.subject];
@@ -271,7 +275,22 @@ export default class BalanceScene extends Phaser.Scene {
       .setScale(this.objectScale)
       .setInteractive({ draggable: true });
 
+    const idleTween = this.tweens.add({
+      targets: draggable,
+      y: startY - 15,
+      angle: -3,
+      duration: 900,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.inOut',
+    });
+
     this.input.setDraggable(draggable);
+
+    draggable.on('dragstart', () => {
+      idleTween.stop();
+      draggable.setAngle(0);
+    });
 
     draggable.on('drag', (_: Phaser.Input.Pointer, x: number, y: number) => {
       draggable.x = x;
@@ -296,6 +315,8 @@ export default class BalanceScene extends Phaser.Scene {
 
       if (dist < 180) {
         draggable.disableInteractive();
+
+        idleTween.stop();
 
         // bóng kéo mờ dần rồi xoá
         this.tweens.add({
@@ -349,6 +370,8 @@ export default class BalanceScene extends Phaser.Scene {
       } else {
         draggable.x = startX;
         draggable.y = startY;
+        draggable.setAngle(0);
+        idleTween.restart();
       }
     });
 

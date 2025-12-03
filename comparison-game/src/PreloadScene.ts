@@ -29,6 +29,7 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image('answer_default', 'assets/button/DRAW.png');
         this.load.image('btn_primary_pressed', 'assets/button/HTU.png');
         this.load.image('btn_replay', 'assets/button/replay.png');
+        this.load.svg('next_end', 'assets/button/next_end.svg');
 
         // Audio
         this.load.audio('bgm_main', 'assets/audio/bgm_main.mp3');

@@ -14,7 +14,14 @@ export default class EndGameScene extends BaseScene {
   }
 
   create() {
+    
     const { width, height } = this.scale;
+
+     // Ẩn hai nút HTML viewport
+    if ((window as any).setGameButtonsVisible) {
+      (window as any).setGameButtonsVisible(false);
+    }
+
 
     // === chỉnh bg dịch lên trên ===
     const bg = this.createFullScreenBg('bg_end');
@@ -62,7 +69,7 @@ export default class EndGameScene extends BaseScene {
 
     // Nút thoát (X)
     const exitBtn = this.add
-      .image(width / 2 + gapX, buttonsY, 'answer_wrong')
+      .image(width / 2 + gapX, buttonsY, 'next_end')
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true });
 

@@ -154,7 +154,7 @@ export default class GameScene extends Phaser.Scene {
 
     // Ẩn nút HTML ở màn câu hỏi, chỉ hiện khi sang màn phụ (BalanceScene)
     if ((window as any).setGameButtonsVisible) {
-      (window as any).setGameButtonsVisible(false);
+      (window as any).setGameButtonsVisible(true);
     }
     if ((window as any).setRandomGameViewportBg) {
       (window as any).setRandomGameViewportBg();
@@ -224,13 +224,29 @@ export default class GameScene extends Phaser.Scene {
       .image(baseLeftColX + BUTTON_OFFSET_X_LEFT, btnY, ANSWER_DEFAULT)
       .setScale(ANSWER_SCALE)
       .setInteractive({ useHandCursor: true })
-      .on('pointerdown', () => this.handleChoice('LEFT'));
+      .on('pointerdown', () => this.handleChoice('LEFT'))
+      .on('pointerover', () => {
+        if (this.gameState === 'WAIT_CHOICE') {
+          this.leftBtn.setTint(0xffffaa).setAlpha(0.95);
+        }
+      })
+      .on('pointerout', () => {
+        this.leftBtn.clearTint().setAlpha(1);
+      });
 
     this.rightBtn = this.add
       .image(baseRightColX + BUTTON_OFFSET_X_RIGHT, btnY, ANSWER_DEFAULT)
       .setScale(ANSWER_SCALE)
       .setInteractive({ useHandCursor: true })
-      .on('pointerdown', () => this.handleChoice('RIGHT'));
+      .on('pointerdown', () => this.handleChoice('RIGHT'))
+      .on('pointerover', () => {
+        if (this.gameState === 'WAIT_CHOICE') {
+          this.rightBtn.setTint(0xffffaa).setAlpha(0.95);
+        }
+      })
+      .on('pointerout', () => {
+        this.rightBtn.clearTint().setAlpha(1);
+      });
 
     // NHÂN VẬT
     const currentSubject = this.levelSubjects[this.levelIndex] ?? 'BALLOON';
@@ -377,7 +393,7 @@ export default class GameScene extends Phaser.Scene {
 
       this.score++;
       // dùng âm thanh thay cho text feedback
-      (window as any).playVoiceLocked(this.sound, 'sfx_correct');
+      this.sound.play('sfx_correct');
       (window as any).playVoiceLocked(this.sound, 'correct');
 
       const chosenBtn = side === 'LEFT' ? this.leftBtn : this.rightBtn;
@@ -408,7 +424,7 @@ export default class GameScene extends Phaser.Scene {
     } else {
       // dùng âm thanh thay cho text feedback
       
-      (window as any).playVoiceLocked(this.sound, 'sfx_wrong');
+      this.sound.play('sfx_wrong');
       (window as any).playVoiceLocked(this.sound, 'wrong');
 
       const chosenBtn = side === 'LEFT' ? this.leftBtn : this.rightBtn;

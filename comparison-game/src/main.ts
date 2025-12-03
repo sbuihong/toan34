@@ -90,7 +90,7 @@ function setGameButtonsVisible(visible: boolean) {
     | HTMLButtonElement
     | null;
   // Luôn để nút hiển thị; logic khóa Next nằm trong GameScene.isLevelComplete()
-  const display = "block";
+  const display = visible ? "block" : "none";
   if (replayBtn) replayBtn.style.display = display;
   if (nextBtn) nextBtn.style.display = display;
 }
@@ -181,34 +181,32 @@ const config: Phaser.Types.Core.GameConfig = {
   },
   scene: [PreloadScene, GameScene,BalanceScene, EndGameScene],
 };
-// ========== HÀM CHỐNG SPAM ÂM THANH VOICE ==========
-// Chỉ cho phép 1 voice (drag / need_finish / complete / v.v.) phát tại 1 thời điểm.
+// ========== HÀM CHỐNG SPAM / CHỒNG VOICE ==========
 let currentVoice: Phaser.Sound.BaseSound | null = null;
 
 export function playVoiceLocked(
   sound: Phaser.Sound.BaseSoundManager,
   key: string
 ): void {
-  // Nếu đang có voice phát, dừng nó trước (tránh chồng chéo)
+  // Nếu đang có voice phát thì bỏ qua mọi lần gọi thêm
   if (currentVoice && currentVoice.isPlaying) {
-    currentVoice.stop();
+    return;
   }
 
   let instance = sound.get(key) as Phaser.Sound.BaseSound | null;
   if (!instance) {
-    instance = sound.add(key);
+    instance = sound.add(key);  // có thể thêm { volume } nếu muốn chỉnh volume riêng
   }
   if (!instance) return;
 
   currentVoice = instance;
   instance.once('complete', () => {
     if (currentVoice === instance) {
-      currentVoice = null;
+      currentVoice = null; // phát xong mới cho lần click tiếp theo
     }
   });
   instance.play();
 }
-
 
 // gắn lên window cho các scene dùng
 (Object.assign(window as any, {
