@@ -802,14 +802,28 @@ export default class GameScene extends Phaser.Scene {
         const objN = objCard.customData!.number;
 
         if (n !== objN && !this.matches[startIndex]) {
-          this.sound.play("sfx_wrong");
+          const playLocked = (window as any).playVoiceLocked as
+            | ((s: Phaser.Sound.BaseSoundManager, k: string) => void)
+            | undefined;
+          if (playLocked) {
+            playLocked(this.sound, "sfx_wrong");
+          } else {
+            this.sound.play("sfx_wrong");
+          }
         }
 
         if (n === objN && !this.matches[startIndex]) {
           matched = true;
           this.matches[startIndex] = true;
 
-          this.sound.play("sfx_correct");
+          const playLocked = (window as any).playVoiceLocked as
+            | ((s: Phaser.Sound.BaseSoundManager, k: string) => void)
+            | undefined;
+          if (playLocked) {
+            playLocked(this.sound, "sfx_correct");
+          } else {
+            this.sound.play("sfx_correct");
+          }
 
           startCard.clearTint();
           objCard.clearTint();
@@ -866,7 +880,14 @@ export default class GameScene extends Phaser.Scene {
 
       if (this.matches.every((m) => m)) {
         this.time.delayedCall(2000, () => {
-          this.sound.play("voice_complete");
+          const playLocked = (window as any).playVoiceLocked as
+            | ((s: Phaser.Sound.BaseSoundManager, k: string) => void)
+            | undefined;
+          if (playLocked) {
+            playLocked(this.sound, "voice_complete");
+          } else {
+            this.sound.play("voice_complete");
+          }
         });
       }
     });
@@ -890,7 +911,7 @@ export default class GameScene extends Phaser.Scene {
       const startPos = this.getHolePos(numCard, "right", 0);
       const rawEndPos = this.getHolePos(objCard, "left", 0);
 
-      const extraIntoObject = objCard.displayWidth * 0.35;
+      const extraIntoObject = objCard.displayWidth * 0.55;
 
       const endPos = {
         x: rawEndPos.x + extraIntoObject,

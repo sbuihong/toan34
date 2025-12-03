@@ -37,6 +37,7 @@ export function preloadGameAssets(scene: Phaser.Scene): void {
   scene.load.audio("sfx_wrong", "assets/audio/sfx_wrong.ogg");
   scene.load.audio("bgm_main", "assets/audio/bgm_main.ogg");
   scene.load.audio("voice_end", "assets/audio/voice_end.ogg");
+  scene.load.audio("voice_rotate", "assets/audio/xoay.ogg");
 
   // --- BACKGROUND ---
   scene.load.image("bg1", "assets/bg/bg1.webp");
@@ -70,6 +71,7 @@ export function preloadGameAssets(scene: Phaser.Scene): void {
   scene.load.image("bowl", "assets/icon/bowl.webp");
   scene.load.image("lamp", "assets/icon/lamp.webp");
   scene.load.image("clock", "assets/icon/clock.webp");
+  scene.load.image("hand", "assets/icon/hand.webp");
 ;
 
   // --- BG END ---

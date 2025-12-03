@@ -39,7 +39,7 @@ export default class OverlayScene extends Phaser.Scene {
     });
 
     // ===== SCALE CHO TỪNG THÀNH PHẦN (để cân bố cục) =====
-    const CHAR_SCALE = uiScale * 1.5;       // nhân vật to hơn
+    const CHAR_SCALE = uiScale * 1.6;       // nhân vật to hơn
     const TITLE_SCALE = uiScale * 1.15;     // title rõ hơn
     const BTN_SCALE = uiScale * 1.7;        // nút bắt đầu to, dễ bấm
     const BTN_SCALE_HOVER = BTN_SCALE * 1.08;
@@ -112,7 +112,15 @@ export default class OverlayScene extends Phaser.Scene {
       }
 
       if (this.bgm && !this.bgm.isPlaying) this.bgm.play();
-      this.sound.play("voice_intro", { volume: 1 });
+
+      const playLocked = (window as any).playVoiceLocked as
+        | ((s: Phaser.Sound.BaseSoundManager, k: string) => void)
+        | undefined;
+      if (playLocked) {
+        playLocked(this.sound, "voice_intro");
+      } else {
+        this.sound.play("voice_intro");
+      }
 
       this.scene.start("GameScene", { level: 0 });
     };
