@@ -10,6 +10,7 @@ type LessonOption = {
     concept: LessonConcept;
     imageKey: string; // 👈 thêm
     title: string;
+    difficultyBgKey: string;
 };
 
 const LESSON_OPTIONS: LessonOption[] = [
@@ -18,24 +19,28 @@ const LESSON_OPTIONS: LessonOption[] = [
         concept: 'HEIGHT',
         imageKey: 'card_height', // ảnh card Cao/Thấp
         title: 'Cao/Thấp',
+        difficultyBgKey: 'diff_height',
     },
     {
         lessonId: 'size_basic_01',
         concept: 'SIZE',
         imageKey: 'card_size', // ảnh card To/Nhỏ/Bằng nhau
         title: 'To/Nhỏ/Bằng nhau',
+        difficultyBgKey: 'diff_size',
     },
     {
         lessonId: 'length_basic_01',
         concept: 'LENGTH',
         imageKey: 'card_length', // ảnh card Dài/Ngắn
         title: 'Dài/Ngắn',
+        difficultyBgKey: 'diff_length',
     },
     {
         lessonId: 'width_basic_01',
         concept: 'WIDTH',
         imageKey: 'card_width', // ảnh card Rộng/Hẹp
         title: 'Rộng/Hẹp',
+        difficultyBgKey: 'diff_width',
     },
 ];
 
@@ -61,6 +66,19 @@ export class LessonSelectScene extends Phaser.Scene {
         }
         if (!this.textures.exists('card_width')) {
             this.load.image('card_width', 'assets/ui/card_width.webp');
+        }
+
+        if (!this.textures.exists('diff_height')) {
+            this.load.image('diff_height', 'assets/ui/diff_height.webp');
+        }
+        if (!this.textures.exists('diff_size')) {
+            this.load.image('diff_size', 'assets/ui/diff_size.webp');
+        }
+        if (!this.textures.exists('diff_length')) {
+            this.load.image('diff_length', 'assets/ui/diff_length.webp');
+        }
+        if (!this.textures.exists('diff_width')) {
+            this.load.image('diff_width', 'assets/ui/diff_width.webp');
         }
     }
 
@@ -135,7 +153,7 @@ export class LessonSelectScene extends Phaser.Scene {
     }
 
     private openDifficultyPopup(option: LessonOption) {
-        const { title, lessonId } = option;
+        const { lessonId, difficultyBgKey } = option;
 
         // Overlay mờ che nền
         const overlay = this.add
@@ -151,109 +169,98 @@ export class LessonSelectScene extends Phaser.Scene {
             .setInteractive(); // chặn click xuống dưới
 
         const centerX = this.scale.width / 2;
-        const centerY = this.scale.height / 2;
+        const centerY = this.scale.height / 2 + 40;
 
-        // Khung popup
-        const popupWidth = 520;
-        const popupHeight = 320;
-        const cornerRadius = 24; // độ bo góc
-
-        // ====== NỀN POPUP BO GÓC ======
-        const popupBg = this.add.graphics();
-
-        // viền
-        popupBg.lineStyle(2, 0xcccccc, 1);
-        // màu nền
-        popupBg.fillStyle(0xffffff, 1);
-
-        // vẽ từ tâm (0,0) để dễ canh giữa
-        popupBg.fillRoundedRect(
-            -popupWidth / 2,
-            -popupHeight / 2,
-            popupWidth,
-            popupHeight,
-            cornerRadius
-        );
-        popupBg.strokeRoundedRect(
-            -popupWidth / 2,
-            -popupHeight / 2,
-            popupWidth,
-            popupHeight,
-            cornerRadius
-        );
-
-        // đặt vị trí ở giữa màn
-        popupBg.setPosition(centerX, centerY);
-
-        const titleText = this.add
-            .text(centerX, centerY - 110, `Chọn độ khó\n${title}`, {
-                fontSize: '24px',
-                color: '#000',
-                align: 'center',
-            })
+        // 🔥 Ảnh popup riêng cho từng bài (CHỌN ĐỘ KHÓ + icon)
+        const popupBg = this.add
+            .image(centerX, centerY, difficultyBgKey)
             .setOrigin(0.5);
 
+        // scale để fit màn (có thể chỉnh lại tuỳ file)
+        const targetWidth = Math.min(this.scale.width * 1, 620);
+        const scale = targetWidth / popupBg.width;
+        popupBg.setScale(scale);
+
+        // Tính vị trí nút theo chính cái popup
+        const btnAreaY = popupBg.y + popupBg.displayHeight / 2 - 100; // gần đáy card
         const btnWidth = 140;
-        const btnHeight = 60;
+        const btnHeight = 50;
         const btnSpacing = 170;
-        const btnY = centerY + 40;
 
         type BtnCfg = { label: string; level: DifficultyLevel; color: number };
 
         const btnConfigs: BtnCfg[] = [
-            { label: 'Dễ', level: 1, color: 0x81c784 }, // <= difficulty 1
-            { label: 'Vừa', level: 2, color: 0xffb74d }, // <= difficulty 2
-            { label: 'Khó', level: 3, color: 0xe57373 }, // <= difficulty 3
+            { label: 'Dễ', level: 1, color: 0x0a9b35 }, // xanh
+            { label: 'Vừa', level: 2, color: 0xf6c515 }, // vàng
+            { label: 'Khó', level: 3, color: 0xd62828 }, // đỏ
         ];
 
         const popupObjects: Phaser.GameObjects.GameObject[] = [
             overlay,
             popupBg,
-            titleText,
         ];
 
         btnConfigs.forEach((cfg, idx) => {
             const x = centerX + (idx - 1) * btnSpacing;
+            const y = btnAreaY;
 
-            const btnRect = this.add
-                .rectangle(x, btnY, btnWidth, btnHeight, cfg.color, 1)
-                .setOrigin(0.5)
-                .setInteractive({ useHandCursor: true });
+            // vẽ nút bo góc bằng Graphics
+            const radius = 14;
+
+            const g = this.add.graphics();
+            g.fillStyle(cfg.color, 1);
+            g.fillRoundedRect(
+                -btnWidth / 2,
+                -btnHeight / 2,
+                btnWidth,
+                btnHeight,
+                radius
+            );
 
             const btnText = this.add
-                .text(x, btnY, cfg.label, {
-                    fontSize: '22px',
+                .text(0, 0, cfg.label, {
+                    fontSize: '25px',
                     color: '#ffffff',
+                    align: 'center',
+                    fontFamily: '"Baloo 2"',
+                    fontStyle: '700',
                 })
                 .setOrigin(0.5);
 
-            popupObjects.push(btnRect, btnText);
+            btnText.setDepth(2);
 
-            btnRect.on('pointerover', () => {
+            // gom lại thành 1 container cho dễ tween + click
+            const btn = this.add.container(x, y, [g, btnText]);
+            btn.setSize(btnWidth, btnHeight);
+            btn.setInteractive({ useHandCursor: true });
+
+            popupObjects.push(btn);
+
+            // hover
+            btn.on('pointerover', () => {
                 this.tweens.add({
-                    targets: [btnRect, btnText],
+                    targets: btn,
                     scaleX: 1.05,
                     scaleY: 1.05,
                     duration: 100,
                 });
             });
 
-            btnRect.on('pointerout', () => {
+            btn.on('pointerout', () => {
                 this.tweens.add({
-                    targets: [btnRect, btnText],
+                    targets: btn,
                     scaleX: 1,
                     scaleY: 1,
                     duration: 100,
                 });
             });
 
-            btnRect.on('pointerdown', () => {
-                const difficultyLevel = cfg.level; // 1 / 2 / 3
+            // click
+            btn.on('pointerdown', () => {
+                const difficultyLevel = cfg.level;
 
-                // xoá popup
                 popupObjects.forEach((obj) => obj.destroy());
 
-                // sang PreloadScene, truyền lessonId + difficulty
                 this.scene.start('PreloadScene', {
                     lessonId,
                     difficulty: difficultyLevel,

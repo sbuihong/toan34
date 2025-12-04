@@ -47,10 +47,14 @@ export class PreloadScene extends Phaser.Scene {
         this.load.image('btn_reset', 'assets/ui/btn_reset.webp');
         this.load.image('btn_exit', 'assets/ui/btn_exit.webp');
 
+        // === AUDIO CHUNG ===
         this.load.audio('complete', 'audio/sfx/complete.ogg');
         this.load.audio('fireworks', 'audio/sfx/fireworks.ogg');
         this.load.audio('applause', 'audio/sfx/applause.ogg');
-        this.load.audio('sfx_click', 'audio/sfx/click.ogg');
+        this.load.audio('sfx-click', 'audio/sfx/click.ogg');
+        this.load.audio('correct', 'audio/sfx/correct.ogg');
+        this.load.audio('wrong', 'audio/sfx/wrong.ogg');
+        this.load.audio('correct_answer', 'audio/sfx/correct_answer.ogg');
 
         // === JSON BÀI HỌC ===
         // XÓA JSON CŨ TRƯỚC
@@ -62,22 +66,37 @@ export class PreloadScene extends Phaser.Scene {
 
     create() {
         const rawLesson = this.cache.json.get('lessonData') as LessonPackage;
-        const filteredItems = rawLesson.items.filter((item) => {
+
+        // 1) Lọc theo độ khó
+        let filteredItems = rawLesson.items.filter((item) => {
             const d = (item as any).difficulty ?? 1;
-            return d === this.selectedDifficulty;
+            return d === this.selectedDifficulty; // hoặc <= nếu bạn đổi logic
         });
 
+        // 2) Random và giới hạn tối đa 5 câu
+        const MAX_QUESTIONS = 5;
+
+        if (filteredItems.length > MAX_QUESTIONS) {
+            // copy ra mảng mới để không đụng mảng gốc
+            const shuffled = Phaser.Utils.Array.Shuffle(filteredItems.slice());
+            filteredItems = shuffled.slice(0, MAX_QUESTIONS);
+        } else {
+            // nếu muốn vẫn random thứ tự khi <= 5
+            filteredItems = Phaser.Utils.Array.Shuffle(filteredItems.slice());
+        }
+
+        // 3) Tạo lessonForPlay SAU KHI đã lọc + random + cắt
         const lessonForPlay: LessonPackage = {
             ...rawLesson,
             items: filteredItems,
         };
 
-        // preload asset cho bộ câu đã lọc
+        // 4) preload asset cho đúng bộ câu đã chọn
         this.preloadLessonAssets(lessonForPlay).then(() => {
             this.lessonData = lessonForPlay;
             this.scene.start('LessonScene', {
                 lesson: this.lessonData,
-                difficulty: this.selectedDifficulty, // ⬅️ truyền xuống
+                difficulty: this.selectedDifficulty,
             });
         });
     }
