@@ -1,23 +1,25 @@
 {
     "lessonId": "width_basic_01",
-    "title": "Rộng / Hẹp",
+    "title": "Rộng hơn / Hẹp hơn",
     "concept": "WIDTH",
     "defaultMode": "BINARY_PICK",
-    "defaultPromptText": "Bé hãy chạm vào đồ vật RỘNG hơn.",
+    "defaultPromptText": "Bé hãy chạm vào bức tranh có đồ vật rộng hơn.",
+    "defaultPromptAudio": "audio/width/default_prompt.ogg",
     "items": [
         {
             "id": "q1",
-            "promptText": "Con đường nào RỘNG hơn?",
+            "promptText": "CÁNH CỬA NÀO RỘNG HƠN?",
+            "promptAudio": "audio/width/prompt_door_1.ogg",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/road_narrow.png",
+                    "image": "assets/width/door_narrow.webp",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/road_wide.png",
-                    "value": 3
+                    "image": "assets/width/door_wide.webp",
+                    "value": 4
                 }
             ],
             "correctOptionId": "opt2",
@@ -25,17 +27,18 @@
         },
         {
             "id": "q2",
-            "promptText": "Cái HỘP nào RỘNG hơn?",
+            "promptText": "CÁNH CỬA NÀO HẸP HƠN?",
+            "promptAudio": "audio/width/prompt_door_2.ogg",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/box_narrow.png",
-                    "value": 1
+                    "image": "assets/width/door_wide.webp",
+                    "value": 4
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/box_wide.png",
-                    "value": 3
+                    "image": "assets/width/door_narrow.webp",
+                    "value": 1
                 }
             ],
             "correctOptionId": "opt2",
@@ -43,89 +46,453 @@
         },
         {
             "id": "q3",
-            "promptText": "DÒNG SÔNG nào RỘNG hơn?",
+            "promptText": "CỬA HANG NÀO RỘNG HƠN?",
+            "promptAudio": "audio/width/prompt_cave_1.ogg",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/river_narrow.png",
-                    "value": 1
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/river_wide.png",
-                    "value": 3
+                    "image": "assets/width/cave_narrow.webp",
+                    "value": 1
                 }
             ],
-            "correctOptionId": "opt2",
+            "correctOptionId": "opt1",
             "difficulty": 1
         },
         {
             "id": "q4",
-            "promptText": "Cửa nào HẸP hơn?",
+            "promptText": "CỬA HANG NÀO HẸP HƠN?",
+            "promptAudio": "audio/width/prompt_cave_2.ogg",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/door_narrow.png",
+                    "image": "assets/width/cave_narrow.webp",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/door_wide.png",
-                    "value": 3
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
                 }
             ],
             "correctOptionId": "opt1",
-            "difficulty": 2
+            "difficulty": 1
         },
         {
             "id": "q5",
-            "promptText": "Chọn CẦU rộng nhất.",
+            "promptText": "LỐI VÀO HANG NÀO RỘNG HƠN?",
+            "promptAudio": "audio/width/prompt_cave_1.ogg",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/bridge_small.png",
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/cave_narrow.webp",
+                    "value": 1
+                }
+            ],
+            "correctOptionId": "opt1",
+            "difficulty": 1
+        },
+        {
+            "id": "q6",
+            "promptText": "LỐI VÀO HANG NÀO HẸP HƠN?",
+            "promptAudio": "audio/width/prompt_cave_2.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/cave_narrow.webp",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/bridge_mid.png",
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
+                }
+            ],
+            "correctOptionId": "opt1",
+            "difficulty": 1
+        },
+        {
+            "id": "q7",
+            "promptText": "CÁNH CỬA NÀO RỘNG NHẤT?",
+            "promptAudio": "audio/width/prompt_door_3.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/door_narrow.webp",
+                    "value": 1
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/door_fit.webp",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/bridge_wide.png",
-                    "value": 3
+                    "image": "assets/width/door_wide.webp",
+                    "value": 4
                 }
             ],
             "correctOptionId": "opt3",
             "difficulty": 2
         },
         {
-            "id": "q6",
-            "promptText": "Con đường nào HẸP nhất?",
+            "id": "q8",
+            "promptText": "CÁNH CỬA NÀO HẸP NHẤT?",
+            "promptAudio": "audio/width/prompt_door_4.ogg",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/road_very_narrow.png",
+                    "image": "assets/width/door_narrow.webp",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/road_mid.png",
+                    "image": "assets/width/door_fit.webp",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/road_wide2.png",
-                    "value": 3
-                },
-                {
-                    "id": "opt4",
-                    "image": "assets/width/road_widest.png",
+                    "image": "assets/width/door_wide.webp",
                     "value": 4
                 }
             ],
             "correctOptionId": "opt1",
+            "difficulty": 2
+        },
+        {
+            "id": "q9",
+            "promptText": "CỬA HANG NÀO RỘNG NHẤT?",
+            "promptAudio": "audio/width/prompt_cave_3.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/cave_narrow.webp",
+                    "value": 1
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/cave_fit.webp",
+                    "value": 2
+                },
+                {
+                    "id": "opt3",
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
+                }
+            ],
+            "correctOptionId": "opt3",
+            "difficulty": 2
+        },
+        {
+            "id": "q10",
+            "promptText": "CỬA HANG NÀO HẸP NHẤT?",
+            "promptAudio": "audio/width/prompt_cave_4.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/cave_narrow.webp",
+                    "value": 1
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/cave_fit.webp",
+                    "value": 2
+                },
+                {
+                    "id": "opt3",
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
+                }
+            ],
+            "correctOptionId": "opt1",
+            "difficulty": 2
+        },
+        {
+            "id": "q11",
+            "promptText": "LỐI VÀO HANG NÀO RỘNG NHẤT?",
+            "promptAudio": "audio/width/prompt_cave_3.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/cave_narrow.webp",
+                    "value": 1
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/cave_fit.webp",
+                    "value": 2
+                },
+                {
+                    "id": "opt3",
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
+                }
+            ],
+            "correctOptionId": "opt3",
+            "difficulty": 2
+        },
+        {
+            "id": "q12",
+            "promptText": "LỐI VÀO HANG NÀO HẸP NHẤT?",
+            "promptAudio": "audio/width/prompt_cave_4.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/cave_narrow.webp",
+                    "value": 1
+                },
+                {
+                    "id": "opt3",
+                    "image": "assets/width/cave_fit.webp",
+                    "value": 2
+                }
+            ],
+            "correctOptionId": "opt2",
+            "difficulty": 2
+        },
+        {
+            "id": "q13",
+            "promptText": "CÁNH CỬA NÀO HẸP HƠN?",
+            "promptAudio": "audio/width/prompt_door_2.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/door_wide.webp",
+                    "value": 4
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/door_fit_1.webp",
+                    "value": 3
+                }
+            ],
+            "correctOptionId": "opt2",
+            "difficulty": 2
+        },
+        {
+            "id": "q14",
+            "promptText": "CỬA HANG NÀO HẸP HƠN?",
+            "promptAudio": "audio/width/prompt_cave_2.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/cave_fit_1.webp",
+                    "value": 3
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
+                }
+            ],
+            "correctOptionId": "opt1",
+            "difficulty": 2
+        },
+        {
+            "id": "q15",
+            "promptText": "LỐI VÀO HANG NÀO RỘNG HƠN?",
+            "promptAudio": "audio/width/prompt_cave_1.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/cave_fit.webp",
+                    "value": 2
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
+                }
+            ],
+            "correctOptionId": "opt2",
+            "difficulty": 2
+        },
+        {
+            "id": "q16",
+            "promptText": "CÁNH CỬA NÀO RỘNG NHẤT?",
+            "promptAudio": "audio/width/prompt_door_3.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/door_narrow.webp",
+                    "value": 1
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/door_fit.webp",
+                    "value": 2
+                },
+                {
+                    "id": "opt3",
+                    "image": "assets/width/door_wide.webp",
+                    "value": 4
+                },
+                {
+                    "id": "opt4",
+                    "image": "assets/width/door_fit_1.webp",
+                    "value": 3
+                }
+            ],
+            "correctOptionId": "opt3",
+            "difficulty": 3
+        },
+        {
+            "id": "q17",
+            "promptText": "CÁNH CỬA NÀO HẸP NHẤT?",
+            "promptAudio": "audio/width/prompt_door_4.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/door_narrow.webp",
+                    "value": 1
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/door_fit.webp",
+                    "value": 2
+                },
+                {
+                    "id": "opt3",
+                    "image": "assets/width/door_fit_1.webp",
+                    "value": 3
+                },
+                {
+                    "id": "opt4",
+                    "image": "assets/width/door_wide.webp",
+                    "value": 4
+                }
+            ],
+            "correctOptionId": "opt1",
+            "difficulty": 3
+        },
+        {
+            "id": "q18",
+            "promptText": "CỬA HANG NÀO RỘNG NHẤT?",
+            "promptAudio": "audio/width/prompt_cave_3.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/cave_narrow.webp",
+                    "value": 1
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/cave_fit.webp",
+                    "value": 2
+                },
+                {
+                    "id": "opt3",
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
+                },
+                {
+                    "id": "opt4",
+                    "image": "assets/width/cave_fit_1.webp",
+                    "value": 3
+                }
+            ],
+            "correctOptionId": "opt3",
+            "difficulty": 3
+        },
+        {
+            "id": "q19",
+            "promptText": "CỬA HANG NÀO HẸP NHẤT?",
+            "promptAudio": "audio/width/prompt_cave_4.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/cave_narrow.webp",
+                    "value": 1
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/cave_fit.webp",
+                    "value": 2
+                },
+                {
+                    "id": "opt3",
+                    "image": "assets/width/cave_fit_1.webp",
+                    "value": 3
+                },
+                {
+                    "id": "opt4",
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
+                }
+            ],
+            "correctOptionId": "opt1",
+            "difficulty": 3
+        },
+        {
+            "id": "q20",
+            "promptText": "LỐI VÀO HANG NÀO RỘNG NHẤT?",
+            "promptAudio": "audio/width/prompt_cave_3.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/cave_narrow.webp",
+                    "value": 1
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/cave_fit.webp",
+                    "value": 2
+                },
+                {
+                    "id": "opt3",
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
+                },
+                {
+                    "id": "opt4",
+                    "image": "assets/width/cave_fit_1.webp",
+                    "value": 3
+                }
+            ],
+            "correctOptionId": "opt3",
+            "difficulty": 3
+        },
+        {
+            "id": "q21",
+            "promptText": "LỐI VÀO HANG NÀO HẸP NHẤT?",
+            "promptAudio": "audio/width/prompt_cave_4.ogg",
+            "options": [
+                {
+                    "id": "opt1",
+                    "image": "assets/width/cave_wide.webp",
+                    "value": 4
+                },
+                {
+                    "id": "opt2",
+                    "image": "assets/width/cave_narrow.webp",
+                    "value": 1
+                },
+                {
+                    "id": "opt3",
+                    "image": "assets/width/cave_fit.webp",
+                    "value": 2
+                },
+                {
+                    "id": "opt4",
+                    "image": "assets/width/cave_fit_1.webp",
+                    "value": 3
+                }
+            ],
+            "correctOptionId": "opt2",
             "difficulty": 3
         }
     ]

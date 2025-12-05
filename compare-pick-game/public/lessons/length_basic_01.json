@@ -4,12 +4,12 @@
     "concept": "LENGTH",
     "defaultMode": "BINARY_PICK",
     "defaultPromptText": "Bé hãy chạm vào bức tranh có đồ vật dài hơn.",
-    "defaultPromptAudio": "audio/length/default_prompt.mp3",
+    "defaultPromptAudio": "audio/length/default_prompt.ogg",
     "items": [
         {
             "id": "q1",
             "promptText": "CHIẾC KẸO MÚT NÀO DÀI HƠN?",
-            "promptAudio": "audio/length/prompt_lollipops_1.mp3",
+            "promptAudio": "audio/length/prompt_lollipops_1.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -28,7 +28,7 @@
         {
             "id": "q2",
             "promptText": "CHIẾC KẸO MÚT NÀO NGẮN HƠN?",
-            "promptAudio": "audio/length/prompt_lollipops_2.mp3",
+            "promptAudio": "audio/length/prompt_lollipops_2.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -47,7 +47,7 @@
         {
             "id": "q3",
             "promptText": "CHIẾC VỢT NÀO DÀI HƠN?",
-            "promptAudio": "audio/length/prompt_racket_1.mp3",
+            "promptAudio": "audio/length/prompt_racket_1.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -66,7 +66,7 @@
         {
             "id": "q4",
             "promptText": "CHIẾC VỢT NÀO NGẮN HƠN?",
-            "promptAudio": "audio/length/prompt_racket_2.mp3",
+            "promptAudio": "audio/length/prompt_racket_2.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -85,7 +85,7 @@
         {
             "id": "q5",
             "promptText": "CHÚ SÂU NÀO DÀI HƠN?",
-            "promptAudio": "audio/length/prompt_worm_1.mp3",
+            "promptAudio": "audio/length/prompt_worm_1.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -104,7 +104,7 @@
         {
             "id": "q6",
             "promptText": "CHÚ SÂU NÀO NGẮN HƠN?",
-            "promptAudio": "audio/length/prompt_worm_2.mp3",
+            "promptAudio": "audio/length/prompt_worm_2.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -123,7 +123,7 @@
         {
             "id": "q7",
             "promptText": "CHIẾC KẸO MÚT NÀO DÀI NHẤT?",
-            "promptAudio": "audio/length/prompt_lollipops_3.mp3",
+            "promptAudio": "audio/length/prompt_lollipops_3.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -147,7 +147,7 @@
         {
             "id": "q8",
             "promptText": "CHIẾC KẸO MÚT NÀO NGẮN NHẤT?",
-            "promptAudio": "audio/length/prompt_lollipops_4.mp3",
+            "promptAudio": "audio/length/prompt_lollipops_4.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -171,7 +171,7 @@
         {
             "id": "q9",
             "promptText": "CHIẾC VỢT NÀO DÀI NHẤT?",
-            "promptAudio": "audio/length/prompt_racket_3.mp3",
+            "promptAudio": "audio/length/prompt_racket_3.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -195,7 +195,7 @@
         {
             "id": "q10",
             "promptText": "CHIẾC VỢT NÀO NGẮN NHẤT?",
-            "promptAudio": "audio/length/prompt_racket_4.mp3",
+            "promptAudio": "audio/length/prompt_racket_4.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -219,7 +219,7 @@
         {
             "id": "q11",
             "promptText": "CHÚ SÂU NÀO DÀI NHẤT?",
-            "promptAudio": "audio/length/prompt_worm_3.mp3",
+            "promptAudio": "audio/length/prompt_worm_3.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -243,7 +243,7 @@
         {
             "id": "q12",
             "promptText": "CHÚ SÂU NÀO NGẮN NHẤT?",
-            "promptAudio": "audio/length/prompt_worm_4.mp3",
+            "promptAudio": "audio/length/prompt_worm_4.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -267,7 +267,7 @@
         {
             "id": "q13",
             "promptText": "CHIẾC KẸO MÚT NÀO NGẮN HƠN?",
-            "promptAudio": "audio/length/prompt_lollipops_2.mp3",
+            "promptAudio": "audio/length/prompt_lollipops_2.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -286,7 +286,7 @@
         {
             "id": "q14",
             "promptText": "CHIẾC VỢT NÀO NGẮN HƠN?",
-            "promptAudio": "audio/length/prompt_racket_2.mp3",
+            "promptAudio": "audio/length/prompt_racket_2.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -305,7 +305,7 @@
         {
             "id": "q15",
             "promptText": "CHÚ SÂU NÀO DÀI HƠN?",
-            "promptAudio": "audio/length/prompt_worm_1.mp3",
+            "promptAudio": "audio/length/prompt_worm_1.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -324,7 +324,7 @@
         {
             "id": "q16",
             "promptText": "CHIẾC KẸO MÚT NÀO DÀI NHẤT?",
-            "promptAudio": "audio/length/prompt_lollipops_3.mp3",
+            "promptAudio": "audio/length/prompt_lollipops_3.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -353,7 +353,7 @@
         {
             "id": "q17",
             "promptText": "CHIẾC KẸO MÚT NÀO NGẮN NHẤT?",
-            "promptAudio": "audio/length/prompt_lollipops_4.mp3",
+            "promptAudio": "audio/length/prompt_lollipops_4.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -382,7 +382,7 @@
         {
             "id": "q18",
             "promptText": "CHIẾC VỢT NÀO DÀI NHẤT?",
-            "promptAudio": "audio/length/prompt_racket_3.mp3",
+            "promptAudio": "audio/length/prompt_racket_3.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -411,7 +411,7 @@
         {
             "id": "q19",
             "promptText": "CHIẾC VỢT NÀO NGẮN NHẤT?",
-            "promptAudio": "audio/length/prompt_racket_4.mp3",
+            "promptAudio": "audio/length/prompt_racket_4.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -440,7 +440,7 @@
         {
             "id": "q20",
             "promptText": "CHÚ SÂU NÀO DÀI NHẤT?",
-            "promptAudio": "audio/length/prompt_worm_3.mp3",
+            "promptAudio": "audio/length/prompt_worm_3.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -469,7 +469,7 @@
         {
             "id": "q21",
             "promptText": "CHÚ SÂU NÀO NGẮN NHẤT?",
-            "promptAudio": "audio/length/prompt_worm_4.mp3",
+            "promptAudio": "audio/length/prompt_worm_4.ogg",
             "options": [
                 {
                     "id": "opt1",

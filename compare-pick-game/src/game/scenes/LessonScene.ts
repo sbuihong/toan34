@@ -109,7 +109,7 @@ export class LessonScene extends Phaser.Scene {
 
         // Progress text
         this.progressText = this.add
-            .text(GAME_WIDTH - 80, 20, '', {
+            .text(250, 40, '', {
                 fontSize: '28px',
                 color: '#555',
                 align: 'right',
@@ -118,12 +118,7 @@ export class LessonScene extends Phaser.Scene {
             })
             .setOrigin(1, 0);
 
-        // Tutorial lần đầu
-        if (!this.hasSeenTutorial()) {
-            this.showTutorialOverlay();
-        } else {
-            this.showQuestion();
-        }
+        this.showQuestion();
 
         // Nhân vật đồng hành random: boy hoặc squirrel
         const characterKeys = ['boy', 'squirrel'];
@@ -174,79 +169,6 @@ export class LessonScene extends Phaser.Scene {
             });
         }
         showGameButtons();
-    }
-
-    // ===== Tutorial overlay =====
-
-    private hasSeenTutorial(): boolean {
-        const key = `compare_tutorial_${this.lesson.lessonId}`;
-        try {
-            return localStorage.getItem(key) === '1';
-        } catch {
-            return false;
-        }
-    }
-
-    private markTutorialSeen() {
-        const key = `compare_tutorial_${this.lesson.lessonId}`;
-        try {
-            localStorage.setItem(key, '1');
-        } catch {
-            // ignore
-        }
-    }
-
-    private showTutorialOverlay() {
-        const overlay = this.add.rectangle(
-            GAME_WIDTH / 2,
-            GAME_HEIGHT / 2,
-            GAME_WIDTH,
-            GAME_HEIGHT,
-            0x000000,
-            0.5
-        );
-
-        const text = this.add
-            .text(
-                GAME_WIDTH / 2,
-                GAME_HEIGHT / 2 - 20,
-                'Chạm vào bức tranh đúng theo câu lệnh nhé!',
-                {
-                    fontSize: '24px',
-                    color: '#fff',
-                    align: 'center',
-                    wordWrap: { width: GAME_WIDTH - 160 },
-                }
-            )
-            .setOrigin(0.5);
-
-        const btn = this.add
-            .rectangle(
-                GAME_WIDTH / 2,
-                GAME_HEIGHT / 2 + 60,
-                200,
-                50,
-                0x42a5f5,
-                1
-            )
-            .setInteractive({ useHandCursor: true });
-
-        const btnText = this.add
-            .text(GAME_WIDTH / 2, GAME_HEIGHT / 2 + 60, 'Bắt đầu', {
-                fontSize: '22px',
-                color: '#fff',
-            })
-            .setOrigin(0.5);
-
-        btn.on('pointerdown', () => {
-            overlay.destroy();
-            text.destroy();
-            btn.destroy();
-            btnText.destroy();
-
-            this.markTutorialSeen();
-            this.showQuestion();
-        });
     }
 
     // ===== Hiển thị 1 câu hỏi =====
@@ -321,7 +243,7 @@ export class LessonScene extends Phaser.Scene {
 
         // Progress
         this.progressText.setText(
-            `Câu ${this.index + 1}/${this.lesson.items.length}`
+            `Câu ${this.index + 1}/${this.lesson.items.length}:`
         );
 
         // Clear options cũ

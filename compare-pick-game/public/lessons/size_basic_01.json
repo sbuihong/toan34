@@ -4,12 +4,12 @@
     "concept": "SIZE",
     "defaultMode": "BINARY_PICK",
     "defaultPromptText": "Bé hãy chạm vào bức tranh có đồ vật to hơn.",
-    "defaultPromptAudio": "audio/size/default_prompt.mp3",
+    "defaultPromptAudio": "audio/size/default_prompt.ogg",
     "items": [
         {
             "id": "q1",
             "promptText": "QUẢ BÓNG NÀO TO HƠN?",
-            "promptAudio": "audio/size/prompt_ball_1.mp3",
+            "promptAudio": "audio/size/prompt_ball_1.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -28,7 +28,7 @@
         {
             "id": "q2",
             "promptText": "QUẢ BÓNG NÀO NHỎ HƠN?",
-            "promptAudio": "audio/size/prompt_ball_2.mp3",
+            "promptAudio": "audio/size/prompt_ball_2.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -47,7 +47,7 @@
         {
             "id": "q3",
             "promptText": "CÂY NẤM NÀO TO HƠN?",
-            "promptAudio": "audio/size/prompt_mushroom_1.mp3",
+            "promptAudio": "audio/size/prompt_mushroom_1.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -66,7 +66,7 @@
         {
             "id": "q4",
             "promptText": "CÂY NẤM NÀO NHỎ HƠN?",
-            "promptAudio": "audio/size/prompt_mushroom_2.mp3",
+            "promptAudio": "audio/size/prompt_mushroom_2.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -85,7 +85,7 @@
         {
             "id": "q5",
             "promptText": "MIẾNG PIZZA NÀO TO HƠN?",
-            "promptAudio": "audio/size/prompt_pizza_1.mp3",
+            "promptAudio": "audio/size/prompt_pizza_1.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -104,7 +104,7 @@
         {
             "id": "q6",
             "promptText": "MIẾNG PIZZA NÀO NHỎ HƠN?",
-            "promptAudio": "audio/size/prompt_pizza_2.mp3",
+            "promptAudio": "audio/size/prompt_pizza_2.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -123,7 +123,7 @@
         {
             "id": "q7",
             "promptText": "QUẢ BÓNG NÀO TO NHẤT?",
-            "promptAudio": "audio/size/prompt_ball_3.mp3",
+            "promptAudio": "audio/size/prompt_ball_3.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -147,7 +147,7 @@
         {
             "id": "q8",
             "promptText": "QUẢ BÓNG NÀO NHỎ NHẤT?",
-            "promptAudio": "audio/size/prompt_ball_4.mp3",
+            "promptAudio": "audio/size/prompt_ball_4.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -171,7 +171,7 @@
         {
             "id": "q9",
             "promptText": "CÂY NẤM NÀO TO NHẤT?",
-            "promptAudio": "audio/size/prompt_mushroom_3.mp3",
+            "promptAudio": "audio/size/prompt_mushroom_3.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -195,7 +195,7 @@
         {
             "id": "q10",
             "promptText": "CÂY NẤM NÀO NHỎ NHẤT?",
-            "promptAudio": "audio/size/prompt_mushroom_4.mp3",
+            "promptAudio": "audio/size/prompt_mushroom_4.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -219,7 +219,7 @@
         {
             "id": "q11",
             "promptText": "MIẾNG PIZZA NÀO TO NHẤT?",
-            "promptAudio": "audio/size/prompt_pizza_3.mp3",
+            "promptAudio": "audio/size/prompt_pizza_3.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -243,7 +243,7 @@
         {
             "id": "q12",
             "promptText": "MIẾNG PIZZA NÀO NHỎ NHẤT?",
-            "promptAudio": "audio/size/prompt_pizza_4.mp3",
+            "promptAudio": "audio/size/prompt_pizza_4.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -267,7 +267,7 @@
         {
             "id": "q13",
             "promptText": "QUẢ BÓNG NÀO NHỎ HƠN?",
-            "promptAudio": "audio/size/prompt_ball_2.mp3",
+            "promptAudio": "audio/size/prompt_ball_2.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -286,7 +286,7 @@
         {
             "id": "q14",
             "promptText": "CÂY NẤM NÀO NHỎ HƠN?",
-            "promptAudio": "audio/size/prompt_mushroom_2.mp3",
+            "promptAudio": "audio/size/prompt_mushroom_2.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -305,7 +305,7 @@
         {
             "id": "q15",
             "promptText": "MIẾNG PIZZA NÀO TO HƠN?",
-            "promptAudio": "audio/size/prompt_pizza_1.mp3",
+            "promptAudio": "audio/size/prompt_pizza_1.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -324,7 +324,7 @@
         {
             "id": "q16",
             "promptText": "QUẢ BÓNG NÀO TO NHẤT?",
-            "promptAudio": "audio/size/prompt_ball_3.mp3",
+            "promptAudio": "audio/size/prompt_ball_3.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -353,7 +353,7 @@
         {
             "id": "q17",
             "promptText": "QUẢ BÓNG NÀO NHỎ NHẤT?",
-            "promptAudio": "audio/size/prompt_ball_4.mp3",
+            "promptAudio": "audio/size/prompt_ball_4.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -382,7 +382,7 @@
         {
             "id": "q18",
             "promptText": "CÂY NẤM NÀO TO NHẤT?",
-            "promptAudio": "audio/size/prompt_mushroom_3.mp3",
+            "promptAudio": "audio/size/prompt_mushroom_3.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -411,7 +411,7 @@
         {
             "id": "q19",
             "promptText": "CÂY NẤM NÀO NHỎ NHẤT?",
-            "promptAudio": "audio/size/prompt_mushroom_4.mp3",
+            "promptAudio": "audio/size/prompt_mushroom_4.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -440,7 +440,7 @@
         {
             "id": "q20",
             "promptText": "MIẾNG PIZZA NÀO TO NHẤT?",
-            "promptAudio": "audio/size/prompt_pizza_3.mp3",
+            "promptAudio": "audio/size/prompt_pizza_3.ogg",
             "options": [
                 {
                     "id": "opt1",
@@ -469,7 +469,7 @@
         {
             "id": "q21",
             "promptText": "MIẾNG PIZZA NÀO NHỎ NHẤT?",
-            "promptAudio": "audio/size/prompt_pizza_4.mp3",
+            "promptAudio": "audio/size/prompt_pizza_4.ogg",
             "options": [
                 {
                     "id": "opt1",
