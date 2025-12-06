@@ -55,7 +55,6 @@ function resizeGame() {
 function updateUIButtonScale() {
     const container = document.getElementById('game-container')!;
     const resetBtn = document.getElementById('btn-reset') as HTMLImageElement;
-    const exitBtn = document.getElementById('btn-exit') as HTMLImageElement;
 
     const w = container.clientWidth;
     const h = container.clientHeight;
@@ -68,25 +67,18 @@ function updateUIButtonScale() {
 
     resetBtn.style.width = `${newSize}px`;
     resetBtn.style.height = 'auto';
-
-    exitBtn.style.width = `${newSize}px`;
-    exitBtn.style.height = 'auto';
 }
 
 export function showGameButtons() {
     const reset = document.getElementById('btn-reset');
-    const exit = document.getElementById('btn-exit');
 
     reset!.style.display = 'block';
-    exit!.style.display = 'block';
 }
 
 export function hideGameButtons() {
     const reset = document.getElementById('btn-reset');
-    const exit = document.getElementById('btn-exit');
 
     reset!.style.display = 'none';
-    exit!.style.display = 'none';
 }
 
 window.addEventListener('resize', resizeGame);
@@ -108,8 +100,4 @@ updateUIButtonScale();
 
 document.getElementById('btn-reset')?.addEventListener('click', () => {
     window.gameScene?.restartLevel();
-});
-
-document.getElementById('btn-exit')?.addEventListener('click', () => {
-    window.gameScene?.exitGame();
 });

@@ -449,6 +449,23 @@ export default class GameScene extends Phaser.Scene {
                                     this.time.delayedCall(waitTime, () => {
                                         this.showNextButton();
                                     });
+
+                                    this.time.delayedCall(
+                                        waitTime + 2000,
+                                        () => {
+                                            this.currentLevel++;
+                                            if (
+                                                this.currentLevel >=
+                                                this.levels.length
+                                            ) {
+                                                this.scene.start('EndScene');
+                                            } else {
+                                                this.scene.restart({
+                                                    level: this.currentLevel,
+                                                });
+                                            }
+                                        }
+                                    );
                                 });
                             },
                         });

@@ -56,12 +56,6 @@ canvas {
 /* Reset: góc trên trái */
 #btn-reset {
     top: 2%;
-    left: 2%;
-}
-
-/* Exit: góc trên phải */
-#btn-exit {
-    top: 2%;
     right: 2%;
 }
 
