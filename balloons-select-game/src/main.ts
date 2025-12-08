@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import GameScene from './scenes/GameScene';
 import { EndScene } from './scenes/EndScene';
+import { initRotateOrientation } from './rotateOrientation';
 
 declare global {
     interface Window {
@@ -28,30 +29,6 @@ const config: Phaser.Types.Core.GameConfig = {
 
 const game = new Phaser.Game(config);
 
-// --- Xử lý xoay ngang trên mobile ---
-function resizeGame() {
-    const gameDiv = document.getElementById('game-container')!;
-    const rotateMsg = document.getElementById('rotate-msg')!;
-
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-
-    if (h > w) {
-        // Điện thoại dọc → hiển thị overlay
-        rotateMsg.style.display = 'block';
-        gameDiv.style.transform = 'rotate(90deg)';
-        gameDiv.style.transformOrigin = 'center center';
-        gameDiv.style.width = `${h}px`;
-        gameDiv.style.height = `${w}px`;
-    } else {
-        // Landscape → ẩn overlay
-        rotateMsg.style.display = 'none';
-        gameDiv.style.transform = '';
-        gameDiv.style.width = `${w}px`;
-        gameDiv.style.height = `${h}px`;
-    }
-}
-
 function updateUIButtonScale() {
     const container = document.getElementById('game-container')!;
     const resetBtn = document.getElementById('btn-reset') as HTMLImageElement;
@@ -59,10 +36,8 @@ function updateUIButtonScale() {
     const w = container.clientWidth;
     const h = container.clientHeight;
 
-    // base height = 720 (game design gốc)
     const scale = Math.min(w, h) / 720;
-
-    const baseSize = 80; // kích thước nút thiết kế gốc (80px)
+    const baseSize = 80;
     const newSize = baseSize * scale;
 
     resetBtn.style.width = `${newSize}px`;
@@ -71,32 +46,24 @@ function updateUIButtonScale() {
 
 export function showGameButtons() {
     const reset = document.getElementById('btn-reset');
-
-    reset!.style.display = 'block';
+    if (reset) reset.style.display = 'block';
 }
 
 export function hideGameButtons() {
     const reset = document.getElementById('btn-reset');
-
-    reset!.style.display = 'none';
+    if (reset) reset.style.display = 'none';
 }
 
-window.addEventListener('resize', resizeGame);
-window.addEventListener('orientationchange', resizeGame);
-
-// Gọi lần đầu
-window.addEventListener('resize', () => {
-    resizeGame();
-    updateUIButtonScale();
-});
-window.addEventListener('orientationchange', () => {
-    resizeGame();
-    updateUIButtonScale();
+// Khởi tạo xoay màn hình
+initRotateOrientation(game, {
+    mainSceneKey: 'GameScene',
+    overlaySceneKey: null,
 });
 
-// Gọi lần đầu
-resizeGame();
+// Scale nút
 updateUIButtonScale();
+window.addEventListener('resize', updateUIButtonScale);
+window.addEventListener('orientationchange', updateUIButtonScale);
 
 document.getElementById('btn-reset')?.addEventListener('click', () => {
     window.gameScene?.restartLevel();

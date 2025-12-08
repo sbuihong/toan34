@@ -104,6 +104,8 @@ export default class GameScene extends Phaser.Scene {
         this.load.image('board_bg', 'assets/images/board_bg.webp');
 
         // AUDIO
+        this.load.audio('voice_rotate', 'assets/audio/rotate.ogg');
+
         this.load.audio('vo_prompt_1', 'assets/audio/vo_prompt_1.ogg');
         this.load.audio('vo_prompt_2', 'assets/audio/vo_prompt_2.ogg');
         this.load.audio('vo_prompt_3', 'assets/audio/vo_prompt_3.ogg');
