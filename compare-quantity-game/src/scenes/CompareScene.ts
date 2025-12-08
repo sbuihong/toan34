@@ -145,6 +145,7 @@ export class CompareScene extends Phaser.Scene {
             'correct_answer',
             'assets/audio/sfx/correct_answer.ogg'
         );
+        this.load.audio('voice_rotate', 'assets/audio/sfx/rotate.ogg');
 
         // cat
         this.load.audio(
@@ -695,6 +696,11 @@ export class CompareScene extends Phaser.Scene {
         // đổi texture sang panel đúng, giữ nguyên cho đến hết câu
         panel.setTexture('panel_bg_correct');
 
+        //tự chuyển sang câu tiếp sau 1 lúc
+        this.time.delayedCall(2000, () => {
+            this.goToNextLevel();
+        });
+
         // hiệu ứng zoom nhẹ cho vui mắt
         this.tweens.add({
             targets,
@@ -740,7 +746,6 @@ export class CompareScene extends Phaser.Scene {
 
     goToNextLevel() {
         this.stopAllVoices();
-        this.sound.play('sfx-click');
 
         const afterShrink = () => {
             this.currentLevelIndex += 1;
