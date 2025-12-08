@@ -114,7 +114,22 @@ export default class GameScene extends Phaser.Scene {
         this.load.audio('sfx_wrong', 'assets/audio/sfx_wrong.ogg');
         this.load.audio('sfx_click', 'assets/audio/sfx_click.ogg');
         this.load.audio('sfx_pop', 'assets/audio/sfx_pop.ogg');
-        this.load.audio('correct_answer', 'assets/audio/correct_answer.ogg');
+        this.load.audio(
+            'correct_answer_1',
+            'assets/audio/correct_answer_1.ogg'
+        );
+        this.load.audio(
+            'correct_answer_2',
+            'assets/audio/correct_answer_2.ogg'
+        );
+        this.load.audio(
+            'correct_answer_3',
+            'assets/audio/correct_answer_3.ogg'
+        );
+        this.load.audio(
+            'correct_answer_4',
+            'assets/audio/correct_answer_4.ogg'
+        );
         this.load.audio('vo_count_1', 'assets/audio/vo_count_1.ogg');
         this.load.audio('vo_count_2', 'assets/audio/vo_count_2.ogg');
         this.load.audio('vo_count_3', 'assets/audio/vo_count_3.ogg');
@@ -189,6 +204,8 @@ export default class GameScene extends Phaser.Scene {
     }
 
     restartLevel() {
+        this.sound.stopAll();
+        this.sound.play('sfx_click');
         this.scene.restart({ level: 0 });
     }
 
@@ -310,12 +327,25 @@ export default class GameScene extends Phaser.Scene {
         });
     }
 
+    playRandomCorrect(sound: Phaser.Sound.BaseSoundManager) {
+        const keys = [
+            'correct_answer_1',
+            'correct_answer_2',
+            'correct_answer_3',
+            'correct_answer_4',
+        ];
+
+        const key = keys[Math.floor(Math.random() * keys.length)];
+        const sfx = sound.get(key) ?? sound.add(key);
+        sfx.play();
+    }
+
     onCorrect(balloon: Phaser.GameObjects.Container) {
         if ((this as any).isProcessing) return;
         (this as any).isProcessing = true;
 
         this.sound.play('sfx_correct');
-        this.sound.play('correct_answer');
+        this.playRandomCorrect(this.sound);
 
         const w = this.scale.width;
         const h = this.scale.height;
@@ -447,7 +477,7 @@ export default class GameScene extends Phaser.Scene {
                                     );
 
                                     this.time.delayedCall(
-                                        waitTime + 2000,
+                                        waitTime + 1000,
                                         () => {
                                             this.currentLevel++;
                                             if (
