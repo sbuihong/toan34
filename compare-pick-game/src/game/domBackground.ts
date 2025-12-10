@@ -3,10 +3,10 @@
 // Map key -> url ảnh background
 const bgByKey: Record<string, string> = {
     // bạn tự chỉnh map này, ví dụ:
-    HEIGHT: 'assets/bg/bg_forest.webp',
-    LENGTH: 'assets/bg/bg_home.webp',
-    SIZE: 'assets/bg/bg_sea.webp',
-    DEFAULT: 'assets/bg/bg_forest.webp',
+    HEIGHT: 'assets/bg/bg_forest.jpg',
+    LENGTH: 'assets/bg/bg_home.jpg',
+    SIZE: 'assets/bg/bg_sea.jpg',
+    DEFAULT: 'assets/bg/bg_forest.jpg',
 };
 
 const FALLBACK_BG = bgByKey.DEFAULT;

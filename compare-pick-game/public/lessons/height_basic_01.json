@@ -4,21 +4,21 @@
     "concept": "HEIGHT",
     "defaultMode": "BINARY_PICK",
     "defaultPromptText": "Bé hãy chạm vào bức tranh có đồ vật cao hơn.",
-    "defaultPromptAudio": "audio/height/default_prompt.ogg",
+    "defaultPromptAudio": "audio/height/default_prompt.mp3",
     "items": [
         {
             "id": "q1",
             "promptText": "CHÚ HƯƠU NÀO CAO HƠN?",
-            "promptAudio": "audio/height/prompt_giraffe_1.ogg",
+            "promptAudio": "audio/height/prompt_giraffe_1.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/giraffe_short.webp",
+                    "image": "assets/height/giraffe_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/giraffe_high.webp",
+                    "image": "assets/height/giraffe_high.png",
                     "value": 4
                 }
             ],
@@ -28,16 +28,16 @@
         {
             "id": "q2",
             "promptText": "CHÚ HƯƠU NÀO THẤP HƠN?",
-            "promptAudio": "audio/height/prompt_giraffe_2.ogg",
+            "promptAudio": "audio/height/prompt_giraffe_2.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/giraffe_high.webp",
+                    "image": "assets/height/giraffe_high.png",
                     "value": 4
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/giraffe_short.webp",
+                    "image": "assets/height/giraffe_short.png",
                     "value": 1
                 }
             ],
@@ -47,16 +47,16 @@
         {
             "id": "q3",
             "promptText": "CÂY HOA NÀO CAO HƠN?",
-            "promptAudio": "audio/height/prompt_flower_1.ogg",
+            "promptAudio": "audio/height/prompt_flower_1.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/flower_high.webp",
+                    "image": "assets/height/flower_high.png",
                     "value": 4
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/flower_short.webp",
+                    "image": "assets/height/flower_short.png",
                     "value": 1
                 }
             ],
@@ -66,16 +66,16 @@
         {
             "id": "q4",
             "promptText": "CÂY HOA NÀO THẤP HƠN?",
-            "promptAudio": "audio/height/prompt_flower_2.ogg",
+            "promptAudio": "audio/height/prompt_flower_2.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/flower_short.webp",
+                    "image": "assets/height/flower_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/flower_high.webp",
+                    "image": "assets/height/flower_high.png",
                     "value": 4
                 }
             ],
@@ -85,16 +85,16 @@
         {
             "id": "q5",
             "promptText": "CON THỎ NÀO CAO HƠN?",
-            "promptAudio": "audio/height/prompt_rabbit_1.ogg",
+            "promptAudio": "audio/height/prompt_rabbit_1.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/rabbit_high.webp",
+                    "image": "assets/height/rabbit_high.png",
                     "value": 4
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/rabbit_short.webp",
+                    "image": "assets/height/rabbit_short.png",
                     "value": 1
                 }
             ],
@@ -104,16 +104,16 @@
         {
             "id": "q6",
             "promptText": "CON THỎ NÀO THẤP HƠN?",
-            "promptAudio": "audio/height/prompt_rabbit_2.ogg",
+            "promptAudio": "audio/height/prompt_rabbit_2.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/rabbit_short.webp",
+                    "image": "assets/height/rabbit_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/rabbit_high.webp",
+                    "image": "assets/height/rabbit_high.png",
                     "value": 4
                 }
             ],
@@ -123,21 +123,21 @@
         {
             "id": "q7",
             "promptText": "CHÚ HƯƠU NÀO CAO NHẤT?",
-            "promptAudio": "audio/height/prompt_giraffe_3.ogg",
+            "promptAudio": "audio/height/prompt_giraffe_3.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/giraffe_short.webp",
+                    "image": "assets/height/giraffe_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/giraffe_high.webp",
+                    "image": "assets/height/giraffe_high.png",
                     "value": 4
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/height/giraffe_fit.webp",
+                    "image": "assets/height/giraffe_fit.png",
                     "value": 2
                 }
             ],
@@ -147,21 +147,21 @@
         {
             "id": "q8",
             "promptText": "CHÚ HƯƠU NÀO THẤP NHẤT?",
-            "promptAudio": "audio/height/prompt_giraffe_4.ogg",
+            "promptAudio": "audio/height/prompt_giraffe_4.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/giraffe_short.webp",
+                    "image": "assets/height/giraffe_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/giraffe_fit.webp",
+                    "image": "assets/height/giraffe_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/height/giraffe_high.webp",
+                    "image": "assets/height/giraffe_high.png",
                     "value": 4
                 }
             ],
@@ -171,21 +171,21 @@
         {
             "id": "q9",
             "promptText": "CÂY HOA NÀO CAO NHẤT?",
-            "promptAudio": "audio/height/prompt_flower_3.ogg",
+            "promptAudio": "audio/height/prompt_flower_3.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/flower_short.webp",
+                    "image": "assets/height/flower_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/flower_fit.webp",
+                    "image": "assets/height/flower_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/height/flower_high.webp",
+                    "image": "assets/height/flower_high.png",
                     "value": 4
                 }
             ],
@@ -195,21 +195,21 @@
         {
             "id": "q10",
             "promptText": "CÂY HOA NÀO THẤP NHẤT?",
-            "promptAudio": "audio/height/prompt_flower_4.ogg",
+            "promptAudio": "audio/height/prompt_flower_4.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/flower_short.webp",
+                    "image": "assets/height/flower_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/flower_fit.webp",
+                    "image": "assets/height/flower_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/height/flower_high.webp",
+                    "image": "assets/height/flower_high.png",
                     "value": 4
                 }
             ],
@@ -219,21 +219,21 @@
         {
             "id": "q11",
             "promptText": "CON THỎ NÀO CAO NHẤT?",
-            "promptAudio": "audio/height/prompt_rabbit_3.ogg",
+            "promptAudio": "audio/height/prompt_rabbit_3.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/rabbit_short.webp",
+                    "image": "assets/height/rabbit_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/rabbit_fit.webp",
+                    "image": "assets/height/rabbit_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/height/rabbit_high.webp",
+                    "image": "assets/height/rabbit_high.png",
                     "value": 4
                 }
             ],
@@ -243,21 +243,21 @@
         {
             "id": "q12",
             "promptText": "CON THỎ NÀO THẤP NHẤT?",
-            "promptAudio": "audio/height/prompt_rabbit_4.ogg",
+            "promptAudio": "audio/height/prompt_rabbit_4.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/rabbit_short.webp",
+                    "image": "assets/height/rabbit_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/rabbit_fit.webp",
+                    "image": "assets/height/rabbit_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/height/rabbit_high.webp",
+                    "image": "assets/height/rabbit_high.png",
                     "value": 4
                 }
             ],
@@ -267,16 +267,16 @@
         {
             "id": "q13",
             "promptText": "CHÚ HƯƠU NÀO THẤP HƠN?",
-            "promptAudio": "audio/height/prompt_giraffe_2.ogg",
+            "promptAudio": "audio/height/prompt_giraffe_2.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/giraffe_high.webp",
+                    "image": "assets/height/giraffe_high.png",
                     "value": 4
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/giraffe_fit_1.webp",
+                    "image": "assets/height/giraffe_fit_1.png",
                     "value": 3
                 }
             ],
@@ -286,16 +286,16 @@
         {
             "id": "q14",
             "promptText": "CÂY HOA NÀO THẤP HƠN?",
-            "promptAudio": "audio/height/prompt_flower_2.ogg",
+            "promptAudio": "audio/height/prompt_flower_2.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/flower_fit_1.webp",
+                    "image": "assets/height/flower_fit_1.png",
                     "value": 3
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/flower_high.webp",
+                    "image": "assets/height/flower_high.png",
                     "value": 4
                 }
             ],
@@ -305,16 +305,16 @@
         {
             "id": "q15",
             "promptText": "CON THỎ NÀO CAO HƠN?",
-            "promptAudio": "audio/height/prompt_rabbit_1.ogg",
+            "promptAudio": "audio/height/prompt_rabbit_1.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/rabbit_fit.webp",
+                    "image": "assets/height/rabbit_fit.png",
                     "value": 3
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/rabbit_high.webp",
+                    "image": "assets/height/rabbit_high.png",
                     "value": 4
                 }
             ],
@@ -324,26 +324,26 @@
         {
             "id": "q16",
             "promptText": "CHÚ HƯƠU NÀO CAO NHẤT?",
-            "promptAudio": "audio/height/prompt_giraffe_3.ogg",
+            "promptAudio": "audio/height/prompt_giraffe_3.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/giraffe_short.webp",
+                    "image": "assets/height/giraffe_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/giraffe_fit.webp",
+                    "image": "assets/height/giraffe_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/height/giraffe_high.webp",
+                    "image": "assets/height/giraffe_high.png",
                     "value": 4
                 },
                 {
                     "id": "opt4",
-                    "image": "assets/height/giraffe_fit_1.webp",
+                    "image": "assets/height/giraffe_fit_1.png",
                     "value": 3
                 }
             ],
@@ -353,26 +353,26 @@
         {
             "id": "q17",
             "promptText": "CHÚ HƯƠU NÀO THẤP NHẤT?",
-            "promptAudio": "audio/height/prompt_giraffe_4.ogg",
+            "promptAudio": "audio/height/prompt_giraffe_4.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/giraffe_short.webp",
+                    "image": "assets/height/giraffe_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/giraffe_fit.webp",
+                    "image": "assets/height/giraffe_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/height/giraffe_fit_1.webp",
+                    "image": "assets/height/giraffe_fit_1.png",
                     "value": 3
                 },
                 {
                     "id": "opt4",
-                    "image": "assets/height/giraffe_high.webp",
+                    "image": "assets/height/giraffe_high.png",
                     "value": 4
                 }
             ],
@@ -382,26 +382,26 @@
         {
             "id": "q18",
             "promptText": "CÂY HOA NÀO CAO NHẤT?",
-            "promptAudio": "audio/height/prompt_flower_3.ogg",
+            "promptAudio": "audio/height/prompt_flower_3.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/flower_short.webp",
+                    "image": "assets/height/flower_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/flower_fit.webp",
+                    "image": "assets/height/flower_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/height/flower_high.webp",
+                    "image": "assets/height/flower_high.png",
                     "value": 4
                 },
                 {
                     "id": "opt4",
-                    "image": "assets/height/flower_fit_1.webp",
+                    "image": "assets/height/flower_fit_1.png",
                     "value": 3
                 }
             ],
@@ -411,26 +411,26 @@
         {
             "id": "q19",
             "promptText": "CÂY HOA NÀO THẤP NHẤT?",
-            "promptAudio": "audio/height/prompt_flower_4.ogg",
+            "promptAudio": "audio/height/prompt_flower_4.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/flower_short.webp",
+                    "image": "assets/height/flower_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/flower_fit.webp",
+                    "image": "assets/height/flower_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/height/flower_fit_1.webp",
+                    "image": "assets/height/flower_fit_1.png",
                     "value": 3
                 },
                 {
                     "id": "opt4",
-                    "image": "assets/height/flower_high.webp",
+                    "image": "assets/height/flower_high.png",
                     "value": 4
                 }
             ],
@@ -440,26 +440,26 @@
         {
             "id": "q20",
             "promptText": "CON THỎ NÀO CAO NHẤT?",
-            "promptAudio": "audio/height/prompt_rabbit_3.ogg",
+            "promptAudio": "audio/height/prompt_rabbit_3.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/rabbit_short.webp",
+                    "image": "assets/height/rabbit_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/rabbit_fit.webp",
+                    "image": "assets/height/rabbit_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/height/rabbit_high.webp",
+                    "image": "assets/height/rabbit_high.png",
                     "value": 4
                 },
                 {
                     "id": "opt4",
-                    "image": "assets/height/rabbit_fit_1.webp",
+                    "image": "assets/height/rabbit_fit_1.png",
                     "value": 3
                 }
             ],
@@ -469,26 +469,26 @@
         {
             "id": "q21",
             "promptText": "CHÚ THỎ NÀO THẤP NHẤT?",
-            "promptAudio": "audio/height/prompt_rabbit_4.ogg",
+            "promptAudio": "audio/height/prompt_rabbit_4.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/height/rabbit_short.webp",
+                    "image": "assets/height/rabbit_short.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/height/rabbit_fit.webp",
+                    "image": "assets/height/rabbit_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/height/rabbit_fit_1.webp",
+                    "image": "assets/height/rabbit_fit_1.png",
                     "value": 3
                 },
                 {
                     "id": "opt4",
-                    "image": "assets/height/rabbit_high.webp",
+                    "image": "assets/height/rabbit_high.png",
                     "value": 4
                 }
             ],

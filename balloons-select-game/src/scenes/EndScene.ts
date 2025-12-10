@@ -9,24 +9,24 @@ export class EndScene extends Phaser.Scene {
 
     preload() {
         // Banner chúc mừng (có chữ sẵn)
-        this.load.image('banner_congrat', 'assets/images/banner_congrat.webp');
-        this.load.image('icon', 'assets/images/icon.webp');
+        this.load.image('banner_congrat', 'assets/images/banner_congrat.png');
+        this.load.image('icon', 'assets/images/icon.png');
 
         // Nút chơi lại
-        this.load.image('btn_reset', 'assets/images/btn_reset.webp');
+        this.load.image('btn_reset', 'assets/images/btn_reset.png');
 
         // Nút thoát
-        this.load.image('btn_exit', 'assets/images/btn_exit.webp');
+        this.load.image('btn_exit', 'assets/images/btn_exit.png');
 
         // Âm thanh click
-        this.load.audio('sfx_click', 'assets/audio/sfx_click.ogg');
+        this.load.audio('sfx_click', 'assets/audio/sfx_click.mp3');
 
         // Âm thanh chúc mừng
-        this.load.audio('complete', 'assets/audio/complete.ogg');
+        this.load.audio('complete', 'assets/audio/complete.mp3');
 
         // Âm thanh chiến thắng
-        this.load.audio('fireworks', 'assets/audio/fireworks.ogg');
-        this.load.audio('applause', 'assets/audio/applause.ogg');
+        this.load.audio('fireworks', 'assets/audio/fireworks.mp3');
+        this.load.audio('applause', 'assets/audio/applause.mp3');
     }
 
     create() {

@@ -27,7 +27,6 @@ export class LessonScene extends Phaser.Scene {
     private boy?: Phaser.GameObjects.Image;
 
     private promptText!: Phaser.GameObjects.Text;
-    private progressText!: Phaser.GameObjects.Text;
     private questionBar?: Phaser.GameObjects.Image;
     private questionBarBaseWidth = 0;
     private questionBarBaseScaleX = 1;
@@ -102,21 +101,13 @@ export class LessonScene extends Phaser.Scene {
                 align: 'center',
                 fontFamily: '"Baloo 2"',
                 fontStyle: '700',
-                // wordWrap: { width: GAME_WIDTH * 0.5 },
+                padding: {
+                    top: 10,
+                    bottom: 10,
+                },
             })
-            .setOrigin(0.5)
+            .setOrigin(0.5, 0.5)
             .setDepth(1); // chữ ở trên
-
-        // Progress text
-        this.progressText = this.add
-            .text(250, 40, '', {
-                fontSize: '28px',
-                color: '#555',
-                align: 'right',
-                fontFamily: '"Baloo 2"',
-                fontStyle: '700',
-            })
-            .setOrigin(1, 0);
 
         this.showQuestion();
 
@@ -240,11 +231,6 @@ export class LessonScene extends Phaser.Scene {
             // 👉 đặt timer 5s đọc lại câu hỏi
             this.schedulePromptReplay();
         }
-
-        // Progress
-        this.progressText.setText(
-            `Câu ${this.index + 1}/${this.lesson.items.length}:`
-        );
 
         // Clear options cũ
         this.optionImages.forEach((img) => img.destroy());
@@ -539,6 +525,19 @@ export class LessonScene extends Phaser.Scene {
         }
     }
 
+    playRandomCorrect(sound: Phaser.Sound.BaseSoundManager) {
+        const keys = [
+            'correct_answer_1',
+            'correct_answer_2',
+            'correct_answer_3',
+            'correct_answer_4',
+        ];
+
+        const key = keys[Math.floor(Math.random() * keys.length)];
+        const sfx = sound.get(key) ?? sound.add(key);
+        sfx.play();
+    }
+
     // ===== Xử lý chọn đáp án =====
 
     private onSelect(
@@ -581,7 +580,7 @@ export class LessonScene extends Phaser.Scene {
         if (isCorrect) {
             this.score++;
             this.sound.play('correct');
-            this.sound.play('correct_answer');
+            this.playRandomCorrect(this.sound);
 
             // Panel đúng
             if (this.textures.exists(correctKey)) {
@@ -651,6 +650,7 @@ export class LessonScene extends Phaser.Scene {
 
         // dừng âm thanh đang phát nếu có
         this.sound.stopAll();
+        this.sound.play('sfx-click');
 
         // reset state
         this.index = 0;

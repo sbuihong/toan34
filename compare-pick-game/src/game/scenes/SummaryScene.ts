@@ -60,6 +60,32 @@ export class SummaryScene extends Phaser.Scene {
             .setDepth(100)
             .setDisplaySize(w * 0.9, h * 0.9); // full màn
 
+        // Icon image at top (outside panel)
+        if (this.textures.exists('icon')) {
+            const icon = this.add.image(w / 2, h / 2 - 150, 'icon');
+            icon.setScale(0.5);
+            icon.setDepth(1005);
+
+            // Animate chicken
+            this.tweens.add({
+                targets: icon,
+                y: icon.y - 10,
+                duration: 800,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut',
+            });
+
+            this.tweens.add({
+                targets: icon,
+                angle: { from: -5, to: 5 },
+                duration: 600,
+                yoyo: true,
+                repeat: -1,
+                ease: 'Sine.easeInOut',
+            });
+        }
+
         // ==== Các nút ngang dưới banner ====
         const btnScale = Math.min(w, h) / 1280;
         const spacing = 250 * btnScale;
@@ -102,6 +128,28 @@ export class SummaryScene extends Phaser.Scene {
             this.clearDimBackground();
             this.stopConfetti();
             this.scene.start('LessonSelectScene');
+
+            // ✅ Gửi COMPLETE cho Game Hub
+            const host = (window as any).irukaHost;
+            const state = (window as any).irukaGameState || {};
+
+            if (host && typeof host.complete === 'function') {
+                const timeMs = state.startTime
+                    ? Date.now() - state.startTime
+                    : 0;
+                const score = state.currentScore || 0;
+
+                host.complete({
+                    score,
+                    timeMs,
+                    extras: {
+                        reason: 'user_exit', // cho hub biết là user tự thoát
+                    },
+                });
+            } else {
+                // Fallback: nếu chạy ngoài Game Hub (dev standalone)
+                this.scene.start('LessonSelectScene');
+            }
         });
 
         // Hover effect (nếu cần trên desktop)

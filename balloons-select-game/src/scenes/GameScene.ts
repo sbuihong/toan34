@@ -63,77 +63,77 @@ export default class GameScene extends Phaser.Scene {
 
     preload() {
         // IMAGES
-        this.load.image('rabbit_idle', 'assets/images/rabbit_idle.webp');
-        this.load.image('rabbit_cheer', 'assets/images/rabbit_cheer.webp');
-        this.load.image('banner_top', 'assets/images/banner_top.webp');
-        this.load.image('banner_no_text', 'assets/images/banner_no_text.webp');
+        this.load.image('rabbit_idle', 'assets/images/rabbit_idle.png');
+        this.load.image('rabbit_cheer', 'assets/images/rabbit_cheer.png');
+        this.load.image('banner_top', 'assets/images/banner_top.png');
+        this.load.image('banner_no_text', 'assets/images/banner_no_text.png');
 
-        this.load.image('btn_reset', 'assets/images/btn_reset.webp');
-        this.load.image('btn_exit', 'assets/images/btn_exit.webp');
+        this.load.image('btn_reset', 'assets/images/btn_reset.png');
+        this.load.image('btn_exit', 'assets/images/btn_exit.png');
 
-        this.load.image('balloon_red', 'assets/images/balloon_red.webp');
-        this.load.image('balloon_blue', 'assets/images/balloon_blue.webp');
-        this.load.image('balloon_green', 'assets/images/balloon_green.webp');
-        this.load.image('balloon_purple', 'assets/images/balloon_purple.webp');
+        this.load.image('balloon_red', 'assets/images/balloon_red.png');
+        this.load.image('balloon_blue', 'assets/images/balloon_blue.png');
+        this.load.image('balloon_green', 'assets/images/balloon_green.png');
+        this.load.image('balloon_purple', 'assets/images/balloon_purple.png');
 
-        this.load.spritesheet('pop_red', 'assets/images/pop_red.webp', {
+        this.load.spritesheet('pop_red', 'assets/images/pop_red.png', {
             frameWidth: 384,
             frameHeight: 685,
         });
 
-        this.load.spritesheet('pop_blue', 'assets/images/pop_blue.webp', {
+        this.load.spritesheet('pop_blue', 'assets/images/pop_blue.png', {
             frameWidth: 384,
             frameHeight: 711,
         });
 
-        this.load.spritesheet('pop_green', 'assets/images/pop_green.webp', {
+        this.load.spritesheet('pop_green', 'assets/images/pop_green.png', {
             frameWidth: 384,
             frameHeight: 636,
         });
 
-        this.load.spritesheet('pop_purple', 'assets/images/pop_purple.webp', {
+        this.load.spritesheet('pop_purple', 'assets/images/pop_purple.png', {
             frameWidth: 384,
             frameHeight: 754,
         });
 
-        this.load.image('apple', 'assets/images/apple.webp');
-        this.load.image('flower', 'assets/images/flower.webp');
-        this.load.image('carrot', 'assets/images/carrot.webp');
-        this.load.image('leaf', 'assets/images/leaf.webp');
+        this.load.image('apple', 'assets/images/apple.png');
+        this.load.image('flower', 'assets/images/flower.png');
+        this.load.image('carrot', 'assets/images/carrot.png');
+        this.load.image('leaf', 'assets/images/leaf.png');
 
-        this.load.image('board_bg', 'assets/images/board_bg.webp');
+        this.load.image('board_bg', 'assets/images/board_bg.png');
 
         // AUDIO
-        this.load.audio('voice_rotate', 'assets/audio/rotate.ogg');
+        this.load.audio('voice_rotate', 'assets/audio/rotate.mp3');
 
-        this.load.audio('vo_prompt_1', 'assets/audio/vo_prompt_1.ogg');
-        this.load.audio('vo_prompt_2', 'assets/audio/vo_prompt_2.ogg');
-        this.load.audio('vo_prompt_3', 'assets/audio/vo_prompt_3.ogg');
-        this.load.audio('vo_prompt_4', 'assets/audio/vo_prompt_4.ogg');
-        this.load.audio('sfx_correct', 'assets/audio/sfx_correct.ogg');
-        this.load.audio('sfx_wrong', 'assets/audio/sfx_wrong.ogg');
-        this.load.audio('sfx_click', 'assets/audio/sfx_click.ogg');
-        this.load.audio('sfx_pop', 'assets/audio/sfx_pop.ogg');
+        this.load.audio('vo_prompt_1', 'assets/audio/vo_prompt_1.mp3');
+        this.load.audio('vo_prompt_2', 'assets/audio/vo_prompt_2.mp3');
+        this.load.audio('vo_prompt_3', 'assets/audio/vo_prompt_3.mp3');
+        this.load.audio('vo_prompt_4', 'assets/audio/vo_prompt_4.mp3');
+        this.load.audio('sfx_correct', 'assets/audio/sfx_correct.mp3');
+        this.load.audio('sfx_wrong', 'assets/audio/sfx_wrong.mp3');
+        this.load.audio('sfx_click', 'assets/audio/sfx_click.mp3');
+        this.load.audio('sfx_pop', 'assets/audio/sfx_pop.mp3');
         this.load.audio(
             'correct_answer_1',
-            'assets/audio/correct_answer_1.ogg'
+            'assets/audio/correct_answer_1.mp3'
         );
         this.load.audio(
             'correct_answer_2',
-            'assets/audio/correct_answer_2.ogg'
+            'assets/audio/correct_answer_2.mp3'
         );
         this.load.audio(
             'correct_answer_3',
-            'assets/audio/correct_answer_3.ogg'
+            'assets/audio/correct_answer_3.mp3'
         );
         this.load.audio(
             'correct_answer_4',
-            'assets/audio/correct_answer_4.ogg'
+            'assets/audio/correct_answer_4.mp3'
         );
-        this.load.audio('vo_count_1', 'assets/audio/vo_count_1.ogg');
-        this.load.audio('vo_count_2', 'assets/audio/vo_count_2.ogg');
-        this.load.audio('vo_count_3', 'assets/audio/vo_count_3.ogg');
-        this.load.audio('vo_count_4', 'assets/audio/vo_count_4.ogg');
+        this.load.audio('vo_count_1', 'assets/audio/vo_count_1.mp3');
+        this.load.audio('vo_count_2', 'assets/audio/vo_count_2.mp3');
+        this.load.audio('vo_count_3', 'assets/audio/vo_count_3.mp3');
+        this.load.audio('vo_count_4', 'assets/audio/vo_count_4.mp3');
     }
 
     create() {

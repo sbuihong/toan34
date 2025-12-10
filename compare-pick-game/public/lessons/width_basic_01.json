@@ -4,21 +4,21 @@
     "concept": "WIDTH",
     "defaultMode": "BINARY_PICK",
     "defaultPromptText": "Bé hãy chạm vào bức tranh có đồ vật rộng hơn.",
-    "defaultPromptAudio": "audio/width/default_prompt.ogg",
+    "defaultPromptAudio": "audio/width/default_prompt.mp3",
     "items": [
         {
             "id": "q1",
             "promptText": "CÁNH CỬA NÀO RỘNG HƠN?",
-            "promptAudio": "audio/width/prompt_door_1.ogg",
+            "promptAudio": "audio/width/prompt_door_1.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/door_narrow.webp",
+                    "image": "assets/width/door_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/door_wide.webp",
+                    "image": "assets/width/door_wide.png",
                     "value": 4
                 }
             ],
@@ -28,16 +28,16 @@
         {
             "id": "q2",
             "promptText": "CÁNH CỬA NÀO HẸP HƠN?",
-            "promptAudio": "audio/width/prompt_door_2.ogg",
+            "promptAudio": "audio/width/prompt_door_2.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/door_wide.webp",
+                    "image": "assets/width/door_wide.png",
                     "value": 4
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/door_narrow.webp",
+                    "image": "assets/width/door_narrow.png",
                     "value": 1
                 }
             ],
@@ -47,16 +47,16 @@
         {
             "id": "q3",
             "promptText": "CỬA HANG NÀO RỘNG HƠN?",
-            "promptAudio": "audio/width/prompt_cave_1.ogg",
+            "promptAudio": "audio/width/prompt_cave_1.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_narrow.webp",
+                    "image": "assets/width/cave_narrow.png",
                     "value": 1
                 }
             ],
@@ -66,16 +66,16 @@
         {
             "id": "q4",
             "promptText": "CỬA HANG NÀO HẸP HƠN?",
-            "promptAudio": "audio/width/prompt_cave_2.ogg",
+            "promptAudio": "audio/width/prompt_cave_2.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_narrow.webp",
+                    "image": "assets/width/cave_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 }
             ],
@@ -85,16 +85,16 @@
         {
             "id": "q5",
             "promptText": "LỐI VÀO HANG NÀO RỘNG HƠN?",
-            "promptAudio": "audio/width/prompt_cave_1.ogg",
+            "promptAudio": "audio/width/prompt_cave_1.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_narrow.webp",
+                    "image": "assets/width/cave_narrow.png",
                     "value": 1
                 }
             ],
@@ -104,16 +104,16 @@
         {
             "id": "q6",
             "promptText": "LỐI VÀO HANG NÀO HẸP HƠN?",
-            "promptAudio": "audio/width/prompt_cave_2.ogg",
+            "promptAudio": "audio/width/prompt_cave_2.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_narrow.webp",
+                    "image": "assets/width/cave_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 }
             ],
@@ -123,21 +123,21 @@
         {
             "id": "q7",
             "promptText": "CÁNH CỬA NÀO RỘNG NHẤT?",
-            "promptAudio": "audio/width/prompt_door_3.ogg",
+            "promptAudio": "audio/width/prompt_door_3.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/door_narrow.webp",
+                    "image": "assets/width/door_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/door_fit.webp",
+                    "image": "assets/width/door_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/door_wide.webp",
+                    "image": "assets/width/door_wide.png",
                     "value": 4
                 }
             ],
@@ -147,21 +147,21 @@
         {
             "id": "q8",
             "promptText": "CÁNH CỬA NÀO HẸP NHẤT?",
-            "promptAudio": "audio/width/prompt_door_4.ogg",
+            "promptAudio": "audio/width/prompt_door_4.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/door_narrow.webp",
+                    "image": "assets/width/door_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/door_fit.webp",
+                    "image": "assets/width/door_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/door_wide.webp",
+                    "image": "assets/width/door_wide.png",
                     "value": 4
                 }
             ],
@@ -171,21 +171,21 @@
         {
             "id": "q9",
             "promptText": "CỬA HANG NÀO RỘNG NHẤT?",
-            "promptAudio": "audio/width/prompt_cave_3.ogg",
+            "promptAudio": "audio/width/prompt_cave_3.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_narrow.webp",
+                    "image": "assets/width/cave_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_fit.webp",
+                    "image": "assets/width/cave_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 }
             ],
@@ -195,21 +195,21 @@
         {
             "id": "q10",
             "promptText": "CỬA HANG NÀO HẸP NHẤT?",
-            "promptAudio": "audio/width/prompt_cave_4.ogg",
+            "promptAudio": "audio/width/prompt_cave_4.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_narrow.webp",
+                    "image": "assets/width/cave_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_fit.webp",
+                    "image": "assets/width/cave_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 }
             ],
@@ -219,21 +219,21 @@
         {
             "id": "q11",
             "promptText": "LỐI VÀO HANG NÀO RỘNG NHẤT?",
-            "promptAudio": "audio/width/prompt_cave_3.ogg",
+            "promptAudio": "audio/width/prompt_cave_3.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_narrow.webp",
+                    "image": "assets/width/cave_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_fit.webp",
+                    "image": "assets/width/cave_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 }
             ],
@@ -243,21 +243,21 @@
         {
             "id": "q12",
             "promptText": "LỐI VÀO HANG NÀO HẸP NHẤT?",
-            "promptAudio": "audio/width/prompt_cave_4.ogg",
+            "promptAudio": "audio/width/prompt_cave_4.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_narrow.webp",
+                    "image": "assets/width/cave_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/cave_fit.webp",
+                    "image": "assets/width/cave_fit.png",
                     "value": 2
                 }
             ],
@@ -267,16 +267,16 @@
         {
             "id": "q13",
             "promptText": "CÁNH CỬA NÀO HẸP HƠN?",
-            "promptAudio": "audio/width/prompt_door_2.ogg",
+            "promptAudio": "audio/width/prompt_door_2.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/door_wide.webp",
+                    "image": "assets/width/door_wide.png",
                     "value": 4
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/door_fit_1.webp",
+                    "image": "assets/width/door_fit_1.png",
                     "value": 3
                 }
             ],
@@ -286,16 +286,16 @@
         {
             "id": "q14",
             "promptText": "CỬA HANG NÀO HẸP HƠN?",
-            "promptAudio": "audio/width/prompt_cave_2.ogg",
+            "promptAudio": "audio/width/prompt_cave_2.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_fit_1.webp",
+                    "image": "assets/width/cave_fit_1.png",
                     "value": 3
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 }
             ],
@@ -305,16 +305,16 @@
         {
             "id": "q15",
             "promptText": "LỐI VÀO HANG NÀO RỘNG HƠN?",
-            "promptAudio": "audio/width/prompt_cave_1.ogg",
+            "promptAudio": "audio/width/prompt_cave_1.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_fit.webp",
+                    "image": "assets/width/cave_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 }
             ],
@@ -324,26 +324,26 @@
         {
             "id": "q16",
             "promptText": "CÁNH CỬA NÀO RỘNG NHẤT?",
-            "promptAudio": "audio/width/prompt_door_3.ogg",
+            "promptAudio": "audio/width/prompt_door_3.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/door_narrow.webp",
+                    "image": "assets/width/door_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/door_fit.webp",
+                    "image": "assets/width/door_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/door_wide.webp",
+                    "image": "assets/width/door_wide.png",
                     "value": 4
                 },
                 {
                     "id": "opt4",
-                    "image": "assets/width/door_fit_1.webp",
+                    "image": "assets/width/door_fit_1.png",
                     "value": 3
                 }
             ],
@@ -353,26 +353,26 @@
         {
             "id": "q17",
             "promptText": "CÁNH CỬA NÀO HẸP NHẤT?",
-            "promptAudio": "audio/width/prompt_door_4.ogg",
+            "promptAudio": "audio/width/prompt_door_4.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/door_narrow.webp",
+                    "image": "assets/width/door_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/door_fit.webp",
+                    "image": "assets/width/door_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/door_fit_1.webp",
+                    "image": "assets/width/door_fit_1.png",
                     "value": 3
                 },
                 {
                     "id": "opt4",
-                    "image": "assets/width/door_wide.webp",
+                    "image": "assets/width/door_wide.png",
                     "value": 4
                 }
             ],
@@ -382,26 +382,26 @@
         {
             "id": "q18",
             "promptText": "CỬA HANG NÀO RỘNG NHẤT?",
-            "promptAudio": "audio/width/prompt_cave_3.ogg",
+            "promptAudio": "audio/width/prompt_cave_3.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_narrow.webp",
+                    "image": "assets/width/cave_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_fit.webp",
+                    "image": "assets/width/cave_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 },
                 {
                     "id": "opt4",
-                    "image": "assets/width/cave_fit_1.webp",
+                    "image": "assets/width/cave_fit_1.png",
                     "value": 3
                 }
             ],
@@ -411,26 +411,26 @@
         {
             "id": "q19",
             "promptText": "CỬA HANG NÀO HẸP NHẤT?",
-            "promptAudio": "audio/width/prompt_cave_4.ogg",
+            "promptAudio": "audio/width/prompt_cave_4.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_narrow.webp",
+                    "image": "assets/width/cave_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_fit.webp",
+                    "image": "assets/width/cave_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/cave_fit_1.webp",
+                    "image": "assets/width/cave_fit_1.png",
                     "value": 3
                 },
                 {
                     "id": "opt4",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 }
             ],
@@ -440,26 +440,26 @@
         {
             "id": "q20",
             "promptText": "LỐI VÀO HANG NÀO RỘNG NHẤT?",
-            "promptAudio": "audio/width/prompt_cave_3.ogg",
+            "promptAudio": "audio/width/prompt_cave_3.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_narrow.webp",
+                    "image": "assets/width/cave_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_fit.webp",
+                    "image": "assets/width/cave_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 },
                 {
                     "id": "opt4",
-                    "image": "assets/width/cave_fit_1.webp",
+                    "image": "assets/width/cave_fit_1.png",
                     "value": 3
                 }
             ],
@@ -469,26 +469,26 @@
         {
             "id": "q21",
             "promptText": "LỐI VÀO HANG NÀO HẸP NHẤT?",
-            "promptAudio": "audio/width/prompt_cave_4.ogg",
+            "promptAudio": "audio/width/prompt_cave_4.mp3",
             "options": [
                 {
                     "id": "opt1",
-                    "image": "assets/width/cave_wide.webp",
+                    "image": "assets/width/cave_wide.png",
                     "value": 4
                 },
                 {
                     "id": "opt2",
-                    "image": "assets/width/cave_narrow.webp",
+                    "image": "assets/width/cave_narrow.png",
                     "value": 1
                 },
                 {
                     "id": "opt3",
-                    "image": "assets/width/cave_fit.webp",
+                    "image": "assets/width/cave_fit.png",
                     "value": 2
                 },
                 {
                     "id": "opt4",
-                    "image": "assets/width/cave_fit_1.webp",
+                    "image": "assets/width/cave_fit_1.png",
                     "value": 3
                 }
             ],
