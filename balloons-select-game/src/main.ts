@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import GameScene from './scenes/GameScene';
 import { EndScene } from './scenes/EndScene';
 import { initRotateOrientation } from './rotateOrientation';
+import PreloadScene from './scenes/PreloadScene';
 
 declare global {
     interface Window {
@@ -14,7 +15,7 @@ const config: Phaser.Types.Core.GameConfig = {
     width: 1280,
     height: 720,
     parent: 'game-container',
-    scene: [GameScene, EndScene],
+    scene: [PreloadScene, GameScene, EndScene],
     backgroundColor: '#ffffff',
     scale: {
         mode: Phaser.Scale.FIT,
@@ -75,10 +76,7 @@ export function hideGameButtons() {
 }
 
 // Khởi tạo xoay màn hình
-initRotateOrientation(game, {
-    mainSceneKey: 'GameScene',
-    overlaySceneKey: null,
-});
+initRotateOrientation(game);
 
 // Scale nút
 updateUIButtonScale();

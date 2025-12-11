@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { hideGameButtons } from '../main';
+import AudioManager from '../audio/AudioManager';
 
 export class EndScene extends Phaser.Scene {
     private confettiEvent?: Phaser.Time.TimerEvent;
@@ -17,16 +18,6 @@ export class EndScene extends Phaser.Scene {
 
         // Nút thoát
         this.load.image('btn_exit', 'assets/images/btn_exit.png');
-
-        // Âm thanh click
-        this.load.audio('sfx_click', 'assets/audio/sfx_click.mp3');
-
-        // Âm thanh chúc mừng
-        this.load.audio('complete', 'assets/audio/complete.mp3');
-
-        // Âm thanh chiến thắng
-        this.load.audio('fireworks', 'assets/audio/fireworks.mp3');
-        this.load.audio('applause', 'assets/audio/applause.mp3');
     }
 
     create() {
@@ -34,12 +25,12 @@ export class EndScene extends Phaser.Scene {
         const h = this.scale.height;
 
         // Phát âm thanh chúc mừng khi vào màn hình
-        this.sound.play('complete');
+        AudioManager.play('complete');
 
         // Phát âm thanh chiến thắng
         this.time.delayedCall(2000, () => {
-            this.sound.play('fireworks');
-            this.sound.play('applause');
+            AudioManager.play('fireworks');
+            AudioManager.play('applause');
         });
 
         // ==== Banner kết quả (ảnh nền) ====
@@ -88,7 +79,8 @@ export class EndScene extends Phaser.Scene {
             .setInteractive({ useHandCursor: true });
 
         replayBtn.on('pointerdown', () => {
-            this.sound.play('sfx_click');
+            AudioManager.stopAll();
+            AudioManager.play('sfx-click');
             this.scene.start('GameScene', { level: 0 });
         });
 
@@ -101,7 +93,8 @@ export class EndScene extends Phaser.Scene {
             .setInteractive({ useHandCursor: true });
 
         exitBtn.on('pointerdown', () => {
-            this.sound.play('sfx_click');
+            AudioManager.stopAll();
+            AudioManager.play('sfx-click');
             this.scene.start('MenuScene');
 
             // ✅ Gửi COMPLETE cho Game Hub

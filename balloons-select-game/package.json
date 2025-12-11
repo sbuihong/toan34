@@ -1,8 +1,10 @@
 {
   "dependencies": {
+    "howler": "^2.2.4",
     "phaser": "^3.90.0"
   },
   "devDependencies": {
+    "@types/howler": "^2.2.12",
     "prettier": "3.6.2",
     "vite": "^7.2.2"
   },
