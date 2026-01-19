@@ -1,0 +1,14 @@
+{
+  "teacher": {
+    "baseScale": 0.95,
+    "outlineKey": "outline",
+    "baseX_pct": 0.5,
+    "baseY_pct": 0.5,
+    "parts": [
+      { "key": "1", "offsetX": 0, "offsetY": 0, "scale": 0.95, "hintPoints": [{"x": 0, "y": 0}]},
+      { "key": "2", "offsetX": 0, "offsetY": 0, "scale": 0.95, "hintPoints": [{"x": 0, "y": 0}]},
+      { "key": "3", "offsetX": 0, "offsetY": 0, "scale": 0.95, "hintPoints": [{"x": 0, "y": 0}]},
+      { "key": "4", "offsetX": 0, "offsetY": 0, "scale": 0.95, "hintPoints": [{"x": 0, "y": 0}]}
+    ]
+  }
+}

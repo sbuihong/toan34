@@ -1,0 +1,14 @@
+{
+    "targetText": {
+        "start": 2,
+        "end": 2
+    },
+    "images": [
+        {
+            "textureKey": "ball2",
+            "baseX_pct": 0.5,
+            "baseY_pct": 0.5,
+            "baseScale": 1
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "images": [
+        {
+            "textureKey": "bong1",
+            "baseX_pct": 0.5,
+            "baseY_pct": 0.5,
+            "baseScale": 0.1
+        }
+    ]
+}
