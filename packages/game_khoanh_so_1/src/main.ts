@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import Scene1 from './scenes/Scene1';
 import PreloadScene from './scenes/PreloadScene';
 import UIScene from './scenes/UIScene';
+import { SceneKeys } from './consts/Keys';
 
 import EndGameScene from './scenes/EndgameScene';
 import { initRotateOrientation } from './utils/rotateOrientation';
@@ -88,12 +89,9 @@ import { game } from "@iruka-edu/mini-game-sdk";
                     console.error("Error playing sfx-click on restart:", e);
                 }
 
-                if (window.gameScene && window.gameScene.scene) {
-                    window.gameScene.scene.stop();
-                    window.gameScene.scene.start('Scene1', { isRestart: true }); 
-                } else {
-                    console.error('GameScene instance not found on window. Cannot restart.');
-                }
+                // Sử dụng gamePhaser để quản lý Scene, an toàn hơn dùng biến global window.gameScene
+                gamePhaser.scene.stop(SceneKeys.Scene1);
+                gamePhaser.scene.start(SceneKeys.Scene1, { isRestart: true });
                 
                 hideGameButtons();
             };

@@ -71,9 +71,11 @@ export const GameConstants = {
             /** Delay restart intro khi xoay màn hình (ms) */
             RESTART_INTRO: 200,
             /** Thắng xong chờ bao lâu chuyển màn EndGame (ms) */
-            WIN_DELAY: 2500,
+            WIN_DELAY: 2800,
             /** Thời gian nhấp nháy khi tô xong 1 phần (ms) */
             AUTO_FILL: 100,
+            /** Thời gian chờ trước khi cho phép tương tác lúc vào game (ms) */
+            GAME_START_DELAY: 3500,
         },
         INTRO_HAND: {
             MOVE: 600,

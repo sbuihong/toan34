@@ -25,6 +25,7 @@ export default class Scene1 extends Phaser.Scene {
     private isIntroductionPlayed: boolean = false;
     private idleManager!: IdleManager;
     private handHint!: Phaser.GameObjects.Image;
+    private static hasInteracted: boolean = false; // Cờ kiểm tra lần đầu vào game
 
     constructor() {
         super(SceneKeys.Scene1);
@@ -39,8 +40,9 @@ export default class Scene1 extends Phaser.Scene {
         setGameSceneReference(this);
         showGameButtons();
 
-        // 1. Setup Environment
-        this.setupBackgroundAndAudio();
+        // 1. Setup Environment (Visual only)
+        // Background load ngay để không bị đen màn hình
+        changeBackground('assets/images/bg/background.jpg');
         
         // 2. Setup Managers
         this.lassoManager = new LassoManager(this);
@@ -57,14 +59,43 @@ export default class Scene1 extends Phaser.Scene {
         const levelConfig = this.cache.json.get(DataKeys.LevelS1Config);
         this.objectManager.spawnObjectsFromConfig(levelConfig);
 
-        // 5. Setup Gameplay Interactions
-        this.setupGameplay();
+        // 5. Start Logic (Conditional)
+        if (!Scene1.hasInteracted) {
+            // Lần đầu vào game: Cần Tap để unlock Audio
+            console.log("First time entry: Waiting for interaction...");
+            
+            // Có thể thêm Text/Hand hướng dẫn "Chạm để bắt đầu" ở đây nếu cần
+            
+            this.input.once('pointerdown', () => {
+                console.log("User interacted. Starting game flow...");
+                Scene1.hasInteracted = true;
+                
+                // Resume Audio Context (cho chắc chắn với browser chặn)
+                const soundManager = this.sound as Phaser.Sound.WebAudioSoundManager;
+                if (soundManager.context && soundManager.context.state === 'suspended') {
+                    soundManager.context.resume();
+                }
+                
+                this.runGameFlow();
+            });
+        } else {
+            // Các lần sau (Replay): Vào thẳng
+            this.runGameFlow();
+        }
 
         // 6. Launch UI Overlay
         if (!this.scene.get(SceneKeys.UI).scene.isActive()) {
             this.scene.launch(SceneKeys.UI, { sceneKey: SceneKeys.Scene1 });
             this.scene.bringToTop(SceneKeys.UI);
         }
+    }
+
+    /**
+     * Bắt đầu luồng game chính (Audio + Gameplay Loop)
+     */
+    private runGameFlow() {
+        this.setupAudio();
+        this.setupGameplay();
     }
 
     update(time: number, delta: number) {
@@ -74,16 +105,39 @@ export default class Scene1 extends Phaser.Scene {
     }
 
     shutdown() {
+        // 1. Dọn dẹp Âm thanh (Audio Cleanup)
+        if (this.bgm) {
+            this.bgm.stop();
+        }
+        // Dừng tất cả âm thanh SFX khác đang chạy qua Howler
+        AudioManager.stopAll();
+
+        // 2. Dọn dẹp Managers (Managers Cleanup)
+        if (this.lassoManager) {
+            this.lassoManager.disable();
+             // Nếu có hàm destroy thì gọi luôn tại đây để chắc chắn
+        }
+        if (this.idleManager) {
+            this.idleManager.stop();
+        }
+
+        // 3. Dọn dẹp hệ thống (System Cleanup)
+        this.tweens.killAll(); // Dừng mọi animation đang chạy
+        this.input.off('pointerdown'); // Gỡ bỏ sự kiện ở Scene context
         
+        // 4. Xóa tham chiếu global (Global References Cleanup)
+        if (window.gameScene === this) {
+            window.gameScene = undefined;
+        }
+
+        console.log("Scene1: Shutdown completed. Resources cleaned up.");
     }
 
     // =================================================================
     // PHẦN 1: CÀI ĐẶT HỆ THỐNG (SYSTEM SETUP)
     // =================================================================
 
-    private setupBackgroundAndAudio() {
-        changeBackground('assets/images/bg/background.jpg');
-
+    private setupAudio() {
         try {
             if (this.sound.get(AudioKeys.BgmNen)) {
                 this.sound.stopByKey(AudioKeys.BgmNen);
@@ -139,11 +193,22 @@ export default class Scene1 extends Phaser.Scene {
     // =================================================================
     
     private setupGameplay() {
-        // Kích hoạt tính năng vẽ Lasso
-        this.lassoManager.enable();
+        // Đợi một chút rồi mới cho phép chơi (để nghe intro hoặc chuẩn bị)
+        const delay = GameConstants.SCENE1.TIMING.GAME_START_DELAY;
+        
+        this.time.delayedCall(delay, () => {
+            // Kích hoạt tính năng vẽ Lasso
+            this.lassoManager.enable();
+            
+            // Bắt đầu đếm Idle ngay khi vào game (hoặc sau intro)
+            this.idleManager.start();
+            
+            console.log("Gameplay enabled after delay.");
+        });
 
         // Khi người chơi chạm vào màn hình -> Reset Idle + Ẩn gợi ý
         this.input.on('pointerdown', () => {
+            // Chỉ reset khi game đã bắt đầu (IdleManager đã chạy)
             this.idleManager.reset();
             this.hideHint();
         });
@@ -152,9 +217,6 @@ export default class Scene1 extends Phaser.Scene {
         this.lassoManager.onLassoComplete = (polygon: Phaser.Geom.Polygon) => {
             this.handleLassoSelection(polygon);
         };
-
-        // Bắt đầu đếm Idle ngay khi vào game (hoặc sau intro)
-        this.idleManager.start();
     }
 
     private handleLassoSelection(polygon: Phaser.Geom.Polygon) {
@@ -184,6 +246,7 @@ export default class Scene1 extends Phaser.Scene {
             });
 
             AudioManager.play("sfx-correct");
+            AudioManager.play("sfx-ting");
             this.objectManager.highlightObjects(selectedObjects, true);
             
             // Ẩn gợi ý nếu đang hiện

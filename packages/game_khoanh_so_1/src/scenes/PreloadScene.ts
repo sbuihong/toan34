@@ -1,6 +1,6 @@
-// src/scenes/PreloadScene.ts
 import Phaser from 'phaser';
 import { SceneKeys, TextureKeys, AudioKeys, DataKeys } from '../consts/Keys';
+import AudioManager from '../audio/AudioManager';
 
 export default class PreloadScene extends Phaser.Scene {
     constructor() {
@@ -39,7 +39,23 @@ export default class PreloadScene extends Phaser.Scene {
     }
 
     create() {
-        // Tải xong thì chuyển sang Scene1
-        this.scene.start(SceneKeys.Scene1);
+        // Chiến thuật: Tải file QUAN TRỌNG nhất (Lời dẫn + SFX cơ bản) trước.
+        // Các file khác tải ngầm sau.
+        const essentials = [
+            AudioKeys.VoiceIntro, 
+            'sfx-correct', 
+            'sfx-ting', 
+            'sfx-wrong'
+        ];
+
+        AudioManager.loadEssentials(essentials).then(() => {
+             console.log("Essential audio loaded. Starting Game...");
+             
+             // Chuyển scene ngay khi có lời dẫn
+             this.scene.start(SceneKeys.Scene1);
+             
+             // Tải nốt các file còn lại (chạy ngầm, không chặn game)
+             AudioManager.loadRest();
+        });
     }
 }
