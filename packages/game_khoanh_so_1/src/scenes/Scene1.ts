@@ -39,10 +39,6 @@ export default class Scene1 extends Phaser.Scene {
         window.gameScene = this;
         setGameSceneReference(this);
         showGameButtons();
-
-        // 1. Setup Environment (Visual only)
-        // Background load ngay để không bị đen màn hình
-        changeBackground('assets/images/bg/background.jpg');
         
         // 2. Setup Managers
         this.lassoManager = new LassoManager(this);
@@ -60,8 +56,6 @@ export default class Scene1 extends Phaser.Scene {
         this.objectManager.spawnObjectsFromConfig(levelConfig);
 
         // 5. Start Logic (Conditional)
-        // 5. Start Logic
-        // A. Nhạc nền + Background (Sync with game_dem_s1)
         this.setupBackgroundAndAudio();
 
         // B. Game logic + Voice Intro (Cần touch để browser không chặn AudioContext của voice/sfx)
@@ -93,16 +87,7 @@ export default class Scene1 extends Phaser.Scene {
         }
     }
 
-    /**
-     * Bắt đầu luồng game chính (Audio + Gameplay Loop)
-     */
-    /**
-     * @deprecated Used split methods setupAudio (BGM) and startIntroAndGameplay (Logic) instead
-     */
-    private runGameFlow() {
-        this.setupAudio();
-        this.setupGameplay();
-    }
+
 
     update(time: number, delta: number) {
         if (this.idleManager) {
@@ -143,13 +128,9 @@ export default class Scene1 extends Phaser.Scene {
     // PHẦN 1: CÀI ĐẶT HỆ THỐNG (SYSTEM SETUP)
     // =================================================================
 
-    // =================================================================
-    // PHẦN 1: CÀI ĐẶT HỆ THỐNG (SYSTEM SETUP)
-    // =================================================================
-
     private setupBackgroundAndAudio() {
-        // 1. Đổi Background (Có thể gọi trong này hoặc ngoài create đều được, để đây cho giống mẫu)
-        // changeBackground('assets/images/bg/background.jpg'); // Đã gọi ở trên create
+        // 1. Đổi Background
+        changeBackground('assets/images/bg/background.jpg');
 
         // 2. Phát nhạc nền (BGM)
         try {
