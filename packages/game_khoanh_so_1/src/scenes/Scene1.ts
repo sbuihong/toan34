@@ -181,6 +181,18 @@ export default class Scene1 extends Phaser.Scene {
         board.displayWidth = GameUtils.getW(this) * 0.95;
         // Giữ tỉ lệ đơn giản, có thể chỉnh lại scale sau
         
+        // Tính toán bounds của board (giới hạn vẽ lasso)
+        const boardWidth = board.displayWidth;
+        const boardHeight = board.displayHeight;
+        const boardX = board.x - boardWidth / 2;  // origin(0.5, 0) -> tâm ngang, đỉnh trên
+        const boardY_start = board.y;             // Vị trí y bắt đầu từ đỉnh
+        const boardBounds = new Phaser.Geom.Rectangle(boardX, boardY_start, boardWidth, boardHeight);
+        
+        // Truyền bounds vào LassoManager
+        this.lassoManager.setBoardBounds(boardBounds);
+        
+        console.log(`Board Bounds: x=${boardX}, y=${boardY_start}, w=${boardWidth}, h=${boardHeight}`);
+        
         // Các phần tử UI khác (Số, Xúc xắc - giữ như cũ để làm mẫu)
         this.add.image(GameUtils.pctX(this, 0.07), boardY + 100, TextureKeys.Number).setOrigin(0.5);
         this.add.image(GameUtils.pctX(this, 0.15), boardY + 100, TextureKeys.Dice).setOrigin(0.5);

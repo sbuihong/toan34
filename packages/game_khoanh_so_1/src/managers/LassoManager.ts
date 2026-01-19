@@ -7,12 +7,16 @@ import Phaser from 'phaser';
  * 1. Xử lý sự kiện vẽ (Pointer Down/Move/Up).
  * 2. Vẽ hình ảnh trực quan của nét dây.
  * 3. Tạo ra Polygon từ nét vẽ để kiểm tra va chạm.
+ * 4. Giới hạn vẽ chỉ trong phạm vi board.
  */
 export class LassoManager {
     private scene: Phaser.Scene;
     private graphics: Phaser.GameObjects.Graphics;
     private points: Phaser.Math.Vector2[] = [];
     private isDrawing: boolean = false;
+    
+    // Giới hạn vẽ (bounds của board)
+    private boardBounds?: Phaser.Geom.Rectangle;
     
     // Cấu hình vẽ
     private readonly LINE_COLOR = 0xff0000;
@@ -26,6 +30,14 @@ export class LassoManager {
         this.scene = scene;
         this.graphics = this.scene.add.graphics();
         this.graphics.setDepth(100); // Đảm bảo vẽ đè lên trên các vật thể
+    }
+
+    /**
+     * Thiết lập giới hạn vẽ (bounds của board).
+     * @param bounds Hình chữ nhật giới hạn vẽ lasso
+     */
+    public setBoardBounds(bounds: Phaser.Geom.Rectangle) {
+        this.boardBounds = bounds;
     }
 
     /**
@@ -49,6 +61,11 @@ export class LassoManager {
     }
 
     private onPointerDown(pointer: Phaser.Input.Pointer) {
+        // Kiểm tra xem điểm bắt đầu có nằm trong bounds không
+        if (this.boardBounds && !Phaser.Geom.Rectangle.Contains(this.boardBounds, pointer.x, pointer.y)) {
+            return; // Không cho phép vẽ ngoài board
+        }
+
         this.isDrawing = true;
         this.points = [];
         this.graphics.clear();
@@ -64,6 +81,28 @@ export class LassoManager {
 
     private onPointerMove(pointer: Phaser.Input.Pointer) {
         if (!this.isDrawing) return;
+
+        // Kiểm tra xem điểm hiện tại có nằm trong bounds không
+        if (this.boardBounds && !Phaser.Geom.Rectangle.Contains(this.boardBounds, pointer.x, pointer.y)) {
+            // Nếu con trỏ ra ngoài board, kết thúc nét vẽ
+            this.isDrawing = false;
+            this.graphics.closePath();
+            this.graphics.strokePath();
+
+            // Tạo Polygon từ các điểm đã vẽ
+            const polygon = new Phaser.Geom.Polygon(this.points);
+
+            // Gọi callback để Scene xử lý logic tiếp theo
+            if (this.onLassoComplete) {
+                this.onLassoComplete(polygon);
+            }
+
+            // Tự động xóa nét vẽ sau một khoảng thời gian ngắn
+            this.scene.time.delayedCall(500, () => {
+                this.graphics.clear();
+            });
+            return;
+        }
 
         // Thêm điểm mới nếu đủ xa so với điểm cuối cùng (Tối ưu performance)
         const lastPoint = this.points[this.points.length - 1];
