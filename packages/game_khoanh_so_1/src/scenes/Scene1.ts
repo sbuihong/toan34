@@ -60,11 +60,14 @@ export default class Scene1 extends Phaser.Scene {
         this.objectManager.spawnObjectsFromConfig(levelConfig);
 
         // 5. Start Logic (Conditional)
+        // 5. Start Logic
+        // A. Nhạc nền chạy ngay lập tức (không đợi touch)
+        this.setupAudio();
+
+        // B. Game logic + Voice Intro (Cần touch để browser không chặn AudioContext của voice/sfx)
         if (!Scene1.hasInteracted) {
             // Lần đầu vào game: Cần Tap để unlock Audio
             console.log("First time entry: Waiting for interaction...");
-            
-            // Có thể thêm Text/Hand hướng dẫn "Chạm để bắt đầu" ở đây nếu cần
             
             this.input.once('pointerdown', () => {
                 console.log("User interacted. Starting game flow...");
@@ -76,11 +79,11 @@ export default class Scene1 extends Phaser.Scene {
                     soundManager.context.resume();
                 }
                 
-                this.runGameFlow();
+                this.startIntroAndGameplay();
             });
         } else {
             // Các lần sau (Replay): Vào thẳng
-            this.runGameFlow();
+            this.startIntroAndGameplay();
         }
 
         // 6. Launch UI Overlay
@@ -92,6 +95,9 @@ export default class Scene1 extends Phaser.Scene {
 
     /**
      * Bắt đầu luồng game chính (Audio + Gameplay Loop)
+     */
+    /**
+     * @deprecated Used split methods setupAudio (BGM) and startIntroAndGameplay (Logic) instead
      */
     private runGameFlow() {
         this.setupAudio();
@@ -147,13 +153,16 @@ export default class Scene1 extends Phaser.Scene {
                 volume: 0.25,
             });
             this.bgm.play();
-
-            // Đọc hướng dẫn
-            AudioManager.play(AudioKeys.VoiceIntro);
             
         } catch (e) {
             console.warn("Audio Context issue:", e);
         }
+    }
+
+    private startIntroAndGameplay() {
+        // Đọc hướng dẫn
+        AudioManager.play(AudioKeys.VoiceIntro);
+        this.setupGameplay();
     }
 
     // =================================================================
