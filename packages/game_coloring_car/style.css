@@ -72,7 +72,7 @@ canvas {
 /* Các nút UI */
 .ui-btn {
     position: absolute;
-    /* width: 5%; /* chuẩn PC */
+    width: 5%; /*chuẩn PC
     /* height: auto; */
     z-index: 9999;
     cursor: pointer;
@@ -84,7 +84,7 @@ canvas {
 #btn-reset {
     top: 2%;
     right: 2%;
-    width: 4.4%;
+    width: 5%;
     height: auto;
 }
 

@@ -244,7 +244,7 @@ export default class Scene1 extends Phaser.Scene {
             .setScale(scl[0], scl[1])
             .setDepth(0);
 
-        board.displayWidth = GameUtils.getW(this) * 0.95;
+        board.displayWidth = GameUtils.getW(this) * 0.93;
 
         const boardRightX = board.x + board.displayWidth / 2;
         const boardCenterY = board.y + board.displayHeight / 2;
