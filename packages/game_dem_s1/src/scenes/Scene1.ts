@@ -26,6 +26,7 @@ export default class Scene1 extends Phaser.Scene {
     private isProcessing: boolean = false; // Chặn spam request
     private isSessionActive: boolean = false; // Check session status
     private submissionCount: number = 0; // Check valid submissions
+    private isRecording: boolean = false;
 
     private testMode: boolean = true; // Bật Test Mode để debug
 
@@ -58,6 +59,7 @@ export default class Scene1 extends Phaser.Scene {
         this.isProcessing = false;
         this.submissionCount = 0;
         this.isSessionActive = false;
+        this.isRecording = false;
         resetVoiceState();
     }
 
@@ -147,8 +149,6 @@ export default class Scene1 extends Phaser.Scene {
 
     private handleOffline = () => {
         console.log("Mất kết nối mạng!");
-        this.textHint.setColor('#ff0000');
-        this.btnMic.disableInteractive().setTint(0x555555);
         
         // Chỉ end session nếu đang active
         if (!this.isSessionActive) return;
@@ -164,7 +164,6 @@ export default class Scene1 extends Phaser.Scene {
         const hasMicPermission = await this.voiceRecorder.checkPermission();
         if (!hasMicPermission) {
             console.log("Cần quyền truy cập Micro để chơi!");
-            this.textHint.setColor('#ff0000');
             return;
         }
 
@@ -186,7 +185,6 @@ export default class Scene1 extends Phaser.Scene {
             // Kiểm tra kết quả
             if (!sessionRes.allowPlay) {
                 console.log(sessionRes.message || "Không thể bắt đầu game (Hết lượt/Banned)");
-                this.btnMic.disableInteractive().setTint(0x555555);
                 return;
             }
 
@@ -208,8 +206,6 @@ export default class Scene1 extends Phaser.Scene {
         } catch (err: any) {
             console.error("Start Session Error:", err);
             console.log("Lỗi kết nối máy chủ");
-            this.btnMic.setVisible(false);
-            this.btnMic.disableInteractive().setTint(0x555555);
         }
     }
 
@@ -232,10 +228,6 @@ export default class Scene1 extends Phaser.Scene {
         } catch (e) {
             console.warn("Audio Context issue:", e);
         }
-
-
-
-        // 3. Phát Voice Hướng dẫn (Intro) sẽ được xử lý ở create()
     }
 
     private createUI() {
@@ -281,7 +273,6 @@ export default class Scene1 extends Phaser.Scene {
              .setScale(0.7)
              .setInteractive()
              .setVisible(false) // Ẩn cho đến khi ghi âm xong
-             .setTint(0x0000ff);
 
         // 5. Số 1
         this.add.image(GameUtils.pctX(this, 0.07), boardY + 100, TextureKeys.Number)
@@ -335,7 +326,7 @@ export default class Scene1 extends Phaser.Scene {
                 AudioManager.stopAll();
 
                 // UI Update
-                this.btnMic.setTint(0x00ff00); // Xanh lá
+                this.isRecording = true;
                 console.log("Đang nghe... (Nói số lượng)");
             },
             onRecordingStop: (audioBlob, duration) => {
@@ -351,7 +342,7 @@ export default class Scene1 extends Phaser.Scene {
                 }
 
                 // UI Update
-                this.btnMic.setTint(0xff0000); // Đỏ lại
+                this.isRecording = false;
                 console.log("Đã ghi xong.");
                 this.btnPlayback.setVisible(true);
 
@@ -378,7 +369,7 @@ export default class Scene1 extends Phaser.Scene {
         // Re-implement button logic with local flag ref
         this.btnMic.on('pointerdown', () => {
              this.resetIdle(); // Reset idle timer
-             if (this.btnMic.tintTopLeft === 0x00ff00) { // Check Green tint
+             if (this.isRecording) {
                  this.voiceRecorder.stop();
              } else {
                  this.voiceRecorder.start();
@@ -513,15 +504,12 @@ export default class Scene1 extends Phaser.Scene {
             if (endRes.quotaDeducted) msg += "\n(Đã trừ lượt)";
             
             console.log(msg);
-            this.textHint.setColor('#0000ff'); // Blue Text
             
             // Show Final Score Popup
             const uiScene = this.scene.get(SceneKeys.UI) as any;
             if (uiScene && uiScene.showFinalScorePopup) {
                 uiScene.showFinalScorePopup(endRes.finalScore);
             }
-            
-            this.btnMic.disableInteractive().setTint(0x555555);
 
             // Chuyển sang EndGameScene sau khi xem điểm (ví dụ 4s)
             this.time.delayedCall(4000, () => {

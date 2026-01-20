@@ -282,8 +282,18 @@ export default class Scene1 extends Phaser.Scene {
                 console.log("Khoanh sai hoặc không trúng!");
             }
             
-            // Rung nhẹ màn hình
-            this.cameras.main.shake(300, 0.01);
+            // Rung các hình ảnh trong config
+            const allObjects = this.objectManager.getAllObjects();
+            allObjects.forEach(obj => {
+                this.tweens.add({
+                    targets: obj,
+                    x: obj.x + 10,
+                    duration: 50,
+                    yoyo: true,
+                    repeat: 3,
+                    ease: 'Linear'
+                });
+            });
             
             AudioManager.play("sfx-wrong");
             

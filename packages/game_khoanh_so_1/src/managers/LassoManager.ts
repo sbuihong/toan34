@@ -48,6 +48,9 @@ export class LassoManager {
         this.scene.input.on('pointerdown', this.onPointerDown, this);
         this.scene.input.on('pointermove', this.onPointerMove, this);
         this.scene.input.on('pointerup', this.onPointerUp, this);
+        
+        // Thay đổi cursor khi được phép vẽ
+        document.body.style.cursor = 'crosshair';
     }
 
     /**
@@ -57,6 +60,10 @@ export class LassoManager {
         this.scene.input.off('pointerdown', this.onPointerDown, this);
         this.scene.input.off('pointermove', this.onPointerMove, this);
         this.scene.input.off('pointerup', this.onPointerUp, this);
+        
+        // Khôi phục cursor mặc định
+        document.body.style.cursor = 'auto';
+        
         this.clear();
     }
 

@@ -26,6 +26,9 @@ export default class UIScene extends Phaser.Scene {
 
     private bannerImage!: Phaser.GameObjects.Image;
     private bannerText!: Phaser.GameObjects.Image;
+    private decorImage!: Phaser.GameObjects.Image;
+    private so1Image!: Phaser.GameObjects.Image;
+    private diceImage!: Phaser.GameObjects.Image;
 
     private createUI() {
         const UI = GameConstants.SCENE1.UI;
@@ -42,9 +45,9 @@ export default class UIScene extends Phaser.Scene {
         this.bannerText = this.add.image(cx, bannerY, textBannerKey).setScale(0.9).setOrigin(0.5, -1.1);
 
         // Hiển thị Decor
-        this.add.image(cx * 1.85, bannerY + 250, TextureKeys.Decor).setScale(0.7).setOrigin(0.5, 0.5);
-        this.add.image(cx * 0.1, bannerY + 200, TextureKeys.So1).setScale(0.7).setOrigin(0.5, -0.1);
-        this.add.image(cx * 0.2, bannerY + 200, TextureKeys.Dice).setScale(0.7).setOrigin(0.5, -0.1);
+        this.decorImage = this.add.image(cx * 1.85, bannerY + 250, TextureKeys.Decor).setScale(0.7).setOrigin(0.5, 0.5);
+        this.so1Image = this.add.image(cx * 0.1, bannerY + 180, TextureKeys.So1).setScale(0.7).setOrigin(0.5, -0.1);
+        this.diceImage = this.add.image(cx * 0.2, bannerY + 180, TextureKeys.Dice).setScale(0.7).setOrigin(0.5, -0.1);
         
         // Tạo bàn tay gợi ý (ẩn đi, set depth cao nhất để đè lên mọi thứ)
         this.handHint = this.add
@@ -128,5 +131,8 @@ export default class UIScene extends Phaser.Scene {
     public hideBanners() {
         if (this.bannerImage) this.bannerImage.destroy();
         if (this.bannerText) this.bannerText.destroy();
+        if (this.decorImage) this.decorImage.destroy();
+        if (this.so1Image) this.so1Image.destroy();
+        if (this.diceImage) this.diceImage.destroy();
     }
 }
