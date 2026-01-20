@@ -240,7 +240,7 @@ export default class Scene1 extends Phaser.Scene {
         board.displayWidth = GameUtils.getW(this) * 0.93;
             
         // 2. Nút Loa
-        this.add.image(cx * 1.77, boardY * 6.5, TextureKeys.Loa).setOrigin(0.5).setScale(1);
+        // this.add.image(cx * 1.77, boardY * 6.5, TextureKeys.Loa).setOrigin(0.5).setScale(1);
 
         // 3. Nút Mic
         this.btnMic = this.add.image(cx, GameUtils.pctY(this, 0.85), TextureKeys.Mic) 
@@ -276,21 +276,41 @@ export default class Scene1 extends Phaser.Scene {
         const configKey = this.LEVEL_KEYS[index];
         this.isProcessing = false;
 
-        // Cleanup
-        this.objectsToCount.forEach(obj => obj.destroy());
-        this.objectsToCount = [];
-
         // Load Config
         const data = this.cache.json.get(configKey);
         if (!data || !data.images) return;
 
-        // Create objects
-        data.images.forEach((def: any) => {
-             const x = GameUtils.pctX(this, def.baseX_pct);
-             const y = GameUtils.pctY(this, def.baseY_pct);
-             const img = this.add.image(x, y, def.textureKey).setScale(def.baseScale || 0.5);
-             this.objectsToCount.push(img);
-        });
+        const newImageDefs = data.images;
+        
+        // 1. Reuse existing objects
+        for (let i = 0; i < newImageDefs.length; i++) {
+            const def = newImageDefs[i];
+            const x = GameUtils.pctX(this, def.baseX_pct);
+            const y = GameUtils.pctY(this, def.baseY_pct);
+            
+            let img: Phaser.GameObjects.Image;
+
+            if (i < this.objectsToCount.length) {
+                // Reuse existing
+                img = this.objectsToCount[i];
+                img.setTexture(def.textureKey);
+                img.setPosition(x, y);
+                img.setScale(def.baseScale || 0.5);
+                img.setVisible(true);
+                img.setActive(true);
+            } else {
+                // Create new if not enough
+                img = this.add.image(x, y, def.textureKey).setScale(def.baseScale || 0.5);
+                this.objectsToCount.push(img);
+            }
+        }
+
+        // 2. Hide unused objects (Pool)
+        for (let i = newImageDefs.length; i < this.objectsToCount.length; i++) {
+            const unusedImg = this.objectsToCount[i];
+            unusedImg.setVisible(false);
+            unusedImg.setActive(false);
+        }
 
         this.levelTarget = data.targetText;
     }

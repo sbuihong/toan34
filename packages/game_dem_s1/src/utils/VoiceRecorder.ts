@@ -62,12 +62,17 @@ export class VoiceRecorder {
         
         this.cleanupAudioContext();
         
-        if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
-            this.mediaRecorder.stop();
-            if (this.mediaRecorder.stream) {
-                 this.mediaRecorder.stream.getTracks().forEach(track => track.stop());
+        try {
+            if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+                this.mediaRecorder.stop();
+                if (this.mediaRecorder.stream) {
+                    this.mediaRecorder.stream.getTracks().forEach(track => track.stop());
+                }
             }
+        } catch (error) {
+            console.warn("Error stopping MediaRecorder:", error);
         }
+        
         this.isRecording = false;
     }
 
