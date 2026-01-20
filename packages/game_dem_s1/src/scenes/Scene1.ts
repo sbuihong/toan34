@@ -380,94 +380,94 @@ export default class Scene1 extends Phaser.Scene {
     // --- API LOGIC (Updated to use Hook) ---
     
     private async sendAudioToBackend(audioBlob: Blob, inputTarget: string | object) {
-        // --- BLOCKING LOGIC ---
+        // --- CHẶN SPAM REQUEST ---
         if (this.isProcessing) {
-             console.log("Ignoring request: Previous request processing or transition...");
+             console.log("Đang xử lý request trước đó, vui lòng đợi...");
              return;
         }
 
         if (!this.voiceHelper.sessionId) {
-             console.error("No active session");
-             console.log("Lỗi phiên làm việc! (Vui lòng reload)");
+             console.error("Lỗi: Không tìm thấy Session ID");
+             console.log("Vui lòng tải lại trang!");
              return;
         }
         
-        this.isProcessing = true; // LOCK
+        this.isProcessing = true; // KHÓA REQUEST
 
-        // Log Session ID cho mỗi lần submit
-        console.log(`[Submit Audio] SessionID: ${this.voiceHelper.sessionId} | Question Index: ${this.currentQuestionIndex + 1}`);
+        // Log thông tin debug
+        console.log(`[Gửi Audio] SessionID: ${this.voiceHelper.sessionId} | Câu hỏi số: ${this.currentQuestionIndex + 1}`);
+        console.log("Đang gửi dữ liệu lên server để chấm điểm...");
 
-        console.log("Đang chấm điểm...");
-        this.btnPlayback.setVisible(false); // Ẩn nút nghe lại khi submit
+        this.btnPlayback.setVisible(false); // Ẩn nút nghe lại để tránh thao tác chồng chéo
 
         try {
-            // Tính duration (Optional or removed if not needed)
-            const durationMs = 0; // VoiceRecorder provides duration in callback if needed
-
-            // Xử lý Input Target: Tự động gói vào Object nếu là String
+            // Xử lý Input Target: Đảm bảo format đúng cho API
             let finalTargetText;
             if (typeof inputTarget === 'string') {
                 finalTargetText = { text: inputTarget };
             } else {
-                finalTargetText = inputTarget; // Dùng luôn Object cấu hình
+                finalTargetText = inputTarget;
             }
 
-            // Gọi Hook
+            // Gọi API thông qua Helper
+            // durationMs mặc định là 0 nếu không cần tính chính xác từ blob
             const result = await this.voiceHelper.submitAudio(
                 audioBlob,
                 finalTargetText,
                 this.currentQuestionIndex + 1,
-                durationMs
+                0 
             );
             
+            // Xử lý kết quả trả về (Phát âm thanh, log)
             this.processResult(result);
-            this.submissionCount++; // Valid submission
+            this.submissionCount++; // Tăng biến đếm số lần nộp bài thành công
 
-            // Logic chuyển tiếp
+            // Tăng index câu hỏi hiện tại để chuẩn bị cho màn tiếp theo
             this.currentQuestionIndex++;
             
-            // Show Popup
+            // --- HIỂN THỊ ĐIỂM SỐ (POPUP) ---
             const uiScene = this.scene.get(SceneKeys.UI) as any; 
             if (uiScene && uiScene.showScorePopup) {
                 uiScene.showScorePopup(result.score, result.feedback);
             }
 
-            // Switch Level Logic (Auto after delay)
+            // --- LOGIC CHUYỂN LEVEL SAU KHI HIỆN ĐIỂM ---
+            // Đợi 3 giây để người dùng xem điểm, sau đó tự động chuyển màn
             if (this.currentQuestionIndex < this.totalQuestions) {
-                 setTimeout(() => {
-                     // Hide popup
+                 this.time.delayedCall(3000, () => {
+                     // 1. Ẩn Popup điểm
                      if (uiScene && uiScene.hideScorePopup) {
                          uiScene.hideScorePopup();
                      }
 
-                     // Demo logic: Chuyển màn 2, 3
+                     // 2. Load màn chơi tiếp theo dựa trên Index
                      if (this.currentQuestionIndex === 1) {
                         this.loadLevel(DataKeys.LevelS2Config);
-                        console.log("Màn 2: Hãy đếm số lượng!");
+                        console.log("--- Chuyển màn 2 ---");
                      } else if (this.currentQuestionIndex === 2) {
                         this.loadLevel(DataKeys.LevelS3Config);
-                        console.log("Màn 3: Hãy đếm số lượng!");
+                        console.log("--- Chuyển màn 3 ---");
                      }
-                 }, 3000); // 3s delay for user to read feedback
+                 });
             } else {
-                 // Đã hết câu hỏi -> Kết thúc game (BẮT BUỘC ĐỂ XÓA CACHE)
-                 setTimeout(() => {
+                 // Đã hoàn thành tất cả câu hỏi -> Kết thúc Game
+                 this.time.delayedCall(3000, () => {
                      if (uiScene && uiScene.hideScorePopup) {
                          uiScene.hideScorePopup();
                      }
                      this.finishGameSession();
-                 }, 3000);
+                 });
             }
 
         } catch (e: any) {
-            console.error("Evaluation Error:", e);
-            this.isProcessing = false; // UNLOCK on Error so user can retry
+            console.error("Lỗi khi chấm điểm:", e);
+            this.isProcessing = false; // MỞ KHÓA để người dùng thử lại
 
-            // Xử lý lỗi mạng
+            // Xử lý các trường hợp lỗi mạng cụ thể
             if (e.message && (e.message.includes('Network') || e.message.includes('offline'))) {
                 this.handleOffline();
             } else {
-                console.log("Lỗi chấm điểm!");
+                console.log("Có lỗi xảy ra trong quá trình chấm điểm. Vui lòng thử lại!");
             }
         }
     }

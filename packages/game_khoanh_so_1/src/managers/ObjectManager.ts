@@ -11,6 +11,8 @@ import Phaser from 'phaser';
 export class ObjectManager {
     private scene: Phaser.Scene;
     private objects: Phaser.GameObjects.Image[] = [];
+    private correctObjectIndex: number = 0; // Index của object đáp án đúng
+    private wrongObjectIndex: number = 1;   // Index của object đáp án sai
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -80,6 +82,81 @@ export class ObjectManager {
         });
 
         return selectedObjects;
+    }
+
+    /**
+     * Tính phần trăm overlap giữa polygon và bounding box của object
+     * @param polygon Vùng vẽ
+     * @param object Object cần kiểm tra
+     * @returns Phần trăm overlap (0-1)
+     */
+    public getOverlapPercentage(polygon: Phaser.Geom.Polygon, object: Phaser.GameObjects.Image): number {
+        // Lấy bounding box của object
+        const objBounds = new Phaser.Geom.Rectangle(
+            object.x - object.displayWidth / 2,
+            object.y - object.displayHeight / 2,
+            object.displayWidth,
+            object.displayHeight
+        );
+        
+        const objArea = objBounds.width * objBounds.height;
+        if (objArea === 0) return 0;
+
+        // Kiểm tra overlap bằng cách lấy 4 góc + tâm + các điểm trên cạnh
+        const testPoints: Phaser.Math.Vector2[] = [
+            // 4 góc
+            new Phaser.Math.Vector2(objBounds.left, objBounds.top),
+            new Phaser.Math.Vector2(objBounds.right, objBounds.top),
+            new Phaser.Math.Vector2(objBounds.left, objBounds.bottom),
+            new Phaser.Math.Vector2(objBounds.right, objBounds.bottom),
+            // Tâm
+            new Phaser.Math.Vector2(object.x, object.y),
+            // Các điểm giữa cạnh
+            new Phaser.Math.Vector2((objBounds.left + objBounds.right) / 2, objBounds.top),
+            new Phaser.Math.Vector2((objBounds.left + objBounds.right) / 2, objBounds.bottom),
+            new Phaser.Math.Vector2(objBounds.left, (objBounds.top + objBounds.bottom) / 2),
+            new Phaser.Math.Vector2(objBounds.right, (objBounds.top + objBounds.bottom) / 2),
+        ];
+
+        // Đếm bao nhiêu điểm nằm trong polygon
+        let pointsInside = 0;
+        testPoints.forEach(point => {
+            if (Phaser.Geom.Polygon.Contains(polygon, point.x, point.y)) {
+                pointsInside++;
+            }
+        });
+
+        // Tính phần trăm dựa trên số điểm nằm trong
+        const overlapPercentage = pointsInside / testPoints.length;
+        return overlapPercentage;
+    }
+
+    /**
+     * Lấy object đáp án đúng
+     */
+    public getCorrectObject(): Phaser.GameObjects.Image | undefined {
+        return this.objects[this.correctObjectIndex];
+    }
+
+    /**
+     * Lấy object đáp án sai
+     */
+    public getWrongObject(): Phaser.GameObjects.Image | undefined {
+        return this.objects[this.wrongObjectIndex];
+    }
+
+    /**
+     * Kiểm tra xem object có phải đáp án sai không
+     */
+    public isWrongAnswer(object: Phaser.GameObjects.Image): boolean {
+        return this.objects[this.wrongObjectIndex] === object;
+    }
+
+    /**
+     * Kiểm tra xem object có phải đáp án đúng không
+     */
+    public isCorrectAnswer(object: Phaser.GameObjects.Image): boolean {
+        return this.objects[this.correctObjectIndex] === object;
     }
 
     /**

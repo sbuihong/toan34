@@ -235,27 +235,57 @@ export default class Scene1 extends Phaser.Scene {
         
         console.log(`Đã khoanh trúng: ${selectedObjects.length} đối tượng.`);
 
-        // 2. Kiểm tra Logic Game
-        // Chỉ chấp nhận nếu: khoanh đúng 1 hình và hình đó là bóng
-        const correctObjects = selectedObjects.filter(obj => obj.texture.key === TextureKeys.S1_Ball);
-        const isSuccess = selectedObjects.length === 1 && correctObjects.length === 1;
+        // 2. Kiểm tra điều kiện Đúng/Sai
+        const correctObject = this.objectManager.getCorrectObject();
+        const wrongObject = this.objectManager.getWrongObject();
+
+        let isSuccess = false;
+        let failureReason = "";
+
+        // Điều kiện thành công:
+        // - Khoanh đúng 1 hình
+        // - Hình đó phải là đáp án đúng
+        // - Lấn qua hình sai không quá 1/5
+        if (selectedObjects.length === 1) {
+            const selectedObj = selectedObjects[0];
+            
+            if (this.objectManager.isCorrectAnswer(selectedObj)) {
+                // Kiểm tra lấn qua hình sai
+                if (wrongObject) {
+                    const overlapWithWrong = this.objectManager.getOverlapPercentage(polygon, wrongObject);
+                    
+                    console.log(`Overlap với hình sai: ${(overlapWithWrong * 100).toFixed(1)}%`);
+                    
+                    if (overlapWithWrong > 0.2) { // 1/5 = 0.2
+                        failureReason = `Vẽ lấn quá hình sai (${(overlapWithWrong * 100).toFixed(1)}% > 20%)`;
+                    } else {
+                        isSuccess = true;
+                    }
+                } else {
+                    isSuccess = true;
+                }
+            } else {
+                failureReason = "Khoanh sai đáp án!";
+            }
+        } else if (selectedObjects.length > 1) {
+            failureReason = "Khoanh quá nhiều hình! Chỉ khoanh 1 hình thôi!";
+        } else {
+            failureReason = "Khoanh sai hoặc không trúng!";
+        }
 
         if (isSuccess) {
             // --- SUCCESS CASE ---
-            // Khoanh trúng ĐÚNG 1 BÓNG THÔI
-            
-            // Vẽ vòng tròn bao quanh
+            // Vẽ vòng tròn bao quanh hình đúng
             const graphics = this.add.graphics();
             graphics.lineStyle(10, 0x00ff00); // Nét, dày 10px
 
-            correctObjects.forEach(obj => {
-                // obj là Image
+            selectedObjects.forEach(obj => {
                 const image = obj as Phaser.GameObjects.Image;
-                // Tính bán kính bao quanh (lấy cạnh lớn nhất / 2 * hệ số nới rộng)
                 const radius = (Math.max(image.displayWidth, image.displayHeight) / 2) * 1.5;
                 graphics.strokeCircle(image.x, image.y, radius);
             });
 
+            console.log("✅ Khoanh ĐÚNG!");
             AudioManager.play("sfx-correct");
             AudioManager.play("sfx-ting");
             this.objectManager.highlightObjects(selectedObjects, true);
@@ -275,14 +305,9 @@ export default class Scene1 extends Phaser.Scene {
 
         } else {
             // --- FAILURE CASE ---
-            // Khoanh sai hoặc khoanh nhiều hơn 1 hình
-            if (selectedObjects.length > 1) {
-                console.log("Khoanh quá nhiều hình! Chỉ khoanh 1 hình thôi!");
-            } else {
-                console.log("Khoanh sai hoặc không trúng!");
-            }
+            console.log(`❌ Khoanh SAI: ${failureReason}`);
             
-            // Rung các hình ảnh trong config
+            // Rung các hình ảnh
             const allObjects = this.objectManager.getAllObjects();
             allObjects.forEach(obj => {
                 this.tweens.add({

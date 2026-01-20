@@ -12,6 +12,7 @@ import Phaser from 'phaser';
 export class LassoManager {
     private scene: Phaser.Scene;
     private graphics: Phaser.GameObjects.Graphics;
+    private maskGraphics?: Phaser.GameObjects.Graphics; // Graphics dùng để tạo mask
     private points: Phaser.Math.Vector2[] = [];
     private isDrawing: boolean = false;
     
@@ -38,6 +39,19 @@ export class LassoManager {
      */
     public setBoardBounds(bounds: Phaser.Geom.Rectangle) {
         this.boardBounds = bounds;
+        
+        // Tạo Graphics dùng để làm mask/clipping
+        if (!this.maskGraphics) {
+            this.maskGraphics = this.scene.add.graphics();
+        }
+        
+        // Vẽ hình chữ nhật trên mask graphics
+        this.maskGraphics.fillStyle(0xffffff, 1);
+        this.maskGraphics.fillRectShape(bounds);
+        
+        // Áp dụng mask lên graphics vẽ lasso
+        const mask = this.maskGraphics.createGeometryMask();
+        this.graphics.setMask(mask);
     }
 
     /**
@@ -53,9 +67,6 @@ export class LassoManager {
         document.body.style.cursor = 'crosshair';
     }
 
-    /**
-     * Vô hiệu hóa chế độ vẽ.
-     */
     public disable() {
         this.scene.input.off('pointerdown', this.onPointerDown, this);
         this.scene.input.off('pointermove', this.onPointerMove, this);
@@ -64,13 +75,20 @@ export class LassoManager {
         // Khôi phục cursor mặc định
         document.body.style.cursor = 'auto';
         
+        // Xóa mask và mask graphics
+        this.graphics.clearMask();
+        if (this.maskGraphics) {
+            this.maskGraphics.destroy();
+            this.maskGraphics = undefined;
+        }
+        
         this.clear();
     }
 
     private onPointerDown(pointer: Phaser.Input.Pointer) {
         // Kiểm tra xem điểm bắt đầu có nằm trong bounds không
         if (this.boardBounds && !Phaser.Geom.Rectangle.Contains(this.boardBounds, pointer.x, pointer.y)) {
-            return; // Không cho phép vẽ ngoài board
+            return; // Không cho phép bắt đầu vẽ ngoài board
         }
 
         this.isDrawing = true;
@@ -89,34 +107,13 @@ export class LassoManager {
     private onPointerMove(pointer: Phaser.Input.Pointer) {
         if (!this.isDrawing) return;
 
-        // Kiểm tra xem điểm hiện tại có nằm trong bounds không
-        if (this.boardBounds && !Phaser.Geom.Rectangle.Contains(this.boardBounds, pointer.x, pointer.y)) {
-            // Nếu con trỏ ra ngoài board, kết thúc nét vẽ
-            this.isDrawing = false;
-            this.graphics.closePath();
-            this.graphics.strokePath();
-
-            // Tạo Polygon từ các điểm đã vẽ
-            const polygon = new Phaser.Geom.Polygon(this.points);
-
-            // Gọi callback để Scene xử lý logic tiếp theo
-            if (this.onLassoComplete) {
-                this.onLassoComplete(polygon);
-            }
-
-            // Tự động xóa nét vẽ sau một khoảng thời gian ngắn
-            this.scene.time.delayedCall(500, () => {
-                this.graphics.clear();
-            });
-            return;
-        }
-
-        // Thêm điểm mới nếu đủ xa so với điểm cuối cùng (Tối ưu performance)
+        // Vẫn cho phép vẽ tiếp dù con trỏ ra ngoài bounds
+        // Nhưng chỉ thêm điểm và vẽ nếu điểm đủ xa (optimization)
         const lastPoint = this.points[this.points.length - 1];
         if (lastPoint && Phaser.Math.Distance.Between(lastPoint.x, lastPoint.y, pointer.x, pointer.y) > this.SIMPLIFY_TOLERANCE) {
             this.addPoint(pointer.x, pointer.y);
             
-            // Vẽ tiếp
+            // Vẽ tiếp (mask sẽ tự động ẩn những gì ngoài bounds)
             this.graphics.lineTo(pointer.x, pointer.y);
             this.graphics.strokePath();
         }
