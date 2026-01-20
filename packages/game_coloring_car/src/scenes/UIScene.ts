@@ -45,9 +45,9 @@ export default class UIScene extends Phaser.Scene {
         this.bannerText = this.add.image(cx, bannerY, textBannerKey).setScale(0.9).setOrigin(0.5, -1.1);
 
         // Hiển thị Decor
-        this.decorImage = this.add.image(cx * 1.85, bannerY + 250, TextureKeys.Decor).setScale(0.7).setOrigin(0.5, 0.5);
-        this.so1Image = this.add.image(cx * 0.1, bannerY + 180, TextureKeys.So1).setScale(0.7).setOrigin(0.5, -0.1);
-        this.diceImage = this.add.image(cx * 0.2, bannerY + 180, TextureKeys.Dice).setScale(0.7).setOrigin(0.5, -0.1);
+        this.decorImage = this.add.image(cx * 1.8, bannerY + 290, TextureKeys.Decor).setScale(1).setOrigin(0.5, 0.5);
+        this.so1Image = this.add.image(cx * 0.12, bannerY + 180, TextureKeys.So1).setScale(1).setOrigin(0.5, -0.1);
+        this.diceImage = this.add.image(cx * 0.25, bannerY + 170, TextureKeys.Dice).setScale(1).setOrigin(0.5, -0.1);
         
         // Tạo bàn tay gợi ý (ẩn đi, set depth cao nhất để đè lên mọi thứ)
         this.handHint = this.add
