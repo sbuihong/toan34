@@ -43,6 +43,7 @@ export class LassoManager {
         // Tạo Graphics dùng để làm mask/clipping
         if (!this.maskGraphics) {
             this.maskGraphics = this.scene.add.graphics();
+            this.maskGraphics.setVisible(false); // Ẩn, chỉ dùng làm mask
         }
         
         // Vẽ hình chữ nhật trên mask graphics
