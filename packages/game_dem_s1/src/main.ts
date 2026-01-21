@@ -49,16 +49,10 @@ import { game } from "@iruka-edu/mini-game-sdk";
 
         const w = window.innerWidth;
         const h = window.innerHeight;
-
-        const MIN_UI_SCALE = 0.45;
-        const MAX_UI_SCALE = 1;
-        const scaleFromViewport = Math.min(w, h) / 720;
-        const scale = Math.min(Math.max(scaleFromViewport, MIN_UI_SCALE), MAX_UI_SCALE);
-        const baseSize = 115;
-        const newSize = baseSize * scale;
+        const newSize = h / 9;
 
         resetBtn.style.width = `${newSize}px`;
-        resetBtn.style.height = 'auto';
+        resetBtn.style.height = `${newSize}px`;
     }
 
     export function showGameButtons() {
