@@ -79,6 +79,12 @@ export default class UIScene extends Phaser.Scene {
         }
     }
 
+    public showProcessingPopup() {
+        if (this.scorePopup) {
+            this.scorePopup.showProcessing();
+        }
+    }
+
     public hideScorePopup() {
         if (this.scorePopup) {
             this.scorePopup.hide();

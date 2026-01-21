@@ -2,3 +2,11 @@ node_modules
 .env
 *.zip
 Gemini.md
+balloons-select-game
+client-sdk
+compare-pick-game
+compare-quantity-game
+doc
+prog-game
+quiz-game
+*.md
