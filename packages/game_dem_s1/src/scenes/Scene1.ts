@@ -50,11 +50,11 @@ export default class Scene1 extends Phaser.Scene {
     // UI Elements
     private btnMic!: Phaser.GameObjects.Image;
     private btnPlayback!: Phaser.GameObjects.Image; 
-    
-    // Idle
     private idleManager!: IdleManager;
     private handCursor!: Phaser.GameObjects.Image;
     private handTween!: Phaser.Tweens.Tween;
+    private tutorialTimer?: Phaser.Time.TimerEvent; // Timer cho vòng lặp hướng dẫn
+    private introTimer?: Phaser.Time.TimerEvent; // Timer cho chuỗi intro
     private radiatingCircles: Phaser.GameObjects.Arc[] = [];
 
     constructor() {
@@ -363,6 +363,9 @@ export default class Scene1 extends Phaser.Scene {
             this.isSessionActive = true;
             this.btnMic.setVisible(true);
             
+            // Kích hoạt hướng dẫn bàn tay khi Mic hiện
+            this.runHandTutorial();
+            
             console.log("========================================");
             console.log("SCENE 1 SESSION ID:", this.voiceHelper.sessionId);
             console.log("========================================");
@@ -463,18 +466,29 @@ export default class Scene1 extends Phaser.Scene {
     }
 
     private processResult(result: any) {
+        // 1. Luôn phát voice nội dung (ví dụ: "Một quả bóng")
+        const contentVoice = "voice_1";
+        AudioManager.play(contentVoice);
+        
+        // Lấy duration để biết khi nào phát feedback sau cùng
+        const duration = AudioManager.getDuration(contentVoice) || 1.5;
+
+        // 2. Chạy song song âm thanh phản hồi (Ting/Wrong)
         if (result.score >= 60){
+            // Đúng: Ting -> Đợi -> Correct
             AudioManager.play("sfx-ting");
-            setTimeout(() => {
+            
+            this.time.delayedCall(duration * 1000, () => {
                 AudioManager.play("sfx-correct");
-            }, 1200);
+            });
         } else {
+            // Sai: Sound Wrong -> Đợi -> Voice Wrong
             AudioManager.play("sfx-wrong");
-            setTimeout(() => {
+            
+            this.time.delayedCall(duration * 1000, () => {
                 AudioManager.play("voice_wrong");
-            }, 1200);
+            });
         }
-        AudioManager.play("voice_1");
     }
 
     update(time: number, delta: number) {
@@ -533,13 +547,105 @@ export default class Scene1 extends Phaser.Scene {
 
     private playIntroSequence() {
         this.isIntroActive = true;
-        if (this.idleManager) this.idleManager.start();
+        
+        // Dừng idle manager trong lúc intro
+        if (this.idleManager) this.idleManager.stop();
 
-        playVoiceLocked(null, 'voice_intro_s2');
-        this.time.delayedCall(GameConstants.SCENE1.TIMING.INTRO_DELAY, () => {
-            if (this.isIntroActive) this.runHandTutorial();
+        const voiceKey = 'voice_intro_s2';
+        playVoiceLocked(null, voiceKey);
+
+        // Lấy thời lượng để biết khi nào intro kết thúc
+        const duration = AudioManager.getDuration(voiceKey) || 3;
+        console.log(`[Scene1] Intro Duration: ${duration}s`);
+
+        // Kết thúc trạng thái active sau khoảng thời gian của intro
+        this.introTimer = this.time.delayedCall(duration * 1000 + 1500, () => {
+             // Chơi tiếp hướng dẫn "Bé bấm vào mic"
+             playVoiceLocked(null, 'voice_guidance_mic');
+
+             // Lấy duration của câu này để tính thời điểm release Intro Active
+             const duration2 = AudioManager.getDuration('voice_guidance_mic') || 2;
+             
+             this.introTimer = this.time.delayedCall(duration2 * 1000 + 300, () => {
+                 this.isIntroActive = false;
+                 this.introTimer = undefined;
+                 // Nếu tutorial đã bị tắt do người dùng chạm, thì start idle ở đây
+                 if (!this.handCursor.visible && this.idleManager) {
+                     this.idleManager.start();
+                 }
+             });
         });
     }
 
-    private runHandTutorial(){}
+    private runHandTutorial() {
+        if (!this.handCursor || !this.btnMic) return;
+
+        // Chỉ chạy nếu Mic đang hiển thị (Visible)
+        if (!this.btnMic.visible) return;
+
+        // Đảm bảo không bị chồng chéo Animation
+        this.tweens.killTweensOf(this.handCursor);
+
+        // 1. Thiết lập trạng thái ban đầu: Hiện bàn tay tại vị trí Mic
+        this.handCursor.setPosition(this.btnMic.x + 80, this.btnMic.y + 80)
+            .setVisible(true)
+            .setScale(1)
+            .setDepth(100);
+
+        // 2. Chuỗi Animation: Nhấn nhấn (Scale)
+        this.tweens.add({
+            targets: this.handCursor,
+            scale: 0.8,
+            duration: 300, 
+            yoyo: true,
+            repeat: 2, // Nhấn 3 lần
+            onComplete: () => {
+                // 3. Sau khi nhấn xong -> Ẩn đi
+                this.handCursor.setVisible(false);
+
+                // 4. Đợi 2s rồi lặp lại quy trình (Loop)
+                // Cần kiểm tra lại điều kiện 'Mic Visible' để tránh chạy khi đã sang màn khác hoặc đã tắt
+                this.tutorialTimer = this.time.delayedCall(2000, () => {
+                    if (this.btnMic.visible && this.handCursor.active) {
+                        this.runHandTutorial();
+                    }
+                });
+            }
+        });
+
+        // Lắng nghe sự kiện chạm vào Mic để tắt hướng dẫn (Chỉ add 1 lần)
+        this.btnMic.off('pointerdown', this.stopHandTutorial, this);
+        this.btnMic.once('pointerdown', this.stopHandTutorial, this);
+    }
+
+    private stopHandTutorial() {
+        // 1. Dừng intro audio nếu đang chạy
+        if (this.isIntroActive) {
+            AudioManager.stopSound('voice_intro_s2');
+            AudioManager.stopSound('voice_guidance_mic');
+            this.isIntroActive = false;
+        }
+
+        // 2. Hủy timer intro pending (nếu chưa chạy đến đoạn "Bé bấm vào mic")
+        if (this.introTimer) {
+            this.introTimer.remove();
+            this.introTimer = undefined;
+        }
+
+        // 3. Hủy timer lặp tutorial
+        if (this.tutorialTimer) {
+            this.tutorialTimer.remove();
+            this.tutorialTimer = undefined;
+        }
+
+        if (this.handCursor) {
+            this.tweens.killTweensOf(this.handCursor);
+            this.handCursor.setVisible(false);
+        }
+        
+        // 4. Bắt đầu Idle Manager (Vì intro đã bị force stop)
+        if (this.idleManager) {
+            this.idleManager.start();
+        }
+    }
 }

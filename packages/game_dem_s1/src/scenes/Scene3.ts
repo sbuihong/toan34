@@ -467,18 +467,24 @@ export default class Scene3 extends Phaser.Scene {
     }
 
     private processResult(result: any) {
+        // 1. Luôn phát voice nội dung (ví dụ: "Một ô tô")
+        const contentVoice = "voice_3";
+        AudioManager.play(contentVoice);
+
+        const duration = AudioManager.getDuration(contentVoice) || 1.5;
+
+        // 2. Chạy song song
         if (result.score >= 60){
             AudioManager.play("sfx-ting");
-            setTimeout(() => {
+            this.time.delayedCall(duration * 1000, () => {
                 AudioManager.play("sfx-correct");
-            }, 1200);
+            });
         } else {
             AudioManager.play("sfx-wrong");
-            setTimeout(() => {
+            this.time.delayedCall(duration * 1000, () => {
                 AudioManager.play("voice_wrong");
-            }, 1200);
+            });
         }
-        AudioManager.play("voice_3");
     }
 
     update(time: number, delta: number) {
@@ -539,9 +545,9 @@ export default class Scene3 extends Phaser.Scene {
         this.isIntroActive = true;
         if (this.idleManager) this.idleManager.start();
         
-        playVoiceLocked(null, 'voice_intro_s3');  // Using scene 3 intro if available
+        playVoiceLocked(null, 'voice_intro_s3');
         this.time.delayedCall(GameConstants.SCENE1.TIMING.INTRO_DELAY, () => {
-            if (this.isIntroActive) this.runHandTutorial();
+             // Intro animation or logic if needed (Currently empty)
         });
     }
 

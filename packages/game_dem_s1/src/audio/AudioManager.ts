@@ -29,6 +29,7 @@ const SOUND_MAP: Record<string, SoundConfig> = {
     'voice_2': { src: `${BASE_PATH}prompt/hai_qua_bong.mp3`, volume: 1.0 },
     'voice_3': { src: `${BASE_PATH}prompt/mot_o_to.mp3`, volume: 1.0 },
     'voice_wrong': { src: `${BASE_PATH}prompt/be_co_gang_hon_nhe.mp3`, volume: 1.0 },
+    'voice_guidance_mic': { src: `${BASE_PATH}prompt/be_bam_vao_mic.mp3`, volume: 1.0 },
 
     // ---- Correct Answer Variations ----
     'complete': { src: `${BASE_PATH}sfx/complete.mp3`, volume: 1.0 },
