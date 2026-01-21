@@ -72,6 +72,15 @@ export default class ScorePopup extends Phaser.GameObjects.Container {
         this._animateShow();
     }
 
+    public showProcessing() {
+        this.popupTitle.setText("ĐANG CHẤM ĐIỂM...");
+        this.popupTitle.setColor('#f57c00'); // Orange for processing
+        this.popupScore.setText("...");
+        this.popupScore.setColor('#f57c00');
+
+        this._animateShow();
+    }
+
     public showFinal(finalScore: number) {
         this.popupTitle.setText("TỔNG KẾT");
         this.popupTitle.setColor('#1565c0'); // Blue
@@ -83,6 +92,18 @@ export default class ScorePopup extends Phaser.GameObjects.Container {
     }
 
     private _animateShow() {
+        if (this.visible && this.scale > 0.1) {
+             // Already visible, just pulse/bounce to indicate update
+             this.scene.tweens.add({
+                targets: this,
+                scale: 1.1,
+                duration: 100,
+                yoyo: true,
+                ease: 'Sine.easeInOut'
+            });
+            return;
+        }
+
         this.setVisible(true);
         this.setScale(0);
         

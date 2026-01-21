@@ -204,6 +204,12 @@ export default class Scene1 extends Phaser.Scene {
                 
                 // Valid recording: LOCK INTERACTION IMMEDIATELY
                 this.isProcessing = true;
+
+                // Show Processing Popup
+                const uiScene = this.scene.get(SceneKeys.UI) as any;
+                if (uiScene && uiScene.showProcessingPopup) {
+                    uiScene.showProcessingPopup();
+                }
                 
                 // Auto Submit
                 const targetText = this.levelTarget || { start: 1, end: 1 };
