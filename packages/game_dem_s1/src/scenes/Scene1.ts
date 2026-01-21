@@ -55,6 +55,7 @@ export default class Scene1 extends Phaser.Scene {
     private idleManager!: IdleManager;
     private handCursor!: Phaser.GameObjects.Image;
     private handTween!: Phaser.Tweens.Tween;
+    private radiatingCircles: Phaser.GameObjects.Arc[] = [];
 
     constructor() {
         super(SceneKeys.Scene1);
@@ -179,6 +180,7 @@ export default class Scene1 extends Phaser.Scene {
                 AudioManager.stopAll();
                 this.isRecording = true;
                 this.tweens.add({ targets: this.btnMic, scale: 1.2, duration: 200, yoyo: true, repeat: -1 });
+                GameUtils.startRadiatingEffect(this, this.btnMic, this.radiatingCircles);
                 // Stop idle timer while recording
                 if (this.idleManager) this.idleManager.stop();
             },
@@ -187,6 +189,7 @@ export default class Scene1 extends Phaser.Scene {
                 this.isRecording = false;
                 this.btnMic.setScale(1); 
                 this.tweens.killTweensOf(this.btnMic);
+                GameUtils.stopRadiatingEffect(this, this.radiatingCircles);
 
                 console.log(`[Voice] Recorded Duration: ${duration}ms (Threshold: ${GameConstants.VOICE.MIN_DURATION}ms)`);
                 
@@ -220,6 +223,9 @@ export default class Scene1 extends Phaser.Scene {
         });
     }
 
+
+
+
     // =================================================================
     // PHẦN 2: TẠO GIAO DIỆN & LEVEL (UI & LEVEL CREATION)
     // =================================================================
@@ -246,7 +252,7 @@ export default class Scene1 extends Phaser.Scene {
 
         // 3. Nút Mic
         this.btnMic = this.add.image(cx, GameUtils.pctY(this, 0.85), TextureKeys.Mic) 
-             .setScale(1).setInteractive().setVisible(false);
+             .setScale(1).setInteractive().setVisible(false).setDepth(10);
 
         this.btnMic.on('pointerdown', () => {
              // Block interaction if processing result

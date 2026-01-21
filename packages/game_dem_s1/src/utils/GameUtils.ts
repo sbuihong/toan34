@@ -228,4 +228,64 @@ export class GameUtils {
             });
         }
     }
+
+
+    /**
+     * Tạo hiệu ứng vòng tròn tỏa ra (Ripple) xung quanh một đối tượng.
+     * @param scene Context scene
+     * @param target Đối tượng trung tâm (ví dụ: nút Mic)
+     * @param circleArray Mảng lưu trữ các vòng tròn để cleanup sau này
+     */
+    static startRadiatingEffect(scene: Phaser.Scene, target: Phaser.GameObjects.Image | Phaser.GameObjects.Sprite, circleArray: Phaser.GameObjects.Arc[]) {
+        GameUtils.stopRadiatingEffect(scene, circleArray);
+
+        const x = target.x;
+        const y = target.y;
+        // Base radius derived from target width
+        const baseRadius = (target.displayWidth || 100) / 2;
+        
+        // Ensure target is above circles
+        target.setDepth(10); 
+
+        for (let i = 0; i < 3; i++) {
+            const circle = scene.add.circle(x, y, baseRadius, 0x000, 0.5);
+            circle.setDepth(target.depth - 1);
+            circle.setVisible(false);
+            circleArray.push(circle);
+
+            scene.tweens.add({
+                targets: circle,
+                scale: { from: 1, to: 3 },
+                alpha: { from: 0.5, to: 0 },
+                duration: 1500,
+                repeat: -1,
+                delay: i * 500,
+                onStart: () => {
+                     circle.setVisible(true);
+                     circle.setScale(1);
+                     circle.setAlpha(0.5);
+                },
+                onRepeat: () => {
+                     circle.setScale(1);
+                     circle.setAlpha(0.5);
+                }
+            });
+        }
+    }
+
+    /**
+     * Dừng và xóa hiệu ứng vòng tròn tỏa ra.
+     * @param scene Context scene
+     * @param circleArray Mảng chứa các vòng tròn cần xóa
+     */
+    static stopRadiatingEffect(scene: Phaser.Scene, circleArray: Phaser.GameObjects.Arc[]) {
+        if (!circleArray || circleArray.length === 0) return;
+
+        circleArray.forEach(circle => {
+            scene.tweens.killTweensOf(circle);
+            circle.destroy();
+        });
+        // Clear array content in place
+        circleArray.length = 0;
+    }
 }
