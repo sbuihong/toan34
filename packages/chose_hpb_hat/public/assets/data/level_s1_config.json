@@ -1,20 +1,25 @@
 {
-    "targetText": {
-        "start": 1,
-        "end": 1
+  "definitions": {
+    "teacher": {
+      "baseScale": 0.9,
+      "outlineKey": "outline",
+      "parts": [
+        { "key": "1", "offsetX": 0, "offsetY": 0, "scale": 0.9, "hintPoints": [{"x": 0, "y": 0}]},
+        { "key": "2", "offsetX": 0, "offsetY": 0, "scale": 0.9, "hintPoints": [{"x": -170, "y": 280}]},
+        { "key": "3", "offsetX": 0, "offsetY": 0, "scale": 0.9, "hintPoints": [{"x": 200, "y": -250}]}
+      ]
+    }
+  },
+  "items": [
+    {
+      "type": "teacher",
+      "baseX_pct": 0.35,
+      "baseY_pct": 0.47
     },
-    "images": [
-        {
-            "textureKey": "hat",
-            "baseX_pct": 0.35,
-            "baseY_pct": 0.45,
-            "baseScale": 0.8
-        },
-        {
-            "textureKey": "hat",
-            "baseX_pct": 0.65,
-            "baseY_pct": 0.45,
-            "baseScale": 0.8
-        }
-    ]
+    {
+      "type": "teacher",
+      "baseX_pct": 0.65,
+      "baseY_pct": 0.47
+    }
+  ]
 }

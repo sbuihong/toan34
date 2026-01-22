@@ -39,13 +39,12 @@ import { game } from "@iruka-edu/mini-game-sdk";
 
     const gamePhaser = new Phaser.Game(config);
 
-    // --- 2. XỬ LÝ LOGIC UI & XOAY MÀN HÌNH ---
+    // --- 2. XỬ LÝ LOGIC UI & XOAY MÀN HÌNH (Giữ nguyên logic cũ của bạn) ---
     function updateUIButtonScale() {
         //const container = document.getElementById('game-container')!;
         const resetBtn = document.getElementById('btn-reset') as HTMLImageElement;
         if (!resetBtn) return; // Thêm check null cho an toàn
 
-        const w = window.innerWidth;
         const h = window.innerHeight;
         const newSize = h / 9;
 

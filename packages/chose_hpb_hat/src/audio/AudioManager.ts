@@ -22,7 +22,7 @@ const SOUND_MAP: Record<string, SoundConfig> = {
 
     // ---- Prompt Voice ----
     'voice-rotate': { src: `${BASE_PATH}prompt/rotate.mp3`, volume: 0.8 },
-    'voice_intro': { src: `${BASE_PATH}prompt/instruction.mp3`, volume: 1 },
+    'voice_intro_s2': { src: `${BASE_PATH}prompt/instruction.mp3`, volume: 1 },
     'hint': { src: `${BASE_PATH}prompt/hint.mp3`, volume: 1.0 },
 
     // ---- Correct Answer Variations ----
@@ -109,9 +109,6 @@ class AudioManager {
     play(id: string): number | undefined {
         // --- LAZY LOAD IMPLEMENTATION ---
         
-        // 0. Stop all previous sounds (Exclusive Mode)
-        this.stopAll();
-
         // 1. Nếu chưa có instance -> Tạo mới (Lazy Load)
         if (!this.sounds[id]) {
             const config = SOUND_MAP[id];
