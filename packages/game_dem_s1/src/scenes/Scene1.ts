@@ -290,8 +290,8 @@ export default class Scene1 extends Phaser.Scene {
             this.anims.create({
                 key: 'listen_anim',
                 frames: this.anims.generateFrameNumbers(TextureKeys.Sprite1, { start: 0, end: 6 }),
-                frameRate: 10,
-                repeat: -1 // Lặp vô tận
+                frameRate: 7,
+                repeat: -1 
             });
         }
         // Gán animation cho sprite

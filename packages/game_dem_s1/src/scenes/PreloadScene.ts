@@ -38,12 +38,26 @@ export default class PreloadScene extends Phaser.Scene {
             frameHeight: 310
         });
         this.load.spritesheet(TextureKeys.Sprite2, 'assets/images/sprite/spritesheet2.png', {
-            frameWidth: 345,
+            frameWidth: 300,
+            frameHeight: 424
+        });
+        this.load.spritesheet(TextureKeys.Sprite3, 'assets/images/sprite/happy.png', {
+            frameWidth: 300,
+            frameHeight: 308
+        });
+        this.load.spritesheet(TextureKeys.Sprite4, 'assets/images/sprite/sad.png', {
+            frameWidth: 300,
             frameHeight: 310
         });
 
         // --- Score Popup ---
-        this.load.image(TextureKeys.ScorePopup, 'assets/images/ui/score_popup.png');
+        // this.load.image(TextureKeys.ScorePopup, 'assets/images/ui/score_popup.png');
+
+        this.load.image(TextureKeys.Six, 'assets/images/score/6d.png');
+        this.load.image(TextureKeys.Seven, 'assets/images/score/7d.png');
+        this.load.image(TextureKeys.Eight, 'assets/images/score/8d.png');
+        this.load.image(TextureKeys.Nine, 'assets/images/score/9d.png');
+        this.load.image(TextureKeys.Ten, 'assets/images/score/10d.png');
 
 
         // - Config JSON

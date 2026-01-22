@@ -114,7 +114,7 @@ export interface EndSessionRequest {
     /** Learner ID (required in test mode when JWT is not available) */
     learner_id?: string;
     /** Age level: "3-4", "4-5", or "5-6" (required in test mode) */
-    age_level?: string;
+    // age_level?: string;
 }
 
 /**
@@ -208,13 +208,13 @@ export class VoiceSessionClient {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                    childId: request.childId,
+                    // childId: request.childId,
                     gameSessionId: request.gameSessionId,
-                    ageLevel: request.ageLevel || "3-4",
+                    // ageLevel: request.ageLevel || "3-4",
                     gameId: request.gameId,
                     lessonId: request.lessonId,
                     gameVersion: request.gameVersion,
-                    gameType: request.gameType,
+                    // gameType: request.gameType,
                 }),
                 signal: AbortSignal.timeout(this.timeout),
             });
@@ -264,7 +264,7 @@ export class VoiceSessionClient {
 
         try {
             const formData = new FormData();
-            formData.append("childId", request.childId);
+            // formData.append("childId", request.childId);
             formData.append("audio_file", request.audioFile, "audio.wav");
             formData.append("questionIndex", request.questionIndex.toString());
             formData.append(
@@ -327,10 +327,11 @@ export class VoiceSessionClient {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
+                    sessionId: request.sessionId,
                     totalQuestionsExpect: request.totalQuestionsExpect,
                     isUserAborted: request.isUserAborted,
                     learner_id: request.learner_id,
-                    age_level: request.age_level,
+                    // age_level: request.age_level,
                 }),
                 signal: AbortSignal.timeout(this.timeout),
             });

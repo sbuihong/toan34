@@ -37,9 +37,16 @@ export enum TextureKeys {
     //--- SpriteSheet ---
     Sprite1 = 'sprite1',
     Sprite2 = 'sprite2',
+    Sprite3 = 'happy',
+    Sprite4 = 'sad',
 
     // --- Score Popup ---
     ScorePopup = 'score_popup',
+    Six = 'six',
+    Seven = 'seven',
+    Eight = 'eight',
+    Nine = 'nine',
+    Ten = 'ten',
     
 
     // --- End Game ---

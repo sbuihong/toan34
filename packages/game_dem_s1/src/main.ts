@@ -91,7 +91,11 @@ import { game } from "@iruka-edu/mini-game-sdk";
                          (uiScene as any).hideScorePopup();
                      }
 
+                    // Stop current scenes
                     window.gameScene.scene.stop();
+                    // Force stop UI scene so it re-inits on Scene1 start
+                    gamePhaser.scene.stop('UIScene'); 
+                    
                     window.gameScene.scene.start('Scene1', { isRestart: true }); 
                 } else {
                     console.error('GameScene instance not found on window. Cannot restart.');
