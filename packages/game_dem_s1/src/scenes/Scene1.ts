@@ -193,6 +193,9 @@ export default class Scene1 extends Phaser.Scene {
                 if (this.idleManager) this.idleManager.stop();
             },
             onRecordingStop: (audioBlob, duration) => {
+                // Fix Safari Volume Ducking
+                AudioManager.restoreAudioAfterRecording();
+
                 if (this.bgm && this.bgm.isPaused) this.bgm.resume();
                 this.isRecording = false;
                 this.btnMic.setScale(1); 

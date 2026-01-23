@@ -199,6 +199,45 @@ class AudioManager {
         }
     }
 
+    /**
+     * Sửa lỗi âm thanh Safari: Khôi phục âm lượng sau khi dùng microphone
+     * Safari tự động giảm âm lượng khi mic hoạt động (cơ chế ducking).
+     * Gọi hàm này sau khi dừng ghi âm để khôi phục âm lượng bình thường.
+     */
+    restoreAudioAfterRecording(): void {
+        try {
+            // 1. Resume AudioContext nếu bị suspended
+            if (Howler.ctx && Howler.ctx.state === 'suspended') {
+                console.log('[AudioManager] Safari fix: Resuming AudioContext...');
+                Howler.ctx.resume();
+            }
+
+            // 2. Reset global volume để buộc Safari làm mới luồng âm thanh
+            const currentVolume = Howler.volume();
+            Howler.volume(0);
+            
+            // Đợi một chút trước khi khôi phục âm lượng
+            setTimeout(() => {
+                Howler.volume(currentVolume || 1.0);
+                console.log('[AudioManager] Safari fix: Volume restored to', currentVolume || 1.0);
+            }, 50);
+
+            // 3. Phát âm thanh tĩnh để "đánh thức" âm thanh Safari
+            const silentSound = new Howl({
+                src: ['data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAAABkYXRhAAAAAA=='],
+                volume: 0.001, // Gần như im lặng
+                html5: true,
+            });
+            silentSound.once('end', () => {
+                silentSound.unload();
+            });
+            silentSound.play();
+
+        } catch (e) {
+            console.warn('[AudioManager] Safari fix error:', e);
+        }
+    }
+
     public getDuration(key: string): number {
         const sound = this.sounds[key];
         
