@@ -45,7 +45,7 @@ export default class UIScene extends Phaser.Scene {
         this.bannerText = this.add.image(cx, bannerY, textBannerKey).setScale(0.9).setOrigin(0.5, -0.7);
 
         // Hiển thị Decor
-        this.decorImage = this.add.image(cx * 1.79, bannerY + 290, TextureKeys.Decor).setScale(1).setOrigin(0.5, 0.5);
+        // this.decorImage = this.add.image(cx * 1.79, bannerY + 290, TextureKeys.Decor).setScale(1).setOrigin(0.5, 0.5);
         this.so1Image = this.add.image(cx * 0.135, bannerY + 180, TextureKeys.So1).setScale(1).setOrigin(0.5, -0.1);
         this.diceImage = this.add.image(cx * 0.265, bannerY + 170, TextureKeys.Dice).setScale(1).setOrigin(0.5, -0.1);
         
