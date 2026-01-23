@@ -271,7 +271,7 @@ export default class Scene1 extends Phaser.Scene {
         this.btnMic = this.add.image(cx, GameUtils.pctY(this, 0.85), TextureKeys.Mic) 
              .setScale(1).setInteractive().setVisible(false).setDepth(10);
 
-        this.btnMic.on('pointerdown', () => {
+        this.btnMic.on('pointerdown', async () => {
              // Block interaction if processing result
              if (this.isProcessing) return;
 
@@ -279,7 +279,14 @@ export default class Scene1 extends Phaser.Scene {
              if (this.isRecording) {
                  this.voiceRecorder.stop(); 
              } else {
-                 this.voiceRecorder.start();
+                 // Check permission explicitly
+                 const hasPermission = await this.voiceRecorder.checkPermission();
+                 if (hasPermission) {
+                    this.voiceRecorder.start();
+                 } else {
+                     console.log("Quyền Mic bị từ chối/chưa cấp.");
+                     alert("Quyền Mic bị từ chối/chưa cấp.");
+                 }
              }
         });
 
