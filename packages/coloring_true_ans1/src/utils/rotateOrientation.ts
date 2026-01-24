@@ -68,12 +68,11 @@ export function playVoiceLocked(
         if (now - lastRotateVoiceTime < ROTATE_VOICE_COOLDOWN) {
             return;
         }
-        if (currentVoiceKey === 'instruction' || 
-        currentVoiceKey === 'cau_do' || 
-        currentVoiceKey === 'voice_intro_s2') {
-            
-        interruptedVoiceKey = currentVoiceKey; // <--- LƯU LẠI TÊN NÓ
-    }
+        if (currentVoiceKey === 'voice_intro_s1' || 
+        currentVoiceKey === 'voice_intro_s2' || 
+        currentVoiceKey === 'voice_intro_s3') {
+            interruptedVoiceKey = currentVoiceKey; // <--- LƯU LẠI TÊN NÓ
+        }
     // ------------------------------------------
 
     lastRotateVoiceTime = now;
@@ -119,7 +118,7 @@ export function playVoiceLocked(
         currentVoiceKey = null;
     }
 
-    if (key === 'instruction' || key === 'cau_do' || key === 'voice_intro_s2') {
+    if (key === 'voice_intro_s1' || key === 'voice_intro_s2' || key === 'voice_intro_s3') {
         interruptedVoiceKey = null; // Reset nếu nó được chạy mới đàng hoàng
     }
 

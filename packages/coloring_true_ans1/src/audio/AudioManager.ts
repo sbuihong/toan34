@@ -22,7 +22,9 @@ const SOUND_MAP: Record<string, SoundConfig> = {
 
     // ---- Prompt Voice ----
     'voice-rotate': { src: `${BASE_PATH}prompt/rotate.mp3`, volume: 0.8 },
-    'voice_intro_s2': { src: `${BASE_PATH}prompt/instruction.mp3`, volume: 1 },
+    'voice_intro_s1': { src: `${BASE_PATH}prompt/instruction1.mp3`, volume: 1 },
+    'voice_intro_s2': { src: `${BASE_PATH}prompt/instruction2.mp3`, volume: 1 },
+    'voice_intro_s3': { src: `${BASE_PATH}prompt/instruction3.mp3`, volume: 1 },
     'hint': { src: `${BASE_PATH}prompt/hint.mp3`, volume: 1.0 },
 
     // ---- Correct Answer Variations ----

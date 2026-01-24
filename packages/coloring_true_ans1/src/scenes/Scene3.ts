@@ -98,7 +98,7 @@ export default class Scene3 extends Phaser.Scene {
 
         this.setupInput(); // Cài đặt sự kiện chạm/vuốt
 
-        // this.playIntroSequence(); // Chạy hướng dẫn đầu game (Đã chuyển sang click-to-start)
+        this.playIntroSequence(); // Chạy hướng dẫn đầu game (Đã chuyển sang click-to-start)
 
         // Sự kiện khi quay lại tab game (Wake up)
         this.events.on('wake', () => {
@@ -195,11 +195,10 @@ export default class Scene3 extends Phaser.Scene {
                     soundManager.context.resume();
                 }
                 // AudioManager.unlockAudio(); // ✅ Unlock Howler Audio
-
-                this.playIntroSequence();
+                // this.playIntroSequence();
                 return;
             }
-
+            this.playIntroSequence();
             this.idleManager.reset();
             this.stopIntro();
             this.stopActiveHint();
@@ -581,7 +580,7 @@ export default class Scene3 extends Phaser.Scene {
 
     private playIntroSequence() {
         this.isIntroActive = true;
-        // playVoiceLocked(null, 'voice_intro_s2');
+        playVoiceLocked(null, 'voice_intro_s3');
         // Đợi 1 chút rồi chạy animation tay hướng dẫn
         this.time.delayedCall(GameConstants.SCENE1.TIMING.INTRO_DELAY, () => {
             if (this.isIntroActive) this.runHandTutorial();

@@ -636,7 +636,7 @@ export default class Scene1 extends Phaser.Scene {
 
     private playIntroSequence() {
         this.isIntroActive = true;
-        playVoiceLocked(null, 'voice_intro_s2');
+        playVoiceLocked(null, 'voice_intro_s1');
         // Đợi 1 chút rồi chạy animation tay hướng dẫn
         this.time.delayedCall(GameConstants.SCENE1.TIMING.INTRO_DELAY, () => {
             if (this.isIntroActive) this.runHandTutorial();
