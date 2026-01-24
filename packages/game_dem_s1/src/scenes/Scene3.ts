@@ -572,7 +572,7 @@ export default class Scene3 extends Phaser.Scene {
         const targetX = this.btnMic.x;
         const targetY = this.btnMic.y;
 
-        this.handCursor.setPosition(targetX + 100, targetY + 100).setVisible(true).setScale(1);
+        this.handCursor.setPosition(targetX + 65, targetY + 50).setVisible(true).setScale(1);
 
         if (this.handTween) this.handTween.stop();
         this.handTween = this.tweens.add({
