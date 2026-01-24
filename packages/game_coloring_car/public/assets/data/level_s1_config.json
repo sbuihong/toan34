@@ -7,8 +7,7 @@
     "parts": [
       { "key": "1", "offsetX": 0, "offsetY": 0, "scale": 0.95, "hintPoints": [{"x": 0, "y": 0}]},
       { "key": "2", "offsetX": 0, "offsetY": 0, "scale": 0.95, "hintPoints": [{"x": -100, "y": -200}, {"x": 150, "y": -200}] },
-      { "key": "3", "offsetX": 0, "offsetY": 0, "scale": 0.95, "hintPoints": [{"x": -350, "y": 200},{"x": 350, "y": 200}]},
-      { "key": "4", "offsetX": 0, "offsetY": 0, "scale": 0.95, "hintPoints": [{"x": 0, "y": 180}, {"x": -580, "y": 180},{"x": 580, "y": 180}]}
+      { "key": "3", "offsetX": 0, "offsetY": 0, "scale": 0.95, "hintPoints": [{"x": -350, "y": 200},{"x": 350, "y": 200}]}
     ]
   }
 }             
