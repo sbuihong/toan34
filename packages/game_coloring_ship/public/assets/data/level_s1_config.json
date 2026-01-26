@@ -1,0 +1,18 @@
+{
+  "teacher": {
+    "baseScale": 0.8,
+    "outlineKey": "outline",
+    "baseX_pct": 0.5,
+    "baseY_pct": 0.5,
+    "parts": [
+      { "key": "1", "offsetX": 0, "offsetY": 0, "scale": 0.8, "hintPoints": [{"x": -150, "y": 0}]},
+      { "key": "2", "offsetX": 0, "offsetY": 0, "scale": 0.8, "hintPoints": [{"x": -230, "y": 280}] },
+      { "key": "3", "offsetX": 0, "offsetY": 0, "scale": 0.8, "hintPoints": [{"x": -570, "y": -100}]},
+      { "key": "4", "offsetX": 0, "offsetY": 0, "scale": 0.8, "hintPoints": [{"x": -570, "y": 60}]},
+      { "key": "5", "offsetX": 0, "offsetY": 0, "scale": 0.8, "hintPoints": [{"x": 570, "y": 230}]},
+      { "key": "6", "offsetX": 0, "offsetY": 0, "scale": 0.8, "hintPoints": [{"x": 570, "y": 50}]},
+      { "key": "7", "offsetX": 0, "offsetY": 0, "scale": 0.8, "hintPoints": [{"x": 300, "y": -350}]},
+      { "key": "8", "offsetX": 0, "offsetY": 0, "scale": 0.8, "hintPoints": [{"x": 270, "y": -130}]}
+    ]
+  }
+}             
