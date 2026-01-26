@@ -12,3 +12,4 @@ quiz-game
 *.md
 .prettierrc
 doc
+copy-projects.bat
