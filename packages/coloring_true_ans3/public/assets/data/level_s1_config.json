@@ -13,14 +13,14 @@
       "type": "teacher",
       "outlineKey": "q1",
       "baseX_pct": 0.33,
-      "baseY_pct": 0.4,
+      "baseY_pct": 0.5,
       "isStatic": true
     },
     {
       "type": "teacher",
       "outlineKey": "q2",
       "baseX_pct": 0.67,
-      "baseY_pct": 0.4,
+      "baseY_pct": 0.5,
       "isStatic": true
     },
     {
