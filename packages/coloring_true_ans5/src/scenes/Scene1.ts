@@ -249,7 +249,7 @@ export default class Scene1 extends Phaser.Scene {
                     .setOrigin(0.5, 0).setScale(0.7).setDepth(0);
 
         // --- DIVIDER LINE ---
-        const dividerHeight = board.displayHeight * 0.5;
+        const dividerHeight = board.displayHeight * 0.7;
         this.add.rectangle(board.x, board.y + board.displayHeight / 2, 4, dividerHeight, 0x000000)
             .setOrigin(0.5, 0.5)
             .setDepth(1);
