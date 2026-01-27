@@ -339,7 +339,7 @@ export default class Scene1 extends Phaser.Scene {
             if (part.hintPoints && Array.isArray(part.hintPoints)) {
                 hitArea.setData('hintPoints', part.hintPoints);
 
-                this.drawHintDebug(hitArea, part.hintPoints);
+                // this.drawHintDebug(hitArea, part.hintPoints);
             }
 
             // --- CẬP NHẬT: LƯU MÀU ĐÚNG (VALIDATION) ---
@@ -359,7 +359,7 @@ export default class Scene1 extends Phaser.Scene {
             .setInteractive({ pixelPerfect: true });
 
         // --- DEBUG: VẼ TRỤC TỌA ĐỘ ---
-        this.drawDebugAxes(outline);
+        // this.drawDebugAxes(outline);
     }
 
     /**
