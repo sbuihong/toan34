@@ -89,6 +89,6 @@ export default class PreloadScene extends Phaser.Scene {
 
     create() {
         // Tải xong thì chuyển sang Scene1
-        this.scene.start(SceneKeys.Scene2);
+        this.scene.start(SceneKeys.Scene1);
     }
 }
