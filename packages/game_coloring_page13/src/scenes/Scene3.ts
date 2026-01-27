@@ -68,7 +68,7 @@ export default class Scene3 extends Phaser.Scene {
             this.isWaitingForIntroStart = false;
             game.retryFromStart();
         } else {
-            this.isWaitingForIntroStart = true;
+            this.isWaitingForIntroStart = false; // ✅ Auto start for Scene 3
         }
     }
 
