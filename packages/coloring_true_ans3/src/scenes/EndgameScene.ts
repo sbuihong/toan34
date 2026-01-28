@@ -32,7 +32,7 @@ export default class EndGameScene extends Phaser.Scene {
         this.sound.stopAll();
         AudioManager.play('complete');
 
-        this.time.delayedCall(2000, () => {
+        this.time.delayedCall(1500, () => {
             AudioManager.play('fireworks');
             AudioManager.play('applause');
         });

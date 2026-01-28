@@ -196,3 +196,7 @@ import { game } from "@iruka-edu/mini-game-sdk";
         });
       },
     });
+
+    // --- E2E INTEGRATION ---
+    import { installIrukaE2E } from './e2e/installIrukaE2E';
+    installIrukaE2E(sdk);

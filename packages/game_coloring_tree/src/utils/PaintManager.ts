@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { GameConstants } from '../consts/GameConstants';
 import AudioManager from '../audio/AudioManager';
+import { game } from "@iruka-edu/mini-game-sdk";
 
 export class PaintManager {
     private scene: Phaser.Scene;
@@ -393,6 +394,7 @@ export class PaintManager {
             if (wrongPercentage > 0.00000001) {
                 console.log(`Wrong color detected! Wrong: ${(wrongPercentage*100).toFixed(1)}%`);
                 AudioManager.play('sfx-wrong');
+                game.recordWrong();
 
                 rt.clear();
                 
