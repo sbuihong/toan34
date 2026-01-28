@@ -144,6 +144,24 @@ export default class UIScene extends Phaser.Scene {
         });
     }
 
+    public showPalette() {
+        this.tweens.killTweensOf(this.paletteButtons);
+        
+        const paletteData = GameConstants.PALETTE_DATA;
+        this.paletteButtons.forEach((btn, i) => {
+            // Logic visual: Nút đầu tiên to hơn (đang chọn), các nút khác nhỏ hơn
+            // Eraser là nút cuối cùng
+            const isEraser = i === paletteData.length;
+            const isFirst = i === 0;
+
+            if (isFirst) {
+                btn.setScale(0.9).setAlpha(1);
+            } else {
+                btn.setScale(0.7).setAlpha(0.8);
+            }
+        });
+    }
+
     public hideBanners() {
         if (this.bannerImage) this.bannerImage.destroy();
         if (this.bannerText) this.bannerText.destroy();
@@ -157,6 +175,9 @@ export default class UIScene extends Phaser.Scene {
         // Re-create or update banners
         if (this.bannerImage) this.bannerImage.destroy();
         if (this.bannerText) this.bannerText.destroy();
+        
+        // Ensure palette is visible (in case it was hidden)
+        this.showPalette();
         
         const UI = GameConstants.SCENE1.UI;
         const cx = GameUtils.pctX(this, 0.5);
@@ -176,17 +197,12 @@ export default class UIScene extends Phaser.Scene {
         this.bannerImage = this.add.image(cx, bannerY, bannerKey).setScale(0.7).setOrigin(0.5, -0.1);
         this.bannerText = this.add.image(cx, bannerY, textBannerKey).setScale(0.9).setOrigin(0.5, -0.7);
 
-        // Reset palette visuals logic? 
-        // User said "không tắt" palette, so we might want to keep selection or reset?
-        // Let's keep it safe: just update the banners.
-
         // SYNC COLOR TO NEW PAINT MANAGER
         if (this.paintManager) {
-            if (this.isEraserActive) {
-                this.paintManager.setEraser();
-            } else {
-                this.paintManager.setColor(this.currentSelectedColor);
-            }
+            // Reset eraser state regardless (since we default to first color selected in visuals)
+             this.isEraserActive = false;
+             this.currentSelectedColor = GameConstants.PALETTE_DATA[0].color; // Default to first color
+             this.paintManager.setColor(this.currentSelectedColor);
         }
     }
 }

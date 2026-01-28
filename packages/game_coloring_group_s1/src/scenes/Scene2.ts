@@ -83,8 +83,8 @@ export default class Scene2 extends Phaser.Scene {
         // Check if UI Scene is already active
         const uiScene = this.scene.get(SceneKeys.UI);
         if (uiScene.scene.isActive()) {
-             (uiScene as any).updateSceneKey(SceneKeys.Scene2);
              (uiScene as any).paintManager = this.paintManager;
+             (uiScene as any).updateSceneKey(SceneKeys.Scene2);
         } else {
             this.scene.launch(SceneKeys.UI, { 
                 paintManager: this.paintManager,
@@ -144,6 +144,8 @@ export default class Scene2 extends Phaser.Scene {
     shutdown() {
         this.stopIntro();
 
+        AudioManager.stopAllVoicePrompts(); // Prevent audio overlap on scene change
+        
         this.paintManager = null as any; // Giải phóng bộ nhớ
         // REMOVED: this.scene.stop(SceneKeys.UI); // Keep UI alive
         // REMOVED: this.bgm.stop(); // Keep BGM alive
@@ -482,6 +484,8 @@ export default class Scene2 extends Phaser.Scene {
         // Kiểm tra điều kiện thắng
         if (this.finishedParts.size >= this.totalParts) {
             console.log('WIN SCENE 2!');
+
+            AudioManager.play('sfx-correct_s2');
 
             // --- Scene 2 Complete -> Next is Scene 3 ---
             

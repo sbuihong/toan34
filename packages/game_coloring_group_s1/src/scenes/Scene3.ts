@@ -67,8 +67,8 @@ export default class Scene3 extends Phaser.Scene {
         // Check if UI Scene is already active
         const uiScene = this.scene.get(SceneKeys.UI);
         if (uiScene.scene.isActive()) {
-             (uiScene as any).updateSceneKey(SceneKeys.Scene3);
              (uiScene as any).paintManager = this.paintManager;
+             (uiScene as any).updateSceneKey(SceneKeys.Scene3);
         } else {
             this.scene.launch(SceneKeys.UI, { 
                 paintManager: this.paintManager,
@@ -119,6 +119,8 @@ export default class Scene3 extends Phaser.Scene {
 
     shutdown() {
         this.stopIntro();
+
+        AudioManager.stopAllVoicePrompts(); // Prevent audio overlap on scene change
 
         this.paintManager = null as any;
         // REMOVED: this.scene.stop(SceneKeys.UI);
@@ -268,7 +270,7 @@ export default class Scene3 extends Phaser.Scene {
             if (part.hintPoints && Array.isArray(part.hintPoints)) {
                 hitArea.setData('hintPoints', part.hintPoints);
 
-                this.drawHintDebug(hitArea, part.hintPoints);
+                // this.drawHintDebug(hitArea, part.hintPoints);
             }
 
             this.unfinishedPartsMap.set(id, hitArea);
@@ -281,7 +283,7 @@ export default class Scene3 extends Phaser.Scene {
             .setDepth(900)
             .setInteractive({ pixelPerfect: true });
 
-        this.drawDebugAxes(outline);
+        // this.drawDebugAxes(outline);
     }
 
     private drawDebugAxes(image: Phaser.GameObjects.Image) {
@@ -421,6 +423,8 @@ export default class Scene3 extends Phaser.Scene {
 
         if (this.finishedParts.size >= this.totalParts) {
             console.log('WIN SCENE 3!');
+
+            AudioManager.play('sfx-correct_s2');
             
             // Xóa UI (Nút màu & Banner) -> REMOVED for transition
             // const uiScene = this.scene.get(SceneKeys.UI) as any;

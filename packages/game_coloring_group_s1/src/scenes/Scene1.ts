@@ -83,8 +83,8 @@ export default class Scene1 extends Phaser.Scene {
         const uiScene = this.scene.get(SceneKeys.UI);
         if (uiScene.scene.isActive()) {
              // If active, just update the banner/visuals for this scene
-             (uiScene as any).updateSceneKey(SceneKeys.Scene1);
              (uiScene as any).paintManager = this.paintManager;
+             (uiScene as any).updateSceneKey(SceneKeys.Scene1);
         } else {
             this.scene.launch(SceneKeys.UI, { 
                 paintManager: this.paintManager,
@@ -114,9 +114,6 @@ export default class Scene1 extends Phaser.Scene {
             if (this.input.keyboard) this.input.keyboard.enabled = true;
         });
 
-        // ✅ HIỂN THỊ FPS
-        // this.fpsCounter = new FPSCounter(this);
-
         // Nếu là restart (không cần chờ tap), chạy intro luôn
         if (!this.isWaitingForIntroStart) {
             const soundManager = this.sound as Phaser.Sound.WebAudioSoundManager;
@@ -145,6 +142,8 @@ export default class Scene1 extends Phaser.Scene {
 
     shutdown() {
         this.stopIntro();
+
+        AudioManager.stopAllVoicePrompts(); // Prevent audio overlap on scene change
 
         this.paintManager = null as any; // Giải phóng bộ nhớ
         // REMOVED: this.scene.stop(SceneKeys.UI); // Keep UI alive
@@ -217,9 +216,11 @@ export default class Scene1 extends Phaser.Scene {
         changeBackground('assets/images/bg/background.jpg');
 
         // Dừng nhạc nền cũ nếu có (tránh chồng nhạc)
-        if (this.sound.get(AudioKeys.BgmNen)) {
-            this.sound.stopByKey(AudioKeys.BgmNen);
-        }
+        // Check ALL instances of this key, not just the first one
+        this.sound.getAll(AudioKeys.BgmNen).forEach(sound => {
+            sound.stop();
+            sound.destroy();
+        });
         // Khởi tạo và phát nhạc nền mới
         this.bgm = this.sound.add(AudioKeys.BgmNen, {
             loop: true,

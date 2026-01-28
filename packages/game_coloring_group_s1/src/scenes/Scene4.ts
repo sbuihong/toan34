@@ -67,8 +67,8 @@ export default class Scene4 extends Phaser.Scene {
         // Check if UI Scene is already active
         const uiScene = this.scene.get(SceneKeys.UI);
         if (uiScene.scene.isActive()) {
-             (uiScene as any).updateSceneKey(SceneKeys.Scene4);
              (uiScene as any).paintManager = this.paintManager;
+             (uiScene as any).updateSceneKey(SceneKeys.Scene4);
         } else {
             this.scene.launch(SceneKeys.UI, { 
                 paintManager: this.paintManager,
@@ -119,6 +119,8 @@ export default class Scene4 extends Phaser.Scene {
 
     shutdown() {
         this.stopIntro();
+
+        AudioManager.stopAllVoicePrompts(); // Prevent audio overlap on scene change
 
         this.paintManager = null as any;
         this.scene.stop(SceneKeys.UI);

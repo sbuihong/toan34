@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { hideGameButtons, showGameButtons, sdk } from '../main';
 import { game } from "@iruka-edu/mini-game-sdk";
 import AudioManager from '../audio/AudioManager';
+import { SceneKeys, AudioKeys } from '../consts/Keys';
 import { changeBackground } from '../utils/BackgroundManager';
 import { resetVoiceState } from '../utils/rotateOrientation';
 
@@ -84,6 +85,7 @@ export default class EndGameScene extends Phaser.Scene {
         replayBtn.on('pointerdown', () => {
             this.time.removeAllEvents();
             this.sound.stopAll();
+            this.sound.stopByKey(AudioKeys.BgmNen); // Stop specific BGM
             AudioManager.stopAll();
             AudioManager.play('sfx-click');
             this.stopConfetti(); //
