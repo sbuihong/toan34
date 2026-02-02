@@ -95,11 +95,14 @@ export default class Scene1 extends Phaser.Scene {
         this.createLevel(); // Tạo nhân vật và các vùng tô màu
         
         // SDK Integration
-        game.setTotal(1);
+        // SDK Integration
+        game.setTotal(4); // Total 4 Scenes
         (window as any).irukaGameState = {
             startTime: Date.now(),
             currentScore: 0,
         };
+        sdk.score(this.score, 0);
+        sdk.progress({ levelIndex: 0, total: 4 });
         sdk.score(this.score, 0);
         sdk.progress({ levelIndex: 0, total: 1 });
         game.startQuestionTimer();
@@ -486,6 +489,7 @@ export default class Scene1 extends Phaser.Scene {
         sdk.progress({
             levelIndex: 0,
             score: this.score,
+            total: 4
         });
         game.finishQuestionTimer();
         if (this.finishedParts.size < this.totalParts) {
@@ -523,14 +527,15 @@ export default class Scene1 extends Phaser.Scene {
             console.log('WIN!');
 
             // --- GAME HUB COMPLETE ---
-            game.finalizeAttempt();
+            // --- GAME HUB PROGRESS ---
+             // Scene 1 Complete -> Next is Scene 2
             sdk.requestSave({
                 score: this.score,
                 levelIndex: 0,
             });
             sdk.progress({
-                levelIndex: 0, // Level complete -> set index + 1 if multi-level, here just complete
-                total: 1,
+                levelIndex: 0, 
+                total: 4,
                 score: this.score,
             });
 

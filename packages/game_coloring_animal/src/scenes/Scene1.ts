@@ -525,7 +525,7 @@ export default class Scene1 extends Phaser.Scene {
                 levelIndex: 0,
             });
             sdk.progress({
-                levelIndex: 0, // Level complete -> set index + 1 if multi-level, here just complete
+                levelIndex: 0,
                 total: 1,
                 score: this.score,
             });
@@ -623,23 +623,26 @@ export default class Scene1 extends Phaser.Scene {
         const UI = GameConstants.SCENE1.UI;
         const INTRO = GameConstants.SCENE1.INTRO_HAND;
 
-        // Tính toán tọa độ nút màu đầu tiên (Horizontal Layout)
-        // Copy logic from UIScene because we need the exact position of the first button
-        const spacingX = GameUtils.pctX(this, UI.PALETTE_SPACING_X);
-        const paletteData = GameConstants.PALETTE_DATA;
-        const totalItems = paletteData.length + 1;
-        const totalWidth = (totalItems - 1) * spacingX;
-        const startX = (GameUtils.getW(this) - totalWidth) / 2;
+        // Tính toán tọa độ nút màu đầu tiên (Vertical Layout - Match UIScene)
+        const spacingY = GameUtils.pctY(this, UI.PALETTE_SPACING_Y);
+        const paletteX = GameUtils.pctX(this, UI.PALETTE_X);
         
-        const paletteY = GameUtils.pctY(this, UI.PALETTE_Y);
+        const paletteData = GameConstants.PALETTE_DATA;
+        const totalItems = paletteData.length + 1; // +1 cho Eraser
+        const totalHeight = (totalItems - 1) * spacingY;
+        const startY = (GameUtils.getH(this) - totalHeight) / 1.5;
 
-        const dragY = destY + 30; // Kéo tay xuống thấp hơn điểm đích một chút để không che mất
+        // Nút màu đầu tiên (Red) nằm ở vị trí đầu
+        const firstBtnX = paletteX;
+        const firstBtnY = startY;
+
+        const dragY = destY + 10;
 
         if (!this.handHint) return;
 
         this.handHint.setOrigin(0, 0);
         // Start from the first color button position
-        this.handHint.setPosition(startX, paletteY).setAlpha(0).setScale(0.7);
+        this.handHint.setPosition(firstBtnX, firstBtnY).setAlpha(0).setScale(0.7);
 
         // --- CẬP NHẬT LOGIC HINT POINTS ---
         const hintPoints = target?.getData('hintPoints'); // Lấy danh sách điểm gợi ý
@@ -647,8 +650,8 @@ export default class Scene1 extends Phaser.Scene {
         const tweensChain: any[] = [
             {
                 alpha: 1,
-                x: startX,
-                y: paletteY,
+                x: firstBtnX,
+                y: firstBtnY,
                 duration: INTRO.MOVE,
                 ease: 'Power2',
             },

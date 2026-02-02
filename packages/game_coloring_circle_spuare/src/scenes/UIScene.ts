@@ -30,13 +30,17 @@ export default class UIScene extends Phaser.Scene {
 
     private bannerImage!: Phaser.GameObjects.Image;
     private bannerText!: Phaser.GameObjects.Image;
-    private decorImage!: Phaser.GameObjects.Image;
-    private so1Image!: Phaser.GameObjects.Image;
-    private diceImage!: Phaser.GameObjects.Image;
+    private cloud1!: Phaser.GameObjects.Image;
+    private cloud2!: Phaser.GameObjects.Image;
+    private cloud3!: Phaser.GameObjects.Image;
+    private smoke1!: Phaser.GameObjects.Image;
+    private smoke2!: Phaser.GameObjects.Image;
+    private smoke3!: Phaser.GameObjects.Image;
 
     private createUI() {
         const UI = GameConstants.SCENE1.UI;
         const cx = GameUtils.pctX(this, 0.5);
+        const cy = GameUtils.pctY(this, 0.5);
 
         // Tính toán vị trí Board dựa trên Banner
         const bannerY = GameUtils.pctY(this, UI.BANNER_Y);
@@ -46,10 +50,12 @@ export default class UIScene extends Phaser.Scene {
         let bannerKey = TextureKeys.S1_Banner;
         let textBannerKey = TextureKeys.S1_BannerText;
         let textOriginY = -0.9;
-        if (this.sceneKey === SceneKeys.Scene2) {
-            textBannerKey = TextureKeys.S2_BannerText;
-            textOriginY = -1.1;
-        }
+
+        
+        this.cloud1 = this.add.image(cx * 0.5, cy * 1.4, TextureKeys.S1_Cl1);
+        this.cloud2 = this.add.image(cx * 1.4, cy * 0.7, TextureKeys.S1_Cl2);
+        this.cloud3 = this.add.image(cx * 1.5, cy * 1.5, TextureKeys.S1_Cl3);
+        
 
         // Hiển thị Banner và Text
         this.bannerImage = this.add.image(cx, bannerY, bannerKey).setScale(0.8,0.75).setOrigin(0.5, -0.1);
@@ -138,13 +144,20 @@ export default class UIScene extends Phaser.Scene {
         this.sceneKey = sceneKey;
         const UI = GameConstants.SCENE1.UI;
         const cx = GameUtils.pctX(this, 0.5);
+        const cy = GameUtils.pctY(this, 0.5);
         const bannerY = GameUtils.pctY(this, UI.BANNER_Y);
 
         let textBannerKey = TextureKeys.S1_BannerText;
         let textOriginY = -0.9;
         if (this.sceneKey === SceneKeys.Scene2) {
+            if (this.cloud1) this.cloud1.destroy();
+            if (this.cloud2) this.cloud2.destroy();
+            if (this.cloud3) this.cloud3.destroy();
             textBannerKey = TextureKeys.S2_BannerText;
-            textOriginY = -0.9;
+            textOriginY = -1.1;
+            this.smoke1 = this.add.image(cx * 0.7, cy * 0.5, TextureKeys.S2_Sm1);
+            this.smoke2 = this.add.image(cx * 0.9, cy * 0.6, TextureKeys.S2_Sm2);
+            this.smoke3 = this.add.image(cx * 1.15, cy * 0.45, TextureKeys.S2_Sm3);
         }
 
         if (this.bannerText) {
@@ -156,9 +169,12 @@ export default class UIScene extends Phaser.Scene {
     public hideBanners() {
         if (this.bannerImage) this.bannerImage.destroy();
         if (this.bannerText) this.bannerText.destroy();
-        if (this.decorImage) this.decorImage.destroy();
-        if (this.so1Image) this.so1Image.destroy();
-        if (this.diceImage) this.diceImage.destroy();
+        if (this.cloud1) this.cloud1.destroy();
+        if (this.cloud2) this.cloud2.destroy();
+        if (this.cloud3) this.cloud3.destroy();
+        if (this.smoke1) this.smoke1.destroy();
+        if (this.smoke2) this.smoke2.destroy();
+        if (this.smoke3) this.smoke3.destroy();
     }
 
     public resetPaletteSelection() {

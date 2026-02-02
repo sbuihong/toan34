@@ -477,6 +477,7 @@ export default class Scene1 extends Phaser.Scene {
         sdk.progress({
             levelIndex: 0,
             score: this.score,
+            total: 1
         });
         game.finishQuestionTimer();
         if (this.finishedParts.size < this.totalParts) {

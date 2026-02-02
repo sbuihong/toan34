@@ -84,7 +84,7 @@ export default class Scene3 extends Phaser.Scene {
             currentScore: 0,
         };
         sdk.score(this.score, 0);
-        sdk.progress({ levelIndex: 2, total: 1 });
+        sdk.progress({ levelIndex: 2, total: 4 });
         game.startQuestionTimer();
 
         this.setupInput();
@@ -397,6 +397,7 @@ export default class Scene3 extends Phaser.Scene {
         sdk.progress({
             levelIndex: 2,
             score: this.score,
+            total: 4
         });
         game.finishQuestionTimer();
         if (this.finishedParts.size < this.totalParts) {

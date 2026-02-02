@@ -88,13 +88,13 @@ export default class Scene1 extends Phaser.Scene {
         this.createLevel(); // Tạo nhân vật và các vùng tô màu
         
         // SDK Integration
-        game.setTotal(2);
+        game.setTotal(1);
         (window as any).irukaGameState = {
             startTime: Date.now(),
             currentScore: 0,
         };
         sdk.score(this.score, 0);
-        sdk.progress({ levelIndex: 0, total: 2 });
+        sdk.progress({ levelIndex: 0, total: 1 });
         game.startQuestionTimer();
 
         this.setupInput(); // Cài đặt sự kiện chạm/vuốt
@@ -483,6 +483,7 @@ export default class Scene1 extends Phaser.Scene {
         sdk.progress({
             levelIndex: 0,
             score: this.score,
+            total: 1
         });
         game.finishQuestionTimer();
         if (this.finishedParts.size < this.totalParts) {
@@ -520,7 +521,7 @@ export default class Scene1 extends Phaser.Scene {
             console.log('WIN!');
 
             // --- GAME HUB COMPLETE ---
-            game.finalizeAttempt();
+            // game.finalizeAttempt(); // Not yet
             sdk.requestSave({
                 score: this.score,
                 levelIndex: 0,
@@ -533,16 +534,8 @@ export default class Scene1 extends Phaser.Scene {
 
             AudioManager.play('sfx-correct_s2');
             
-            // Xóa UI (Nút màu & Banner)
-            // Xóa UI (Nút màu & Banner) -> SKIP FOR SCENE 2 TRANSITION
-            // const uiScene = this.scene.get(SceneKeys.UI) as any;
-            // if (uiScene) {
-            //     if (uiScene.hidePalette) uiScene.hidePalette();
-            //     if (uiScene.hideBanners) uiScene.hideBanners();
-            // }
-
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
-                this.scene.start(SceneKeys.Scene2);
+                this.scene.start(SceneKeys.Scene2, { score: this.score, levelIndex: 1 });
             });
         }
     }

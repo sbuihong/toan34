@@ -602,22 +602,14 @@ export default class Scene1 extends Phaser.Scene {
                 levelIndex: 0,
             });
             sdk.progress({
-                levelIndex: 0, // Level complete -> set index + 1 if multi-level, here just complete
+                levelIndex: 0, 
                 total: 1,
                 score: this.score,
             });
 
             AudioManager.play('sfx-correct_s2');
             
-            // Xóa UI (Nút màu & Banner)
-            const uiScene = this.scene.get(SceneKeys.UI) as any;
-            if (uiScene) {
-                if (uiScene.hidePalette) uiScene.hidePalette();
-                if (uiScene.hideBanners) uiScene.hideBanners();
-            }
-
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
-                // Transition to Scene 2
                 this.scene.start(SceneKeys.EndGame);
             });
         }

@@ -19,98 +19,6 @@ import { game } from "@iruka-edu/mini-game-sdk";
         }
     }
 
-    // --- CẤU HÌNH GAME (Theo cấu trúc mẫu: FIT) ---
-    const config: Phaser.Types.Core.GameConfig = {
-        type: Phaser.AUTO,
-        width: 1920,
-        height: 1080,
-        parent: 'game-container',
-        scene: [PreloadScene, Scene1, Scene2, Scene3, Scene4, EndGameScene, UIScene],
-        backgroundColor: '#ffffff',
-        scale: {
-            mode: Phaser.Scale.FIT,       // Dùng FIT để co giãn giữ tỉ lệ
-            autoCenter: Phaser.Scale.CENTER_BOTH,
-        },
-        physics: {
-            default: 'arcade',
-            arcade: { debug: false }
-        },
-        render: {
-            transparent: true,
-        },
-    };
-
-    const gamePhaser = new Phaser.Game(config);
-
-    // --- 2. XỬ LÝ LOGIC UI & XOAY MÀN HÌNH (Giữ nguyên logic cũ của bạn) ---
-    function updateUIButtonScale() {
-        //const container = document.getElementById('game-container')!;
-        const resetBtn = document.getElementById('btn-reset') as HTMLImageElement;
-        if (!resetBtn) return; // Thêm check null cho an toàn
-
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        const newSize = h / 9;
-
-        resetBtn.style.width = `${newSize}px`;
-        resetBtn.style.height = `${newSize}px`;
-    }
-
-    export function showGameButtons() {
-        const reset = document.getElementById('btn-reset');
-        if (reset) reset.style.display = 'block';
-    }
-
-    export function hideGameButtons() {
-        const reset = document.getElementById('btn-reset');
-        if (reset) reset.style.display = 'none';
-    }
-
-    function attachResetHandler() {
-        const resetBtn = document.getElementById('btn-reset') as HTMLImageElement;
-        
-        if (resetBtn) {
-            resetBtn.onclick = () => {
-                console.log('Restart button clicked. Stopping all audio and restarting scene.');
-
-                game.retryFromStart(); // Track restart
-
-                //game.sound.stopAll();
-                gamePhaser.sound.stopByKey('bgm-nen');
-                AudioManager.stopAll();
-                // 2. PHÁT SFX CLIC
-                try {
-                    AudioManager.play('sfx-click'); 
-                } catch (e) {
-                    console.error("Error playing sfx-click on restart:", e);
-                }
-
-                if (window.gameScene && window.gameScene.scene) {
-                    window.gameScene.scene.stop();
-                    window.gameScene.scene.start('Scene1', { isRestart: true }); 
-                } else {
-                    console.error('GameScene instance not found on window. Cannot restart.');
-                }
-                
-                hideGameButtons();
-            };
-        }
-    }
-
-    // Khởi tạo xoay màn hình
-    initRotateOrientation(gamePhaser);
-    attachResetHandler();
-
-    // Scale nút
-    updateUIButtonScale();
-    window.addEventListener('resize', updateUIButtonScale);
-    window.addEventListener('orientationchange', updateUIButtonScale);
-
-    document.getElementById('btn-reset')?.addEventListener('sfx-click', () => {
-
-        window.gameScene?.scene.restart();
-    });
-
     // --- GAME HUB SDK INTEGRATION ---
 
     function applyResize(width: number, height: number) {
@@ -120,11 +28,12 @@ import { game } from "@iruka-edu/mini-game-sdk";
             gameDiv.style.height = `${height}px`;
         }
         // Phaser Scale FIT: gọi resize để canvas update
-        gamePhaser.scale.resize(width, height);
+        if (gamePhaser) gamePhaser.scale.resize(width, height);
     }
 
 
     function broadcastSetState(payload: any) {
+        if (!gamePhaser) return;
         // chuyển xuống scene đang chạy để bạn route helper (audio/score/timer/result...)
         const scene = gamePhaser.scene.getScenes(true)[0] as any;
         scene?.applyHubState?.(payload);
@@ -147,6 +56,8 @@ import { game } from "@iruka-edu/mini-game-sdk";
     }
 
 
+import { installIrukaE2E } from './e2e/installIrukaE2E';
+
     export const sdk = game.createGameSdk({
       hubOrigin: getHubOrigin(),
 
@@ -154,28 +65,31 @@ import { game } from "@iruka-edu/mini-game-sdk";
       onInit(ctx: any) {
         // reset stats session nếu bạn muốn
         // game.resetAll(); hoặc statsCore.resetAll()
+        installIrukaE2E(sdk);
 
 
         // báo READY sau INIT
         sdk.ready({
-          capabilities: ["resize", "score", "complete", "save_load", "set_state"],
+          capabilities: ["resize", "score", "complete", "save_load", "set_state", "stats", "hint"],
         });
       },
 
 
       onStart() {
-        gamePhaser.scene.resume("Scene1");
-        gamePhaser.scene.resume("EndGameScene");
+        if (gamePhaser) {
+             gamePhaser.scene.resume("Scene1");
+             gamePhaser.scene.resume("EndGameScene");
+        }
       },
 
 
       onPause() {
-        gamePhaser.scene.pause("Scene1");
+        if (gamePhaser) gamePhaser.scene.pause("Scene1");
       },
 
 
       onResume() {
-        gamePhaser.scene.resume("Scene1");
+        if (gamePhaser) gamePhaser.scene.resume("Scene1");
       },
 
 
@@ -197,4 +111,88 @@ import { game } from "@iruka-edu/mini-game-sdk";
           extras: { reason: "hub_quit", stats: game.prepareSubmitData() },
         });
       },
+    });
+
+    let gamePhaser: Phaser.Game;
+
+    // --- CẤU HÌNH GAME (Theo cấu trúc mẫu: FIT) ---
+    const config: Phaser.Types.Core.GameConfig = {
+        type: Phaser.AUTO,
+        width: 1920,
+        height: 1080,
+        parent: 'game-container',
+        scene: [PreloadScene, Scene1, Scene2, Scene3, Scene4, EndGameScene, UIScene],
+        backgroundColor: '#ffffff',
+        scale: {
+            mode: Phaser.Scale.FIT,       // Dùng FIT để co giãn giữ tỉ lệ
+            autoCenter: Phaser.Scale.CENTER_BOTH,
+        },
+        physics: {
+            default: 'arcade',
+            arcade: { debug: false }
+        },
+        render: {
+            transparent: true,
+        },
+    };
+
+    gamePhaser = new Phaser.Game(config);
+
+    // --- 4. CẤU HÌNH UI & XOAY MÀN HÌNH (SETUP SAU KHI GAME ĐÃ KHỞI TẠO) ---
+
+    export function showGameButtons() {
+        const reset = document.getElementById('btn-reset');
+        if (reset) reset.style.display = 'block';
+    }
+
+    export function hideGameButtons() {
+        const reset = document.getElementById('btn-reset');
+        if (reset) reset.style.display = 'none';
+    }
+
+    function updateUIButtonScale() {
+        const resetBtn = document.getElementById('btn-reset') as HTMLImageElement;
+        if (!resetBtn) return;
+        const h = window.innerHeight;
+        const newSize = h / 9;
+        resetBtn.style.width = `${newSize}px`;
+        resetBtn.style.height = `${newSize}px`;
+    }
+
+    function attachResetHandler() {
+        const resetBtn = document.getElementById('btn-reset') as HTMLImageElement;
+        if (resetBtn) {
+            resetBtn.onclick = () => {
+                console.log('Restart button clicked.');
+                game.retryFromStart(); 
+                gamePhaser.sound.stopByKey('bgm-nen');
+                AudioManager.stopAll();
+                try {
+                    AudioManager.play('sfx-click'); 
+                } catch (e) { console.error(e); }
+
+                // Sử dụng gamePhaser để quản lý Scene, an toàn hơn dùng biến global window.gameScene
+                if (window.gameScene && window.gameScene.scene) {
+                    window.gameScene.scene.stop();
+                    // Basic restart logic: Check which scene is active or just restart Scene 1
+                    // Since Scene1 is entry, we restart Scene1.
+                    // However, if Scene 2 is active, we might want to restart Scene 2?
+                    // User code had Scene1 restart. Stick to that or use active scene.
+                    gamePhaser.scene.start(SceneKeys.Scene1, { isRestart: true });
+                }
+                
+                hideGameButtons();
+            };
+        }
+    }
+
+    // Init Logic
+    initRotateOrientation(gamePhaser);
+    attachResetHandler();
+    updateUIButtonScale();
+    window.addEventListener('resize', updateUIButtonScale);
+    window.addEventListener('orientationchange', updateUIButtonScale);
+
+    document.getElementById('btn-reset')?.addEventListener('sfx-click', () => {
+        window.gameScene?.scene.restart();
     });

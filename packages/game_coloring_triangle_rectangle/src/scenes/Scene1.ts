@@ -542,7 +542,7 @@ export default class Scene1 extends Phaser.Scene {
             // }
 
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
-                this.scene.start(SceneKeys.Scene2);
+                this.scene.start(SceneKeys.Scene2, { score: this.score });
             });
         }
     }

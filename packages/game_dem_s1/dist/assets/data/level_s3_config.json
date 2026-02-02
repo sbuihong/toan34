@@ -1,0 +1,14 @@
+{
+    "targetText": {
+        "start": 1,
+        "end": 1
+    },
+    "images": [
+        {
+            "textureKey": "car",
+            "baseX_pct": 0.5,
+            "baseY_pct": 0.5,
+            "baseScale": 1
+        }
+    ]
+}

@@ -57,11 +57,11 @@ export default class Scene2 extends Phaser.Scene {
      * Khởi tạo lại dữ liệu khi Scene bắt đầu (hoặc Restart)
      * QUAN TRỌNG: Phải clear các Map/Set để tránh lỗi "Zombie Object" (tham chiếu đến object cũ đã bị destroy)
      */
-    init(data?: { isRestart: boolean }) {
+    init(data?: { isRestart: boolean; score?: number }) {
         this.unfinishedPartsMap.clear();
         this.finishedParts.clear();
         this.totalParts = 0;
-        this.score = 0;
+        this.score = data?.score || 0;
 
         if (data?.isRestart) {
             game.retryFromStart();
@@ -91,13 +91,9 @@ export default class Scene2 extends Phaser.Scene {
         this.createLevel(); // Tạo nhân vật và các vùng tô màu
         
         // SDK Integration
-        game.setTotal(3);
-        (window as any).irukaGameState = {
-            startTime: Date.now(),
-            currentScore: 0,
-        };
+        // game.setTotal(1); // Set in Scene1
         sdk.score(this.score, 0);
-        sdk.progress({ levelIndex: 0, total: 1 });
+        sdk.progress({ levelIndex: 1, total: 2 });
         game.startQuestionTimer();
 
         this.setupInput(); // Cài đặt sự kiện chạm/vuốt
@@ -310,8 +306,9 @@ export default class Scene2 extends Phaser.Scene {
         (window as any).irukaGameState.currentScore = this.score;
         sdk.score(this.score, 1);
         sdk.progress({
-            levelIndex: 0,
+            levelIndex: 1,
             score: this.score,
+            total: 2
         });
         game.finishQuestionTimer();
         if (this.finishedParts.size < this.totalParts) {
@@ -347,14 +344,15 @@ export default class Scene2 extends Phaser.Scene {
             console.log('SCENE 2 WIN!');
 
             // --- GAME HUB COMPLETE ---
+            // --- GAME HUB COMPLETE ---
             game.finalizeAttempt();
             sdk.requestSave({
                 score: this.score,
-                levelIndex: 0,
+                levelIndex: 1,
             });
             sdk.progress({
-                levelIndex: 0, 
-                total: 1,
+                levelIndex: 1, 
+                total: 2,
                 score: this.score,
             });
 

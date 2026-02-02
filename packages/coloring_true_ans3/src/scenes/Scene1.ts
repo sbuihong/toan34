@@ -602,7 +602,7 @@ export default class Scene1 extends Phaser.Scene {
                 levelIndex: 0,
             });
             sdk.progress({
-                levelIndex: 0, // Level complete -> set index + 1 if multi-level, here just complete
+                levelIndex: 0, 
                 total: 1,
                 score: this.score,
             });
@@ -617,7 +617,7 @@ export default class Scene1 extends Phaser.Scene {
             }
 
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
-                // Transition to Scene 2
+                // Transition to EndGame
                 this.scene.start(SceneKeys.EndGame);
             });
         }

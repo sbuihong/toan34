@@ -5,11 +5,12 @@ import { GameUtils } from '../utils/GameUtils';
 import { changeBackground } from '../utils/BackgroundManager';
 import { VoiceRecorder } from '../utils/VoiceRecorder';
 import AudioManager from '../audio/AudioManager';
-import { showGameButtons, hideGameButtons } from '../main';
+import { showGameButtons, hideGameButtons, sdk } from '../main';
 import { useVoiceEvaluation } from '../hooks/useVoiceEvaluation';
 import { playVoiceLocked, setGameSceneReference, resetVoiceState } from '../utils/rotateOrientation';
 import { IdleManager } from '../utils/IdleManager';
 import { ExerciseType } from '../lib/voice-session-client';
+import { game } from "@iruka-edu/mini-game-sdk";
 
 export default class Scene1 extends Phaser.Scene {
     // --- PROPERTIES ---
@@ -71,7 +72,17 @@ export default class Scene1 extends Phaser.Scene {
         this.isStartingSession = false;
         this.isRecording = false;
         this.isRestart = data?.isRestart || false;
+        this.isRestart = data?.isRestart || false;
         resetVoiceState();
+        
+        // SDK: Set Total Levels
+        game.setTotal(this.LEVEL_KEYS.length || 1);
+        (window as any).irukaGameState = {
+            startTime: Date.now(),
+            currentScore: 0,
+        };
+        sdk.score(0, 0);
+        sdk.progress({ levelIndex: 0, total: this.LEVEL_KEYS.length || 1 });
     }
 
     create() {
@@ -479,6 +490,14 @@ export default class Scene1 extends Phaser.Scene {
 
             this.processResult(result);
             this.submissionCount++;
+            
+            // SDK: Report Progress
+            sdk.score(result.score, result.score); 
+            sdk.progress({
+                 levelIndex: this.currentQuestionIndex, // Current Level (0-based)
+                 total: this.LEVEL_KEYS.length,
+                 score: result.score
+            });
 
             // Show Popup
             const uiScene = this.scene.get(SceneKeys.UI) as any; 

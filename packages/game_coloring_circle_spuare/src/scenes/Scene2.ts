@@ -38,6 +38,8 @@ export default class Scene2 extends Phaser.Scene {
     private score: number = 0; // Điểm số hiện tại
     private isIntroActive: boolean = false; // Cờ chặn tương tác khi đang chạy intro
 
+    private currentLevelIndex: number = 0;
+
     // --- UI COMPONENTS ---
     
     private get handHint(): Phaser.GameObjects.Image | undefined {
@@ -57,11 +59,14 @@ export default class Scene2 extends Phaser.Scene {
      * Khởi tạo lại dữ liệu khi Scene bắt đầu (hoặc Restart)
      * QUAN TRỌNG: Phải clear các Map/Set để tránh lỗi "Zombie Object" (tham chiếu đến object cũ đã bị destroy)
      */
-    init(data?: { isRestart: boolean }) {
+    init(data?: { isRestart: boolean; score?: number; levelIndex?: number }) {
         this.unfinishedPartsMap.clear();
         this.finishedParts.clear();
         this.totalParts = 0;
-        this.score = 0;
+        
+        // Restore state from Scene 1
+        this.score = data?.score ?? 0;
+        this.currentLevelIndex = data?.levelIndex ?? 1; // Default to 1 if coming directly or Scene 1 finished 0
 
         if (data?.isRestart) {
             game.retryFromStart();
@@ -91,13 +96,13 @@ export default class Scene2 extends Phaser.Scene {
         this.createLevel(); // Tạo nhân vật và các vùng tô màu
         
         // SDK Integration
-        game.setTotal(3);
+        game.setTotal(5);
         (window as any).irukaGameState = {
             startTime: Date.now(),
-            currentScore: 0,
+            currentScore: this.score,
         };
         sdk.score(this.score, 0);
-        sdk.progress({ levelIndex: 0, total: 1 });
+        sdk.progress({ levelIndex: this.currentLevelIndex, total: 5 });
         game.startQuestionTimer();
 
         this.setupInput(); // Cài đặt sự kiện chạm/vuốt
@@ -313,15 +318,7 @@ export default class Scene2 extends Phaser.Scene {
         this.score += 1;
         (window as any).irukaGameState.currentScore = this.score;
         sdk.score(this.score, 1);
-        sdk.progress({
-            levelIndex: 0,
-            score: this.score,
-        });
-        game.finishQuestionTimer();
-        if (this.finishedParts.size < this.totalParts) {
-            game.startQuestionTimer();
-        }
-
+        
         // --- LOGIC AUTO-FILL THÔNG MINH ---
         if (usedColors.size === 1) {
             const singleColor = usedColors.values().next().value || 0;
@@ -336,6 +333,9 @@ export default class Scene2 extends Phaser.Scene {
         this.unfinishedPartsMap.delete(id);
 
         AudioManager.play('sfx-ting');
+        
+        // Increment Level Index for each part completed
+        this.currentLevelIndex++;
 
         // Hiệu ứng nhấp nháy báo hiệu hoàn thành
         this.tweens.add({
@@ -352,14 +352,16 @@ export default class Scene2 extends Phaser.Scene {
 
             // --- GAME HUB COMPLETE ---
             game.finalizeAttempt();
-            sdk.requestSave({
-                score: this.score,
-                levelIndex: 0,
-            });
+            
             sdk.progress({
-                levelIndex: 0, 
-                total: 1,
+                levelIndex: this.currentLevelIndex, 
+                total: 5,
                 score: this.score,
+            });
+
+            sdk.complete({
+                timeMs: Date.now() - ((window as any).irukaGameState?.startTime ?? Date.now()),
+                extras: { reason: "finish", stats: game.prepareSubmitData() },
             });
 
             AudioManager.play('sfx-correct_s2');
@@ -373,6 +375,13 @@ export default class Scene2 extends Phaser.Scene {
 
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
                 this.scene.start(SceneKeys.EndGame);
+            });
+        } else {
+             // If not complete, just update progress
+             sdk.progress({
+                levelIndex: this.currentLevelIndex,
+                score: this.score,
+                total: 5
             });
         }
     }

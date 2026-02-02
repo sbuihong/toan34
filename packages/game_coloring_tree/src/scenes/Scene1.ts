@@ -94,7 +94,7 @@ export default class Scene1 extends Phaser.Scene {
             currentScore: 0,
         };
         sdk.score(this.score, 0);
-        sdk.progress({ levelIndex: 0, total: this.levels.length });
+        sdk.progress({ levelIndex: 0, total: 2 });
         game.startQuestionTimer();
 
         this.setupInput(); // Cài đặt sự kiện chạm/vuốt
@@ -542,7 +542,7 @@ export default class Scene1 extends Phaser.Scene {
             // }
 
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
-                this.scene.start(SceneKeys.Scene2);
+                this.scene.start(SceneKeys.Scene2, { score: this.score });
             });
         }
     }

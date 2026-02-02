@@ -1,0 +1,20 @@
+{
+    "targetText": {
+        "start": 1,
+        "end": 1
+    },
+    "images": [
+        {
+            "textureKey": "ball",
+            "baseX_pct": 0.3,
+            "baseY_pct": 0.6,
+            "baseScale": 0.7
+        },
+        {
+            "textureKey": "ball2",
+            "baseX_pct": 0.7,
+            "baseY_pct": 0.6,
+            "baseScale": 0.7
+        }
+    ]
+}

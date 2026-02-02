@@ -418,7 +418,7 @@ export default class Scene1 extends Phaser.Scene {
                 levelIndex: 0,
             });
             sdk.progress({
-                levelIndex: 0, // Level complete -> set index + 1 if multi-level, here just complete
+                levelIndex: 0,
                 total: 1,
                 score: this.score,
             });

@@ -34,8 +34,6 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image(TextureKeys.BtnS1_3, 'assets/images/color/cl3.png');
         this.load.image(TextureKeys.BtnS1_4, 'assets/images/color/cl4.png');
         this.load.image(TextureKeys.BtnS1_5, 'assets/images/color/cl5.png');
-        this.load.image(TextureKeys.BtnS1_6, 'assets/images/color/cl6.png');
-        this.load.image(TextureKeys.BtnS1_7, 'assets/images/color/cl7.png');
 
         // - Config JSON
         // Lưu ý: File json gốc là level_s1_config.json, nhưng ta load vào key LevelS1Config

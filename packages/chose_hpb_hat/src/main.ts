@@ -7,6 +7,7 @@ import EndGameScene from './scenes/EndgameScene';
 import { initRotateOrientation } from './utils/rotateOrientation';
 import AudioManager from './audio/AudioManager';
 import { game } from "@iruka-edu/mini-game-sdk";
+import { installIrukaE2E } from './e2e/installIrukaE2E';
 
     declare global {
         interface Window {
@@ -154,7 +155,7 @@ import { game } from "@iruka-edu/mini-game-sdk";
 
         // báo READY sau INIT
         sdk.ready({
-          capabilities: ["resize", "score", "complete", "save_load", "set_state"],
+          capabilities: ["resize", "score", "complete", "save_load", "set_state", "stats", "hint"],
         });
       },
 
@@ -194,3 +195,5 @@ import { game } from "@iruka-edu/mini-game-sdk";
         });
       },
     });
+
+    installIrukaE2E(sdk);

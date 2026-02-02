@@ -8,15 +8,6 @@ export const GameConstants = {
     // =========================================
     // CẤU HÌNH CHUNG (SYSTEM)
     // =========================================
-    PALETTE_DATA: [
-        { key: TextureKeys.BtnS1_1, color: 0xE05136 },
-        { key: TextureKeys.BtnS1_2, color: 0xFFE007 },
-        { key: TextureKeys.BtnS1_3, color: 0x499343 },
-        { key: TextureKeys.BtnS1_4, color: 0x539BD7 }, 
-        { key: TextureKeys.BtnS1_5, color: 0xFDAB12 },
-        { key: TextureKeys.BtnS1_6, color: 0xE97090 },
-        { key: TextureKeys.BtnS1_7, color: 0x000000 },
-    ],
     DEBUG_MODE: true, // Set false khi release
     IDLE: {
         /** Thời gian chờ trước khi hiện gợi ý (ms). 10000 = 10 giây */
@@ -34,18 +25,15 @@ export const GameConstants = {
     },
 
     // =========================================
-    // SCENE 1: TÔ MÀU (CROCODILE)
+    // SCENE 1: Chọn Đáp Án
     // =========================================
     SCENE1: {
         UI: {
             BANNER_Y: 0.001,
             // BẢNG
             BOARD_OFFSET: 0.03,
-            /** Vị trí Y của hàng màu (Tỉ lệ màn hình) - Bên dưới */
-            PALETTE_Y: 0.88,
-            /** Khoảng cách ngang giữa các nút màu (Tỉ lệ màn hình) */
-            PALETTE_SPACING_X: 0.11,
-            
+            // Khoảng cách các đáp án
+            PADDING_ANS: 0.1,
             // Tọa độ đích cho bàn tay hướng dẫn Intro
             HAND_INTRO_END_X: 0.42,
             HAND_INTRO_END_Y: 0.4,
@@ -66,16 +54,6 @@ export const GameConstants = {
             DRAG: 800,
             RUB: 400,
         }
-    },
-
-    // =========================================
-    // CẤU HÌNH VẼ (PAINT MANAGER)
-    // =========================================
-    PAINT: {
-        BRUSH_SIZE: 100,
-        /** Tỉ lệ tô màu để tính là hoàn thành (0.90 = 90%) */
-        WIN_PERCENT: 0.90,
-        DEFAULT_COLOR: 0x5EA455
     },
 
     // =========================================

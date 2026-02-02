@@ -7,191 +7,198 @@ import EndGameScene from './scenes/EndgameScene';
 import { initRotateOrientation } from './utils/rotateOrientation';
 import AudioManager from './audio/AudioManager';
 import { game } from "@iruka-edu/mini-game-sdk";
+import { installIrukaE2E } from './e2e/installIrukaE2E';
 
-    declare global {
-        interface Window {
-            gameScene: any;
-            irukaHost: any; // Khai báo thêm để TS không báo lỗi
-            irukaGameState: any;
-        }
+declare global {
+    interface Window {
+        gameScene: any;
+        irukaHost: any; // Khai báo thêm để TS không báo lỗi
+        irukaGameState: any;
     }
+}
 
-    // --- CẤU HÌNH GAME (Theo cấu trúc mẫu: FIT) ---
-    const config: Phaser.Types.Core.GameConfig = {
-        type: Phaser.AUTO,
-        width: 1920,
-        height: 1080,
-        parent: 'game-container',
-        scene: [PreloadScene, Scene1, EndGameScene, UIScene],
-        backgroundColor: '#ffffff',
-        scale: {
-            mode: Phaser.Scale.FIT,       // Dùng FIT để co giãn giữ tỉ lệ
-            autoCenter: Phaser.Scale.CENTER_BOTH,
-        },
-        physics: {
-            default: 'arcade',
-            arcade: { debug: false }
-        },
-        render: {
-            transparent: true,
-        },
-    };
+// --- GAME HUB SDK INTEGRATION ---
 
-    const gamePhaser = new Phaser.Game(config);
-
-    // --- 2. XỬ LÝ LOGIC UI & XOAY MÀN HÌNH (Giữ nguyên logic cũ của bạn) ---
-    function updateUIButtonScale() {
-        //const container = document.getElementById('game-container')!;
-        const resetBtn = document.getElementById('btn-reset') as HTMLImageElement;
-        if (!resetBtn) return; // Thêm check null cho an toàn
-
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        const newSize = h / 9;
-
-        resetBtn.style.width = `${newSize}px`;
-        resetBtn.style.height = `${newSize}px`;
+function applyResize(width: number, height: number) {
+    const gameDiv = document.getElementById('game-container');
+    if (gameDiv) {
+        gameDiv.style.width = `${width}px`;
+        gameDiv.style.height = `${height}px`;
     }
+    // Phaser Scale FIT: gọi resize để canvas update
+    if (gamePhaser) gamePhaser.scale.resize(width, height);
+}
 
-    export function showGameButtons() {
-        const reset = document.getElementById('btn-reset');
-        if (reset) reset.style.display = 'block';
-    }
 
-    export function hideGameButtons() {
-        const reset = document.getElementById('btn-reset');
-        if (reset) reset.style.display = 'none';
-    }
+function broadcastSetState(payload: any) {
+    if (!gamePhaser) return;
+    // chuyển xuống scene đang chạy để bạn route helper (audio/score/timer/result...)
+    const scene = gamePhaser.scene.getScenes(true)[0] as any;
+    scene?.applyHubState?.(payload);
+}
 
-    function attachResetHandler() {
-        const resetBtn = document.getElementById('btn-reset') as HTMLImageElement;
-        
-        if (resetBtn) {
-            resetBtn.onclick = () => {
-                console.log('Restart button clicked. Stopping all audio and restarting scene.');
 
-                game.retryFromStart(); // Track restart
+// lấy hubOrigin: tốt nhất từ query param, fallback document.referrer
+function getHubOrigin(): string {
+  const qs = new URLSearchParams(window.location.search);
+  const o = qs.get("hubOrigin");
+  if (o) return o;
 
-                //game.sound.stopAll();
-                gamePhaser.sound.stopByKey('bgm-nen');
-                AudioManager.stopAll();
-                // 2. PHÁT SFX CLIC
-                try {
-                    AudioManager.play('sfx-click'); 
-                } catch (e) {
-                    console.error("Error playing sfx-click on restart:", e);
-                }
 
-                if (window.gameScene && window.gameScene.scene) {
-                    window.gameScene.scene.stop();
-                    window.gameScene.scene.start('Scene1', { isRestart: true }); 
-                } else {
-                    console.error('GameScene instance not found on window. Cannot restart.');
-                }
-                
-                hideGameButtons();
-            };
-        }
-    }
+  // fallback: origin của referrer (hub)
+  try {
+    const ref = document.referrer;
+    if (ref) return new URL(ref).origin;
+  } catch {}
+  return "*"; // nếu protocol của bạn bắt buộc origin cụ thể thì KHÔNG dùng "*"
+}
 
-    // Khởi tạo xoay màn hình
-    initRotateOrientation(gamePhaser);
-    attachResetHandler();
 
-    // Scale nút
-    updateUIButtonScale();
-    window.addEventListener('resize', updateUIButtonScale);
-    window.addEventListener('orientationchange', updateUIButtonScale);
+export const sdk = game.createGameSdk({
+  hubOrigin: getHubOrigin(),
 
-    document.getElementById('btn-reset')?.addEventListener('sfx-click', () => {
 
-        window.gameScene?.scene.restart();
+  onInit(ctx: any) {
+    // reset stats session nếu bạn muốn
+    // game.resetAll(); hoặc statsCore.resetAll()
+    installIrukaE2E(sdk);
+
+
+    // báo READY sau INIT
+    sdk.ready({
+      capabilities: ["resize", "score", "complete", "save_load", "set_state", "stats", "hint"],
     });
+  },
 
-    // --- GAME HUB SDK INTEGRATION ---
 
-    function applyResize(width: number, height: number) {
-        const gameDiv = document.getElementById('game-container');
-        if (gameDiv) {
-            gameDiv.style.width = `${width}px`;
-            gameDiv.style.height = `${height}px`;
-        }
-        // Phaser Scale FIT: gọi resize để canvas update
-        gamePhaser.scale.resize(width, height);
+  onStart() {
+    if (gamePhaser) {
+         gamePhaser.scene.resume("Scene1");
+         gamePhaser.scene.resume("EndGameScene");
     }
+  },
 
 
-    function broadcastSetState(payload: any) {
-        // chuyển xuống scene đang chạy để bạn route helper (audio/score/timer/result...)
-        const scene = gamePhaser.scene.getScenes(true)[0] as any;
-        scene?.applyHubState?.(payload);
-    }
+  onPause() {
+    if (gamePhaser) gamePhaser.scene.pause("Scene1");
+  },
 
 
-    // lấy hubOrigin: tốt nhất từ query param, fallback document.referrer
-    function getHubOrigin(): string {
-      const qs = new URLSearchParams(window.location.search);
-      const o = qs.get("hubOrigin");
-      if (o) return o;
+  onResume() {
+    if (gamePhaser) gamePhaser.scene.resume("Scene1");
+  },
 
 
-      // fallback: origin của referrer (hub)
-      try {
-        const ref = document.referrer;
-        if (ref) return new URL(ref).origin;
-      } catch {}
-      return "*"; // nếu protocol của bạn bắt buộc origin cụ thể thì KHÔNG dùng "*"
-    }
+  onResize(size: any) {
+    applyResize(size.width, size.height);
+  },
 
 
-    export const sdk = game.createGameSdk({
-      hubOrigin: getHubOrigin(),
+  onSetState(state: any) {
+    broadcastSetState(state);
+  },
 
 
-      onInit(ctx: any) {
-        // reset stats session nếu bạn muốn
-        // game.resetAll(); hoặc statsCore.resetAll()
-
-
-        // báo READY sau INIT
-        sdk.ready({
-          capabilities: ["resize", "score", "complete", "save_load", "set_state"],
-        });
-      },
-
-
-      onStart() {
-        gamePhaser.scene.resume("Scene1");
-        gamePhaser.scene.resume("EndGameScene");
-      },
-
-
-      onPause() {
-        gamePhaser.scene.pause("Scene1");
-      },
-
-
-      onResume() {
-        gamePhaser.scene.resume("Scene1");
-      },
-
-
-      onResize(size: any) {
-        applyResize(size.width, size.height);
-      },
-
-
-      onSetState(state: any) {
-        broadcastSetState(state);
-      },
-
-
-      onQuit() {
-        // QUIT: chốt attempt là quit + gửi complete
-        game.finalizeAttempt("quit");
-        sdk.complete({
-          timeMs: Date.now() - ((window as any).irukaGameState?.startTime ?? Date.now()),
-          extras: { reason: "hub_quit", stats: game.prepareSubmitData() },
-        });
-      },
+  onQuit() {
+    // QUIT: chốt attempt là quit + gửi complete
+    game.finalizeAttempt("quit");
+    sdk.complete({
+      timeMs: Date.now() - ((window as any).irukaGameState?.startTime ?? Date.now()),
+      extras: { reason: "hub_quit", stats: game.prepareSubmitData() },
     });
+  },
+});
+
+let gamePhaser: Phaser.Game;
+
+// --- CẤU HÌNH GAME (Theo cấu trúc mẫu: FIT) ---
+const config: Phaser.Types.Core.GameConfig = {
+    type: Phaser.AUTO,
+    width: 1920,
+    height: 1080,
+    parent: 'game-container',
+    scene: [PreloadScene, Scene1, EndGameScene, UIScene],
+    backgroundColor: '#ffffff',
+    scale: {
+        mode: Phaser.Scale.FIT,       // Dùng FIT để co giãn giữ tỉ lệ
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+    },
+    physics: {
+        default: 'arcade',
+        arcade: { debug: false }
+    },
+    render: {
+        transparent: true,
+    },
+};
+
+gamePhaser = new Phaser.Game(config);
+
+// --- 2. XỬ LÝ LOGIC UI & XOAY MÀN HÌNH (Giữ nguyên logic cũ của bạn) ---
+function updateUIButtonScale() {
+    //const container = document.getElementById('game-container')!;
+    const resetBtn = document.getElementById('btn-reset') as HTMLImageElement;
+    if (!resetBtn) return; // Thêm check null cho an toàn
+
+    const h = window.innerHeight;
+    const newSize = h / 9;
+
+    resetBtn.style.width = `${newSize}px`;
+    resetBtn.style.height = `${newSize}px`;
+}
+
+export function showGameButtons() {
+    const reset = document.getElementById('btn-reset');
+    if (reset) reset.style.display = 'block';
+}
+
+export function hideGameButtons() {
+    const reset = document.getElementById('btn-reset');
+    if (reset) reset.style.display = 'none';
+}
+
+function attachResetHandler() {
+    const resetBtn = document.getElementById('btn-reset') as HTMLImageElement;
+    
+    if (resetBtn) {
+        resetBtn.onclick = () => {
+            console.log('Restart button clicked. Stopping all audio and restarting scene.');
+
+            game.retryFromStart(); // Track restart
+
+            //game.sound.stopAll();
+            gamePhaser.sound.stopByKey('bgm-nen');
+            AudioManager.stopAll();
+            // 2. PHÁT SFX CLIC
+            try {
+                AudioManager.play('sfx-click'); 
+            } catch (e) {
+                console.error("Error playing sfx-click on restart:", e);
+            }
+
+            if (window.gameScene && window.gameScene.scene) {
+                window.gameScene.scene.stop();
+                window.gameScene.scene.start(Scene1, { isRestart: true }); 
+                // fix: dùng Scene1 thay vì 'Scene1' nếu import
+            } else {
+                console.error('GameScene instance not found on window. Cannot restart.');
+            }
+            
+            hideGameButtons();
+        };
+    }
+}
+
+// Khởi tạo xoay màn hình
+initRotateOrientation(gamePhaser);
+attachResetHandler();
+
+// Scale nút
+updateUIButtonScale();
+window.addEventListener('resize', updateUIButtonScale);
+window.addEventListener('orientationchange', updateUIButtonScale);
+
+document.getElementById('btn-reset')?.addEventListener('sfx-click', () => {
+
+    window.gameScene?.scene.restart();
+});

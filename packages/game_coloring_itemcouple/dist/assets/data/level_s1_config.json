@@ -1,0 +1,14 @@
+{
+  "teacher": {
+    "baseScale": 0.7,
+    "outlineKey": "outline",
+    "baseX_pct": 0.5,
+    "baseY_pct": 0.55,
+    "parts": [
+      { "key": "1", "offsetX": 0, "offsetY": 0, "scale": 0.7, "correctColor": 13444389, "hintPoints": [{"x": -300, "y": -100}]},
+      { "key": "2", "offsetX": 0, "offsetY": 0, "scale": 0.7, "correctColor": 16572715, "hintPoints": [{"x": -300, "y": 150}] },
+      { "key": "3", "offsetX": 0, "offsetY": 0, "scale": 0.7, "correctColor": 13720733, "hintPoints": [{"x": 350, "y": 500}]},
+      { "key": "4", "offsetX": 0, "offsetY": 0, "scale": 0.7, "correctColor": 3441881, "hintPoints": [{"x": 350, "y": 200}]}
+    ]
+  }
+}             

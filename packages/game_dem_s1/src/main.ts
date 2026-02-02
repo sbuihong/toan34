@@ -180,8 +180,11 @@ import { game } from "@iruka-edu/mini-game-sdk";
 
         // báo READY sau INIT
         sdk.ready({
-          capabilities: ["resize", "score", "complete", "save_load", "set_state"],
+          capabilities: ["resize", "score", "complete", "save_load", "set_state", "stats", "hint"],
         });
+        
+        // E2E Hook
+        import("./e2e/installIrukaE2E").then((m) => m.installIrukaE2E(gamePhaser, sdk));
       },
 
 

@@ -18,6 +18,91 @@ import { game } from "@iruka-edu/mini-game-sdk";
         }
     }
 
+    // --- 0. HELPER FUNCTIONS ---
+    function applyResize(width: number, height: number) {
+        const gameDiv = document.getElementById('game-container');
+        if (gameDiv) {
+            gameDiv.style.width = `${width}px`;
+            gameDiv.style.height = `${height}px`;
+        }
+        if (gamePhaser) {
+             gamePhaser.scale.resize(width, height);
+        }
+    }
+
+    function broadcastSetState(payload: any) {
+        // chuyển xuống scene đang chạy
+        if (!gamePhaser) return;
+        const scene = gamePhaser.scene.getScenes(true)[0] as any;
+        scene?.applyHubState?.(payload);
+    }
+
+    function getHubOrigin(): string {
+      const qs = new URLSearchParams(window.location.search);
+      const o = qs.get("hubOrigin");
+      if (o) return o;
+      try {
+        const ref = document.referrer;
+        if (ref) return new URL(ref).origin;
+      } catch {}
+      return "*"; 
+    }
+
+    // --- 1. BIẾN GLOBAL CHO GAME PHASER ---
+    // Khai báo trước để SDK callback có thể tham chiếu (dù lúc đầu là undefined)
+    let gamePhaser: Phaser.Game;
+
+    // --- 2. KHỞI TẠO SDK TRƯỚC (Để hook E2E có ngay lập tức) ---
+    import { installIrukaE2E } from './e2e/installIrukaE2E';
+
+    export const sdk = game.createGameSdk({
+      hubOrigin: getHubOrigin(),
+
+      onInit(ctx: any) {
+        // Có thể gamePhaser chưa ready ở đây nếu init quá nhanh, nhưng thường thì ok
+        // Reset stats session nếu cần
+        
+        sdk.ready({
+          capabilities: ["resize", "score", "complete", "save_load", "set_state", "stats", "hint"],
+        });
+      },
+
+      onStart() {
+        if(gamePhaser) {
+            gamePhaser.scene.resume("Scene1");
+            gamePhaser.scene.resume("EndGameScene");
+        }
+      },
+
+      onPause() {
+        if(gamePhaser) gamePhaser.scene.pause("Scene1");
+      },
+
+      onResume() {
+        if(gamePhaser) gamePhaser.scene.resume("Scene1");
+      },
+
+      onResize(size: any) {
+        applyResize(size.width, size.height);
+      },
+
+      onSetState(state: any) {
+        broadcastSetState(state);
+      },
+
+      onQuit() {
+        game.finalizeAttempt("quit");
+        sdk.complete({
+          timeMs: Date.now() - ((window as any).irukaGameState?.startTime ?? Date.now()),
+          extras: { reason: "hub_quit", stats: game.prepareSubmitData() },
+        });
+      },
+    });
+
+    // Cài đặt Hook ngay lập tức!
+    installIrukaE2E(sdk);
+
+    // --- 3. CẤU HÌNH & KHỞI TẠO GAME PHASER ---
     // --- CẤU HÌNH GAME (Theo cấu trúc mẫu: FIT) ---
     const config: Phaser.Types.Core.GameConfig = {
         type: Phaser.AUTO,
@@ -39,13 +124,13 @@ import { game } from "@iruka-edu/mini-game-sdk";
         },
     };
 
-    const gamePhaser = new Phaser.Game(config);
+    // Khởi tạo Game sau khi SDK đã sẵn sàng hook
+    gamePhaser = new Phaser.Game(config);
 
-    // --- 2. XỬ LÝ LOGIC UI & XOAY MÀN HÌNH (Giữ nguyên logic cũ của bạn) ---
+    // --- 4. XỬ LÝ LOGIC UI & HELPER KHÁC ---
     function updateUIButtonScale() {
-        //const container = document.getElementById('game-container')!;
         const resetBtn = document.getElementById('btn-reset') as HTMLImageElement;
-        if (!resetBtn) return; // Thêm check null cho an toàn
+        if (!resetBtn) return; 
 
         const h = window.innerHeight;
         const newSize = h / 9;
@@ -69,18 +154,17 @@ import { game } from "@iruka-edu/mini-game-sdk";
         
         if (resetBtn) {
             resetBtn.onclick = () => {
-                console.log('Restart button clicked. Stopping all audio and restarting scene.');
+                console.log('Restart button clicked.');
 
                 game.retryFromStart(); // Track restart
 
-                //game.sound.stopAll();
-                gamePhaser.sound.stopByKey('bgm-nen');
+                if(gamePhaser) gamePhaser.sound.stopByKey('bgm-nen');
                 AudioManager.stopAll();
-                // 2. PHÁT SFX CLIC
+                
                 try {
                     AudioManager.play('sfx-click'); 
                 } catch (e) {
-                    console.error("Error playing sfx-click on restart:", e);
+                    console.error("Error playing sfx-click:", e);
                 }
 
                 if (window.gameScene && window.gameScene.scene) {
@@ -95,7 +179,7 @@ import { game } from "@iruka-edu/mini-game-sdk";
         }
     }
 
-    // Khởi tạo xoay màn hình
+    // Init logic phụ
     initRotateOrientation(gamePhaser);
     attachResetHandler();
 
@@ -105,94 +189,5 @@ import { game } from "@iruka-edu/mini-game-sdk";
     window.addEventListener('orientationchange', updateUIButtonScale);
 
     document.getElementById('btn-reset')?.addEventListener('sfx-click', () => {
-
         window.gameScene?.scene.restart();
-    });
-
-    // --- GAME HUB SDK INTEGRATION ---
-
-    function applyResize(width: number, height: number) {
-        const gameDiv = document.getElementById('game-container');
-        if (gameDiv) {
-            gameDiv.style.width = `${width}px`;
-            gameDiv.style.height = `${height}px`;
-        }
-        // Phaser Scale FIT: gọi resize để canvas update
-        gamePhaser.scale.resize(width, height);
-    }
-
-
-    function broadcastSetState(payload: any) {
-        // chuyển xuống scene đang chạy để bạn route helper (audio/score/timer/result...)
-        const scene = gamePhaser.scene.getScenes(true)[0] as any;
-        scene?.applyHubState?.(payload);
-    }
-
-
-    // lấy hubOrigin: tốt nhất từ query param, fallback document.referrer
-    function getHubOrigin(): string {
-      const qs = new URLSearchParams(window.location.search);
-      const o = qs.get("hubOrigin");
-      if (o) return o;
-
-
-      // fallback: origin của referrer (hub)
-      try {
-        const ref = document.referrer;
-        if (ref) return new URL(ref).origin;
-      } catch {}
-      return "*"; // nếu protocol của bạn bắt buộc origin cụ thể thì KHÔNG dùng "*"
-    }
-
-
-    export const sdk = game.createGameSdk({
-      hubOrigin: getHubOrigin(),
-
-
-      onInit(ctx: any) {
-        // reset stats session nếu bạn muốn
-        // game.resetAll(); hoặc statsCore.resetAll()
-
-
-        // báo READY sau INIT
-        sdk.ready({
-          capabilities: ["resize", "score", "complete", "save_load", "set_state"],
-        });
-      },
-
-
-      onStart() {
-        gamePhaser.scene.resume("Scene1");
-        gamePhaser.scene.resume("EndGameScene");
-      },
-
-
-      onPause() {
-        gamePhaser.scene.pause("Scene1");
-      },
-
-
-      onResume() {
-        gamePhaser.scene.resume("Scene1");
-      },
-
-
-      onResize(size: any) {
-        applyResize(size.width, size.height);
-      },
-
-
-      onSetState(state: any) {
-        broadcastSetState(state);
-      },
-
-
-      onQuit() {
-        // QUIT: chốt attempt là quit + gửi complete
-        game.finalizeAttempt("quit");
-        sdk.complete({
-          timeMs: Date.now() - ((window as any).irukaGameState?.startTime ?? Date.now()),
-          extras: { reason: "hub_quit", stats: game.prepareSubmitData() },
-        });
-      },
     });

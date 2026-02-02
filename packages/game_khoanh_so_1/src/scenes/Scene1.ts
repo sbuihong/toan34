@@ -1,4 +1,3 @@
-
 import Phaser from 'phaser';
 import { SceneKeys, TextureKeys, AudioKeys, DataKeys } from '../consts/Keys';
 import { GameConstants } from '../consts/GameConstants';
@@ -12,6 +11,8 @@ import { IdleManager } from '../utils/IdleManager';
 // Managers
 import { LassoManager } from '../managers/LassoManager';
 import { ObjectManager } from '../managers/ObjectManager';
+import { game } from "@iruka-edu/mini-game-sdk";
+import { sdk } from '../main';
 
 export default class Scene1 extends Phaser.Scene {
     private bgm!: Phaser.Sound.BaseSound;
@@ -85,6 +86,16 @@ export default class Scene1 extends Phaser.Scene {
             this.scene.launch(SceneKeys.UI, { sceneKey: SceneKeys.Scene1 });
             this.scene.bringToTop(SceneKeys.UI);
         }
+        
+        // SDK Integration
+        game.setTotal(1);
+        (window as any).irukaGameState = {
+            startTime: Date.now(),
+            currentScore: 0,
+        };
+        sdk.score(0, 0);
+        sdk.progress({ levelIndex: 0, total: 1 });
+        game.startQuestionTimer();
     }
 
 
@@ -286,11 +297,19 @@ export default class Scene1 extends Phaser.Scene {
             AudioManager.play("sfx-ting");
             this.objectManager.highlightObjects(selectedObjects, true);
             
+            // SDK: Record Score
+            game.recordCorrect({ scoreDelta: 1 });
+            sdk.score(1, 1);
+            sdk.progress({ levelIndex: 0, total: 1, score: 1 });
+
             // Ẩn gợi ý nếu đang hiện
             this.hideHint();
             
             // Vô hiệu hóa input để tránh spam
             this.lassoManager.disable();
+
+            // --- GAME HUB COMPLETE ---
+            game.finalizeAttempt();
 
             // Đợi WIN_DELAY rồi chuyển cảnh
             const t = GameConstants.SCENE1.TIMING.WIN_DELAY;
@@ -317,11 +336,11 @@ export default class Scene1 extends Phaser.Scene {
             });
             
             AudioManager.play("sfx-wrong");
-            
-            // Cooldown: Phạt người chơi đợi 1s
+            game.recordWrong();
+            // Cooldown: Phạt người chơi đợi 
             this.lassoManager.disable();
             
-            this.time.delayedCall(1000, () => {
+            this.time.delayedCall(500, () => {
                 this.lassoManager.enable();
             });
         }
@@ -337,6 +356,7 @@ export default class Scene1 extends Phaser.Scene {
      */
     private showHint() {
         // 1. Tìm quả bóng đúng
+        game.addHint();
         const ball = this.objectManager.getAllObjects().find(obj => obj.texture.key === TextureKeys.S1_Ball);
         if (!ball) return; // Không tìm thấy bóng thì thôi
 

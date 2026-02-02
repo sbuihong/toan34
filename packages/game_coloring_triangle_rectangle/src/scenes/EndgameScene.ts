@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { hideGameButtons, showGameButtons, sdk } from '../main';
 import { game } from "@iruka-edu/mini-game-sdk";
 import AudioManager from '../audio/AudioManager';
+import { SceneKeys, AudioKeys } from '../consts/Keys';
 import { changeBackground } from '../utils/BackgroundManager';
 import { resetVoiceState } from '../utils/rotateOrientation';
 
@@ -29,7 +30,7 @@ export default class EndGameScene extends Phaser.Scene {
         const w = this.scale.width; 
         const h = this.scale.height;
         AudioManager.loadAll();
-        this.sound.stopAll();
+        // this.sound.stopAll();
         AudioManager.play('complete');
 
         this.time.delayedCall(1500, () => {
@@ -68,6 +69,7 @@ export default class EndGameScene extends Phaser.Scene {
                 repeat: -1,
                 ease: 'Sine.easeInOut',
             });
+        }
         
         //  === NÚT CHỨC NĂNG ===
         const btnScale = Math.min(w, h) / 1280;
@@ -105,19 +107,20 @@ export default class EndGameScene extends Phaser.Scene {
             AudioManager.play('sfx-click');
             AudioManager.stopAll();
             this.stopConfetti(); //
-            this.scene.start('MenuScene');
 
             // ✅ Gửi COMPLETE cho Game Hub
             const state = (window as any).irukaGameState || {};
             const timeMs = state.startTime ? Date.now() - state.startTime : 0;
             
             game.finalizeAttempt(); 
-            const extraData = game.prepareSubmitData();
+            // const extraData = game.prepareSubmitData();
 
             sdk.complete({
                 timeMs: Date.now() - ((window as any).irukaGameState?.startTime ?? Date.now()),
                 extras: { reason: "user_exit", stats: game.prepareSubmitData() },
             });
+
+            this.scene.start('MenuScene');
         });
 
         // === optional: hover effect ===
@@ -128,7 +131,6 @@ export default class EndGameScene extends Phaser.Scene {
 
         hideGameButtons();
         this.createConfettiEffect();
-    }      
     }
     
     private createConfettiEffect(): void {

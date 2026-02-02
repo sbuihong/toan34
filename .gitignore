@@ -8,6 +8,7 @@ compare-pick-game
 compare-quantity-game
 prog-game
 quiz-game
+game-test
 .prettierrc
 copy-projects.bat
 *.text

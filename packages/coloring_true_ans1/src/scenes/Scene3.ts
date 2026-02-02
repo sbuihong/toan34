@@ -87,13 +87,13 @@ export default class Scene3 extends Phaser.Scene {
         this.createLevel(); // Tạo nhân vật và các vùng tô màu
         
         // SDK Integration
-        game.setTotal(1);
+        game.setTotal(3);
         (window as any).irukaGameState = {
             startTime: Date.now(),
             currentScore: 0,
         };
         sdk.score(this.score, 0);
-        sdk.progress({ levelIndex: 2, total: 1 });
+        sdk.progress({ levelIndex: 2, total: 3 });
         game.startQuestionTimer();
 
         this.setupInput(); // Cài đặt sự kiện chạm/vuốt
@@ -546,9 +546,13 @@ export default class Scene3 extends Phaser.Scene {
                 levelIndex: 2,
             });
             sdk.progress({
-                levelIndex: 2, // Level complete -> set index + 1 if multi-level, here just complete
-                total: 1,
+                levelIndex: 2, 
+                total: 3,
                 score: this.score,
+            });
+            sdk.complete({
+                  timeMs: Date.now() - ((window as any).irukaGameState?.startTime ?? Date.now()),
+                  extras: { reason: "finish", stats: game.prepareSubmitData() },
             });
 
             AudioManager.play('sfx-correct_s2');

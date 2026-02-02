@@ -144,6 +144,8 @@ import { game } from "@iruka-edu/mini-game-sdk";
     }
 
 
+import { installIrukaE2E } from './e2e/installIrukaE2E';
+
     export const sdk = game.createGameSdk({
       hubOrigin: getHubOrigin(),
 
@@ -151,11 +153,12 @@ import { game } from "@iruka-edu/mini-game-sdk";
       onInit(ctx: any) {
         // reset stats session nếu bạn muốn
         // game.resetAll(); hoặc statsCore.resetAll()
+        installIrukaE2E(sdk);
 
 
         // báo READY sau INIT
         sdk.ready({
-          capabilities: ["resize", "score", "complete", "save_load", "set_state"],
+          capabilities: ["resize", "score", "complete", "save_load", "set_state", "stats", "hint"],
         });
       },
 

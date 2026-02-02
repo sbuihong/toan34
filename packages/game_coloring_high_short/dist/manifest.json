@@ -1,0 +1,21 @@
+{
+  "id": "game_coloring_high_short_low_long",
+  "name": "Game Tô Màu Cao-Thấp-Dài-Ngắn-Hơn",
+  "short_name": "Tô Màu Cao-Thấp-Dài-Ngắn-Hơn",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "thumb1.png",
+      "sizes": "308x211",
+      "type": "image/png"
+    },
+    {
+      "src": "thumb2.png",
+      "sizes": "343x170",
+      "type": "image/png"
+    }
+  ]
+}

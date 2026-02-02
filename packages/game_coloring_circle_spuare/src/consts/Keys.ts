@@ -18,13 +18,15 @@ export enum TextureKeys {
     HandHint = 'hand_hint',
     // BoardRight = 'board_right',
 
-    // --- Scene 1 (New Crocodile) ---
+    // --- Scene 1  ---
     S1_Banner = 'banner_s2',
     S1_BannerText = 'text_banner_s1',
     S1_Board = 'board_s2',
 
-    // --- Scene 2 ---
-    S2_BannerText = 'text_banner_s2',
+    // --- Cloud ---
+    S1_Cl1 = 'cl1',
+    S1_Cl2 = 'cl2',
+    S1_Cl3 = 'cl3',
 
     S1_Outline = 'outline',
     S1_1 = '1',
@@ -35,11 +37,16 @@ export enum TextureKeys {
     BtnS1_4 = 's1_btn_4',
 
     // --- Scene 2 ---
+    S2_BannerText = 'text_banner_s2',
     S2_Outline = 's2_outline',
     S2_1 = 's2_1',
     S2_2 = 's2_2',
     S2_3 = 's2_3',
     S2_4 = 's2_4',
+
+    S2_Sm1 = 'sm1',
+    S2_Sm2 = 'sm2',
+    S2_Sm3 = 'sm3',
 
     // --- End Game ---
     End_Icon = 'icon_end',

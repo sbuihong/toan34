@@ -101,7 +101,7 @@ export default class Scene2 extends Phaser.Scene {
             currentScore: 0,
         };
         sdk.score(this.score, 0);
-        sdk.progress({ levelIndex: 1, total: 1 }); // Scene 2 index 1? Or just progress.
+        sdk.progress({ levelIndex: 1, total: 4 });
         game.startQuestionTimer();
 
         this.setupInput(); // Cài đặt sự kiện chạm/vuốt
@@ -451,6 +451,7 @@ export default class Scene2 extends Phaser.Scene {
         sdk.progress({
             levelIndex: 1, // Scene 2
             score: this.score,
+            total: 4
         });
         game.finishQuestionTimer();
         if (this.finishedParts.size < this.totalParts) {
