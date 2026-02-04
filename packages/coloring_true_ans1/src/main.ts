@@ -156,7 +156,7 @@ import { game } from "@iruka-edu/mini-game-sdk";
             resetBtn.onclick = () => {
                 console.log('Restart button clicked.');
 
-                game.retryFromStart(); // Track restart
+                //game.retryFromStart(); // DUPLICATE // Track restart
 
                 if(gamePhaser) gamePhaser.sound.stopByKey('bgm-nen');
                 AudioManager.stopAll();

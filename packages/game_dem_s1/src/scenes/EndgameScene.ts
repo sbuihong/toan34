@@ -25,7 +25,7 @@ export default class EndGameScene extends Phaser.Scene {
     }
 
     create() {
-        game.finalizeAttempt(); // Confirm game finished
+        // game.finalizeAttempt(); // DUPLICATE - Phải gọi ở Scene chính khi WIN
         resetVoiceState();
         const w = this.scale.width; 
         const h = this.scale.height;
@@ -112,7 +112,7 @@ export default class EndGameScene extends Phaser.Scene {
             const state = (window as any).irukaGameState || {};
             const timeMs = state.startTime ? Date.now() - state.startTime : 0;
             
-            game.finalizeAttempt(); 
+            // game.finalizeAttempt(); // DUPLICATE
             // const extraData = game.prepareSubmitData();
 
             sdk.complete({
@@ -120,7 +120,7 @@ export default class EndGameScene extends Phaser.Scene {
                 extras: { reason: "user_exit", stats: game.prepareSubmitData() },
             });
 
-            this.scene.start('MenuScene');
+            this.scene.start('EndGameScene');
         });
 
         // === optional: hover effect ===

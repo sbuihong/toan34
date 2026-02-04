@@ -79,7 +79,7 @@ configureSdkContext({
             resetBtn.onclick = async () => {
                 console.log('Restart button clicked. Stopping all audio and restarting scene.');
 
-                game.retryFromStart(); // Track restart
+                //game.retryFromStart(); // DUPLICATE
 
                 //game.sound.stopAll();
                 gamePhaser.sound.stopByKey('bgm-nen');

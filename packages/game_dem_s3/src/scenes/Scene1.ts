@@ -198,6 +198,9 @@ export default class Scene1 extends Phaser.Scene {
                 const uiScene = this.scene.get(SceneKeys.UI) as any;
                 if (uiScene?.showFinalScorePopup) uiScene.showFinalScorePopup(endData.finalScore);
                 
+                // ✅ Finalize attempt khi hoàn thành tất cả 3 levels
+                game.finalizeAttempt();
+                
                 // Transition to End Game scene
                 this.time.delayedCall(GameConstants.SCENE1.DELAYS.ENDGAME_TRANSITION, () => {
                     this.scene.stop(SceneKeys.UI);

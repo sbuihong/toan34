@@ -111,14 +111,14 @@ export default class EndGameScene extends Phaser.Scene {
             const state = (window as any).irukaGameState || {};
             const timeMs = state.startTime ? Date.now() - state.startTime : 0;
             
-            game.finalizeAttempt(); 
+            // game.finalizeAttempt(); // DUPLICATE 
 
             sdk.complete({
                 timeMs: Date.now() - ((window as any).irukaGameState?.startTime ?? Date.now()),
                 extras: { reason: "user_exit", stats: game.prepareSubmitData() },
             });
 
-            this.scene.start('MenuScene');
+            this.scene.start('EndGameScene');
         });
 
         // === optional: hover effect ===

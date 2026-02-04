@@ -1,43 +1,42 @@
 {
-    "sharedImages": [
-        {
-            "textureKey": "cake",
-            "baseX_pct": 0.5,
-            "baseY_pct": 0.5,
-            "baseScale": 0.65
-        }
-    ],
     "levels": [
         {
             "id": 1,
-            "targetText": {
-                "start": 1,
-                "end": 1
+            "image": {
+                "textureKey": "image_level1",
+                "x_pct": 0.5,
+                "y_pct": 0.5,
+                "scale": 0.65
             },
-            "circle": {
-                "x_pct": 0.43,
-                "y_pct": 0.66,
-                "radius": 100,
-                "color": "",
-                "alpha": 0.001,
-                "strokeColor": "0x00AA00",
-                "strokeWidth": 5
+            "targetText": {
+                "start": 3,
+                "end": 3
             }
         },
         {
             "id": 2,
-            "targetText": {
-                "start": 2,
-                "end": 2
+            "image": {
+                "textureKey": "image_level2",
+                "x_pct": 0.5,
+                "y_pct": 0.5,
+                "scale": 0.65
             },
-            "circle": {
-                "x_pct": 0.616,
-                "y_pct": 0.686,
-                "radius": 150,
-                "color": "",
-                "alpha": 0.0001,
-                "strokeColor": "0x00AA00",
-                "strokeWidth": 5
+            "targetText": {
+                "start": 3,
+                "end": 3
+            }
+        },
+        {
+            "id": 3,
+            "image": {
+                "textureKey": "image_level3",
+                "x_pct": 0.5,
+                "y_pct": 0.5,
+                "scale": 0.65
+            },
+            "targetText": {
+                "start": 3,
+                "end": 3
             }
         }
     ]

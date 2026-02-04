@@ -25,7 +25,8 @@ export default class EndGameScene extends Phaser.Scene {
     }
 
     create() {
-        game.finalizeAttempt(); // Confirm game finished
+        // ❌ SAI - Không nên finalizeAttempt ở create của EndgameScene
+        // game.finalizeAttempt(); // Phải gọi ở Scene chính khi WIN/LOSE
         resetVoiceState();
         const w = this.scale.width; 
         const h = this.scale.height;
@@ -111,8 +112,8 @@ export default class EndGameScene extends Phaser.Scene {
             // ✅ Gửi COMPLETE cho Game Hub
             const state = (window as any).irukaGameState || {};
             const timeMs = state.startTime ? Date.now() - state.startTime : 0;
-            
-            game.finalizeAttempt(); 
+            // ❌ DUPLICATE - Không gọi finalizeAttempt ở đây
+            // game.finalizeAttempt(); // Đã gọi ở scene chính khi WIN
             // const extraData = game.prepareSubmitData();
 
             sdk.complete({
@@ -120,7 +121,7 @@ export default class EndGameScene extends Phaser.Scene {
                 extras: { reason: "user_exit", stats: game.prepareSubmitData() },
             });
 
-            this.scene.start('MenuScene');
+            this.scene.start('EndGameScene');
         });
 
         // === optional: hover effect ===

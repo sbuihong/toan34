@@ -162,7 +162,7 @@ import { installIrukaE2E } from './e2e/installIrukaE2E';
         if (resetBtn) {
             resetBtn.onclick = () => {
                 console.log('Restart button clicked.');
-                game.retryFromStart(); 
+                //game.retryFromStart(); // DUPLICATE 
                 gamePhaser.sound.stopByKey('bgm-nen');
                 AudioManager.stopAll();
                 try {
