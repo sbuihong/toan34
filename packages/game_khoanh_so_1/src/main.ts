@@ -173,7 +173,7 @@ import { installIrukaE2E } from './e2e/installIrukaE2E';
                 gamePhaser.scene.stop(SceneKeys.Scene1);
                 gamePhaser.scene.start(SceneKeys.Scene1, { isRestart: true }); 
                 
-                hideGameButtons();
+                // hideGameButtons(); 
             };
         }
     }

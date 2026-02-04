@@ -180,7 +180,7 @@ declare global {
 
                 if (window.gameScene && window.gameScene.scene) {
                     window.gameScene.scene.stop();
-                    window.gameScene.scene.start(Scene1, { isRestart: true }); 
+                    window.gameScene.scene.start('Scene1', { isRestart: true }); 
                 } else {
                     console.error('GameScene instance not found on window. Cannot restart.');
                 }

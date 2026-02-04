@@ -181,7 +181,7 @@ import { game } from "@iruka-edu/mini-game-sdk";
                 if (window.gameScene && window.gameScene.scene) {
                     window.gameScene.scene.stop();
                     // Fix scene key usage
-                    window.gameScene.scene.start(Scene1, { isRestart: true }); 
+                    window.gameScene.scene.start('Scene1', { isRestart: true }); 
                 } else {
                     console.error('GameScene instance not found on window. Cannot restart.');
                 }

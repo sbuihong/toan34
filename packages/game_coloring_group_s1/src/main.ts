@@ -174,11 +174,7 @@ import { installIrukaE2E } from './e2e/installIrukaE2E';
                 // Sử dụng gamePhaser để quản lý Scene, an toàn hơn dùng biến global window.gameScene
                 if (window.gameScene && window.gameScene.scene) {
                     window.gameScene.scene.stop();
-                    // Basic restart logic: Check which scene is active or just restart Scene 1
-                    // Since Scene1 is entry, we restart Scene1.
-                    // However, if Scene 2 is active, we might want to restart Scene 2?
-                    // User code had Scene1 restart. Stick to that or use active scene.
-                    gamePhaser.scene.start(SceneKeys.Scene1, { isRestart: true });
+                    window.gameScene.scene.start('Scene1', { isRestart: true });
                 }
                 
                 hideGameButtons();
