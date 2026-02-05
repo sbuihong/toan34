@@ -71,12 +71,19 @@ export class VoiceManager {
         sessionId: null
     };
     
+    // Flag để track xem đã submit audio cho recording hiện tại chưa
+    // Tránh duplicate submission khi callback được gọi nhiều lần
+    private hasSubmittedThisRecording: boolean = false;
+    
     // Track audio blob cho record+submit flow
     private pendingAudioBlob: Blob | null = null;
     private pendingSubmitInfo: { targetText: string | object, globalIndex: number, localIndex: number } | null = null;
     
     // Track processed results để tránh xử lý duplicate từ backend
-    private processedResults = new Set<string>();
+    private processedResults: Set<string> = new Set();
+    
+    // Track current level để play đúng audio
+    private currentLevel: number = 1;
     
     // UI Elements
     private btnMic: Phaser.GameObjects.Image;
@@ -174,6 +181,13 @@ export class VoiceManager {
     }
     
     /**
+     * Set current level để play đúng audio
+     */
+    public setCurrentLevel(levelId: number): void {
+        this.currentLevel = levelId;
+    }
+
+    /**
      * Start voice evaluation session
      * @returns Session data hoặc null nếu failed
      */
@@ -228,6 +242,9 @@ export class VoiceManager {
             return false;
         }
         
+        // Reset submission flag mỗi khi bắt đầu recording mới
+        this.hasSubmittedThisRecording = false;
+        
         const hasPermission = await this.voiceRecorder.checkPermission();
         if (!hasPermission) {
             console.log("[VoiceManager] Mic permission denied");
@@ -261,10 +278,19 @@ export class VoiceManager {
         globalIndex: number = 1,
         localIndex: number = 0
     ): Promise<any | null> {
+        // Guard: Tránh submit duplicate cho cùng 1 recording
+        if (this.hasSubmittedThisRecording) {
+            console.warn('[VoiceManager] Already submitted this recording - skipping duplicate');
+            return null;
+        }
+        
         if (!this.voiceHelper.sessionId) {
             console.error("[VoiceManager] No session ID - cannot submit");
             return null;
         }
+        
+        // Đánh dấu đã submit
+        this.hasSubmittedThisRecording = true;
         
         this.state.isProcessing = true;
         
@@ -375,10 +401,12 @@ export class VoiceManager {
      */
     processFeedback(result: any): void {
         const isPassed = result.score >= GameConstants.SCENE1.PASS_SCORE;
-        const contentVoice = "voice_1";
         
-        AudioManager.play(contentVoice);
-        const duration = AudioManager.getDuration(contentVoice) || 1.5;
+        // Lấy voice audio theo level từ config
+        const voiceKey = GameConstants.LEVEL_AUDIO[this.currentLevel]?.voiceFeedback || 'voice_1';
+        
+        AudioManager.play(voiceKey);
+        const duration = AudioManager.getDuration(voiceKey) || 1.5;
         
         if (isPassed) {
             AudioManager.play("sfx-ting");
@@ -508,7 +536,7 @@ export class VoiceManager {
             console.log(`%c[VoiceManager] Recording too short - ignored`, "color: orange");
             AudioManager.play('sfx-wrong');
             
-            // Notify callback
+            // Notify callback (không skip vì recording invalid)
             if (this.callbacks.onRecordingStop) {
                 this.callbacks.onRecordingStop();
             }
@@ -516,7 +544,7 @@ export class VoiceManager {
         }
         
         // Valid recording - will be handled by caller
-        // Notify callback
+        // Notify callback (luôn gọi vì đây là nơi trigger override callback)
         if (this.callbacks.onRecordingStop) {
             this.callbacks.onRecordingStop();
         }

@@ -51,7 +51,7 @@ export default class Scene1 extends Phaser.Scene {
     /**
      * Init data when scene starts/restarts
      */
-    init(data?: { isRestart: boolean }) {
+    init(data?: { isRestart: boolean; fromEndGame?: boolean }) {
         this.unfinishedPartsMap.clear();
         this.finishedParts.clear();
         this.answers = [];
@@ -61,7 +61,9 @@ export default class Scene1 extends Phaser.Scene {
 
         if (data?.isRestart) {
             this.isWaitingForIntroStart = false;
-            game.retryFromStart();
+            if (!data.fromEndGame) {
+                game.retryFromStart();
+            }
         } else {
             this.isWaitingForIntroStart = true;
         }

@@ -28,6 +28,7 @@ export default class UIScene extends Phaser.Scene {
 
     private bannerImage!: Phaser.GameObjects.Image;
     private bannerText!: Phaser.GameObjects.Image;
+    private titleImage!: Phaser.GameObjects.Image;
 
     private createUI() {
         const UI = GameConstants.SCENE1.UI;
@@ -42,17 +43,11 @@ export default class UIScene extends Phaser.Scene {
         this.bannerImage = this.add.image(cx, bannerY, bannerKey).setScale(0.7).setOrigin(0.5, -0.1);
         
         // Title (Added here to be on top of Banner)
-        // Scene1 & Scene2: Dùng Title1
-        // Scene3: Dùng Title3
-        if(this.sceneKey === SceneKeys.Scene1 || this.sceneKey === SceneKeys.Scene2){
-            this.add.image(cx, bannerY, TextureKeys.Title1)
-                .setOrigin(0.5, -0.9)
-                .setScale(0.85);
-        } else if(this.sceneKey === SceneKeys.Scene3){
-            this.add.image(cx, bannerY, TextureKeys.Title3)
-                .setOrigin(0.5, -0.9)
-                .setScale(0.85);
-        }
+        // Level 1 & 2: Title1, Level 3: Title3
+        const initialTitleKey = TextureKeys.Title1;
+        this.titleImage = this.add.image(cx, bannerY, initialTitleKey)
+            .setOrigin(0.5, -0.9)
+            .setScale(0.85);
 
         // Tạo bàn tay gợi ý (ẩn đi, set depth cao nhất để đè lên mọi thứ)
         this.handHint = this.add
@@ -86,6 +81,35 @@ export default class UIScene extends Phaser.Scene {
     public showFinalScorePopup(finalScore: number) {
         if (this.scorePopup) {
             this.scorePopup.showFinal(finalScore);
+        }
+    }
+
+    /**
+     * Cập nhật Title theo level ID
+     * Level 1-2: Title1
+     * Level 3: Title3
+     */
+    public updateTitle(levelId: number) {
+        if (!this.titleImage) return;
+
+        let newTitleKey: string;
+        if (levelId === 1 || levelId === 2) {
+            newTitleKey = TextureKeys.Title1;
+        } else if (levelId === 3) {
+            newTitleKey = TextureKeys.Title3;
+        } else {
+            return; // Invalid levelId
+        }
+
+        // Safe check: titleImage.texture có thể undefined khi scene vừa launch
+        if (!this.titleImage.texture) {
+            this.titleImage.setTexture(newTitleKey);
+            return;
+        }
+
+        // Chỉ update nếu title thay đổi
+        if (this.titleImage.texture.key !== newTitleKey) {
+            this.titleImage.setTexture(newTitleKey);
         }
     }
 }

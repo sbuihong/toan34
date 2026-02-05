@@ -60,7 +60,14 @@ export enum TextureKeys {
 
 // 3. Tên Âm thanh (Audio)
 export enum AudioKeys {
-    BgmNen = 'bgm-nen'
+    BgmNen = 'bgm-nen',
+    // Instructions
+    Instruction = 'instruction',
+    Instruction3 = 'instruction3',
+    // Voice Feedback
+    Voice1 = 'voice_1',
+    Voice2 = 'voice_2',
+    Voice3 = 'voice_3',
 }
 
 // 4. Tên File Data (JSON)

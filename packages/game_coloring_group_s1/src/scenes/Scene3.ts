@@ -400,9 +400,7 @@ export default class Scene3 extends Phaser.Scene {
             total: 4
         });
         game.finishQuestionTimer();
-        if (this.finishedParts.size < this.totalParts) {
-            game.startQuestionTimer();
-        }
+
 
         if (usedColors.size === 1) {
             const singleColor = usedColors.values().next().value || 0;

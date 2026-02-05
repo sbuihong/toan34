@@ -310,9 +310,7 @@ export default class Scene2 extends Phaser.Scene {
             total: 2
         });
         game.finishQuestionTimer();
-        if (this.finishedParts.size < this.totalParts) {
-            game.startQuestionTimer();
-        }
+
 
         // --- LOGIC AUTO-FILL THÔNG MINH ---
         if (usedColors.size === 1) {

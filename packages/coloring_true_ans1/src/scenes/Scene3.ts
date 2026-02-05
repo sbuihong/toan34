@@ -324,8 +324,6 @@ export default class Scene3 extends Phaser.Scene {
             // --- CẬP NHẬT: LƯU HINT POINTS (NẾU CÓ) ---
             if (part.hintPoints && Array.isArray(part.hintPoints)) {
                 hitArea.setData('hintPoints', part.hintPoints);
-                // --- DEBUG: Show Hint Points Coordinates ---
-                // this.drawHintDebug(hitArea, part.hintPoints);
             }
 
             this.unfinishedPartsMap.set(id, hitArea);
@@ -339,109 +337,6 @@ export default class Scene3 extends Phaser.Scene {
             .setScale(config.baseScale)
             .setDepth(900)
             .setInteractive({ pixelPerfect: true });
-        
-        // --- DEBUG: VẼ TRỤC TỌA ĐỘ ---
-        // this.drawDebugAxes(outline);
-    }
-    
-    // ... (Keep drawDebugAxes and drawHintDebug as is) ...
-
-    /**
-     * Vẽ trục tọa độ (Debug) cho ảnh
-     * Trục X: Màu đỏ, kèm số đo
-     * Trục Y: Màu xanh lá, kèm số đo
-     */
-    private drawDebugAxes(image: Phaser.GameObjects.Image) {
-        const graphics = this.add.graphics();
-        graphics.setDepth(1000); // Vẽ đè lên mọi thứ
-
-        const x = image.x;
-        const y = image.y;
-        
-        // Lấy kích thước hiển thị thực tế (đã nhân scale)
-        const w = image.displayWidth;
-        const h = image.displayHeight;
-
-        // Trục X (Red)
-        graphics.lineStyle(2, 0xff0000, 1);
-        graphics.beginPath();
-        graphics.moveTo(x - w / 2, y);
-        graphics.lineTo(x + w / 2, y);
-        graphics.strokePath();
-
-         // Trục Y (Green)
-        graphics.lineStyle(2, 0x00ff00, 1);
-        graphics.beginPath();
-        graphics.moveTo(x, y - h / 2);
-        graphics.lineTo(x, y + h / 2);
-        graphics.strokePath();
-        
-        // Tâm (Blue Dot)
-        graphics.fillStyle(0x0000ff, 1);
-        graphics.fillCircle(x, y, 4);
-
-        // --- DRAW TICKS & LABELS ---
-        const step = 50; 
-        const tickSize = 5;
-
-        // X-Axis Ticks
-        for (let i = step; i <= w / 2; i += step) {
-             // Positive X (Right)
-             this.drawTick(graphics, x + i, y, tickSize, 0xff0000, i.toString());
-             // Negative X (Left)
-             this.drawTick(graphics, x - i, y, tickSize, 0xff0000, (-i).toString());
-        }
-
-        // Y-Axis Ticks
-        for (let i = step; i <= h / 2; i += step) {
-             // Positive Y (Down)
-             this.drawTick(graphics, x, y + i, tickSize, 0x00ff00, i.toString());
-             // Negative Y (Up)
-             this.drawTick(graphics, x, y - i, tickSize, 0x00ff00, (-i).toString());
-        }
-    }
-
-    private drawTick(graphics: Phaser.GameObjects.Graphics, cx: number, cy: number, size: number, color: number, text: string) {
-        // Draw tick line (vertical for X-axis usage, horizontal for Y-axis usage - simplified to cross for visibility)
-        graphics.lineStyle(1, color, 1);
-        graphics.beginPath();
-        graphics.moveTo(cx - 2, cy - 2);
-        graphics.lineTo(cx + 2, cy + 2);
-        graphics.moveTo(cx + 2, cy - 2);
-        graphics.lineTo(cx - 2, cy + 2);
-        graphics.strokePath();
-        
-        // Draw text
-        this.add.text(cx, cy, text, { 
-            fontSize: '9px', 
-            color: '#ffffff',
-            backgroundColor: '#000000AA'
-        }).setOrigin(0.5).setDepth(1001);
-    }
-
-    private drawHintDebug(image: Phaser.GameObjects.Image, hintPoints: any[]) {
-        const graphics = this.add.graphics();
-        graphics.setDepth(1001); // On top of axes
-
-        const baseX = image.x;
-        const baseY = image.y;
-        const scale = image.getData('originScale') || 1;
-
-        hintPoints.forEach((p) => {
-            const wx = baseX + p.x * scale;
-            const wy = baseY + p.y * scale;
-
-            // Draw Point (Yellow)
-            graphics.fillStyle(0xffff00, 1);
-            graphics.fillCircle(wx, wy, 5);
-
-            // Draw Text (Coordinates)
-            this.add.text(wx + 5, wy + 5, `(${p.x}, ${p.y})`, {
-                fontSize: '10px',
-                color: '#ffff00',
-                backgroundColor: '#000000'
-            }).setDepth(1002);
-        });
     }
 
     // =================================================================
@@ -467,6 +362,7 @@ export default class Scene3 extends Phaser.Scene {
         
         if (isCorrect === false) {
              // ĐÁP ÁN SAI
+             game.recordWrong();
              console.log('WRONG ANSWER!');
              AudioManager.play('sfx-wrong'); // Cần đảm bảo có file âm thanh này, hoặc dùng âm thanh tương tự
              
@@ -498,9 +394,6 @@ export default class Scene3 extends Phaser.Scene {
             score: this.score,
         });
         game.finishQuestionTimer();
-        if (this.finishedParts.size < this.totalParts) {
-            game.startQuestionTimer();
-        }
 
         // --- LOGIC AUTO-FILL THÔNG MINH ---
         // Nếu bé chỉ dùng ĐÚNG 1 MÀU -> Game tự động fill màu đó cho đẹp (khen thưởng)
@@ -550,10 +443,6 @@ export default class Scene3 extends Phaser.Scene {
                 total: 3,
                 score: this.score,
             });
-            // sdk.complete({
-            //       timeMs: Date.now() - ((window as any).irukaGameState?.startTime ?? Date.now()),
-            //       extras: { reason: "finish", stats: game.prepareSubmitData() },
-            // });
 
             AudioManager.play('sfx-correct_s2');
             

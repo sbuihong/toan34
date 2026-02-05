@@ -19,10 +19,13 @@ const SOUND_MAP: Record<string, SoundConfig> = {
     'sfx-wrong': { src: `${BASE_PATH}sfx/wrong.mp3`, volume: 0.5 },
     'sfx-click': { src: `${BASE_PATH}sfx/click.mp3`, volume: 0.5 },
     'sfx-ting': { src: `${BASE_PATH}sfx/correct.mp3`, volume: 0.6 },
+    'sfx-retry': { src: `${BASE_PATH}sfx/retry.mp3`, volume: 1.0 },
 
     // ---- Prompt Voice ----
     'voice-rotate': { src: `${BASE_PATH}prompt/rotate.mp3`, volume: 0.8 },
     'voice_intro_s2': { src: `${BASE_PATH}prompt/instruction.mp3`, volume: 1 },
+    'instruction': { src: `${BASE_PATH}prompt/instruction.mp3`, volume: 1.0 },
+    'instruction3': { src: `${BASE_PATH}prompt/instruction3.mp3`, volume: 1.0 },
     'hint': { src: `${BASE_PATH}prompt/hint.mp3`, volume: 1.0 },
     'voice_wrong': { src: `${BASE_PATH}prompt/be_co_gang_hon_nhe.mp3`, volume: 1.0 },
 
@@ -32,7 +35,8 @@ const SOUND_MAP: Record<string, SoundConfig> = {
     'applause': { src: `${BASE_PATH}sfx/applause.mp3`, volume: 1.0 },
 
     'voice_1': { src: `${BASE_PATH}prompt/voice1.mp3`, volume: 1.0 },
-    'voice_2': { src: `${BASE_PATH}prompt/voice2.mp3`, volume: 1.0 }
+    'voice_2': { src: `${BASE_PATH}prompt/voice2.mp3`, volume: 1.0 },
+    'voice_3': { src: `${BASE_PATH}prompt/voice3.mp3`, volume: 1.0 }
 };
 
 
@@ -99,6 +103,34 @@ class AudioManager {
                         }
                     },
                 });
+            });
+        });
+    }
+
+    loadId(id: string): Promise<void> {
+        return new Promise((resolve) => {
+            if (this.sounds[id]) {
+                resolve();
+                return;
+            }
+
+            const config = SOUND_MAP[id];
+            if (!config) {
+                console.warn(`[AudioManager] Sound ID not found in config: ${id}`);
+                resolve();
+                return;
+            }
+
+            this.sounds[id] = new Howl({
+                src: [config.src],
+                loop: config.loop || false,
+                volume: config.volume || 1.0,
+                html5: true,
+                onload: () => resolve(),
+                onloaderror: (_sndId, error) => {
+                    console.error(`[Howler Error] Load failed for ${id}:`, error);
+                    resolve();
+                }
             });
         });
     }

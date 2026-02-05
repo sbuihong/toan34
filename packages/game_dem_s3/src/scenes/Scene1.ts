@@ -9,7 +9,6 @@ import { useVoiceEvaluation, ExerciseType } from '../hooks/useVoiceEvaluation';
 import { playVoiceLocked, setGameSceneReference, resetVoiceState } from '../utils/rotateOrientation';
 import { IdleManager } from '../utils/IdleManager';
 import { game } from "@iruka-edu/mini-game-sdk";
-import { playRecordedAudio } from '../utils/AudioUtils';
 import { VoiceManager } from '../managers/VoiceManager';
 
 export default class Scene1 extends Phaser.Scene {
@@ -85,19 +84,24 @@ export default class Scene1 extends Phaser.Scene {
 
         // Create UI (MUST be before setupVoiceManager vì cần btnMic, hero, radiatingCircles)
         this.createUI();
-        this.loadLevel(1); // Load level đầu tiên với id = 1
         
-        // Setup VoiceManager sau khi UI elements đã được tạo
-        this.setupVoiceManager();
-
-        // Launch UI Scene
+        // Launch UI Scene TRƯỚC khi loadLevel (để titleImage được init)
         const uiScene = this.scene.get(SceneKeys.UI);
         if (!uiScene.scene.isActive()) {
             this.scene.launch(SceneKeys.UI, { sceneKey: SceneKeys.Scene1 });
             this.scene.bringToTop(SceneKeys.UI);
         }
+        
+        // Delay nhỏ để UIScene kịp init titleImage
+        this.time.delayedCall(50, () => {
+            // Load level sau khi UI Scene đã active
+            this.loadLevel(1); // Load level đầu tiên với id = 1
+            
+            // Setup VoiceManager sau khi UI elements đã được tạo
+            this.setupVoiceManager();
 
-        this.handleIntro();
+            this.handleIntro();
+        });
     }
 
     update(time: number, delta: number): void {
@@ -233,9 +237,18 @@ export default class Scene1 extends Phaser.Scene {
         this.btnMic = this.add.image(centerX, GameUtils.pctY(this, 0.85), TextureKeys.Mic) 
             .setScale(GameConstants.SCENE1.SCALES.MIC).setInteractive().setVisible(false).setDepth(10);
 
+        // Hover effect - đổi cursor
+        this.btnMic.on('pointerover', () => {
+            this.input.setDefaultCursor('pointer');
+        });
+        
+        this.btnMic.on('pointerout', () => {
+            this.input.setDefaultCursor('default');
+        });
+
         this.btnMic.on('pointerdown', async () => {
             if (this.voiceManager.isProcessing) return;
-
+            // AudioManager.play('sfx-click');
             this.resetIdle(); 
             
             if (this.voiceManager.isRecording) {
@@ -243,7 +256,7 @@ export default class Scene1 extends Phaser.Scene {
                 this.voiceManager.stopRecording(); 
             } else {
                 // Bắt đầu record và auto-submit
-                const targetText = this.levelTarget || { start: 1, end: 1 };
+                const targetText = this.levelTarget;
                 const flow = GameConstants.FLOW;
                 const globalIndex = flow.indexOf(this.scene.key as any) + 1;
                 
@@ -277,7 +290,7 @@ export default class Scene1 extends Phaser.Scene {
 
     // ================= GAME FLOW =================
 
-    private loadLevel(levelId: number): void {
+    private loadLevel(levelId: number, playInstruction: boolean = false): void {
         this.isProcessing = false;
         
         // Load config data
@@ -295,6 +308,11 @@ export default class Scene1 extends Phaser.Scene {
         }
 
         this.currentLevelId = levelId;
+        
+        // Sync level với VoiceManager
+        if (this.voiceManager) {
+            this.voiceManager.setCurrentLevel(levelId);
+        }
         
         // Mỗi level có hình ảnh riêng
         const imageConfig = levelData.image;
@@ -315,31 +333,22 @@ export default class Scene1 extends Phaser.Scene {
         this.objectsToCount.push(img);
 
         this.levelTarget = levelData.targetText;
-    }
-
-    /**
-     * Vẽ vòng tròn xanh lá overlay lên tấm hình
-     */
-    private drawCircleOverlay(circleConfig: any): void {
-        const x = GameUtils.pctX(this, circleConfig.x_pct);
-        const y = GameUtils.pctY(this, circleConfig.y_pct);
-        const radius = circleConfig.radius || 80;
-        const color = parseInt(circleConfig.color.replace('0x', ''), 16);
-        const alpha = circleConfig.alpha || 0;
-        const strokeColor = parseInt(circleConfig.strokeColor.replace('0x', ''), 16);
-        const strokeWidth = circleConfig.strokeWidth || 3;
-
-        // Create graphics object
-        this.circleOverlay = this.add.graphics();
-        this.circleOverlay.setDepth(5); // Nằm trên objects nhưng dưới UI
-
-        // Fill circle
-        this.circleOverlay.fillStyle(color, alpha);
-        this.circleOverlay.fillCircle(x, y, radius);
-
-        // Stroke circle
-        this.circleOverlay.lineStyle(strokeWidth, strokeColor, 1);
-        this.circleOverlay.strokeCircle(x, y, radius);
+        
+        // Cập nhật Title trong UIScene theo level
+        const uiScene = this.scene.get(SceneKeys.UI) as any;
+        if (uiScene?.updateTitle) {
+            uiScene.updateTitle(levelId);
+        }
+        
+        // Play instruction nếu cần (khi chuyển level mới)
+        if (playInstruction) {
+            const instructionKey = GameConstants.LEVEL_AUDIO[levelId]?.instruction;
+            if (instructionKey) {
+                this.time.delayedCall(500, () => {
+                    AudioManager.play(instructionKey);
+                });
+            }
+        }
     }
 
     private async runGameFlow(): Promise<void> {
@@ -388,8 +397,8 @@ export default class Scene1 extends Phaser.Scene {
         if (isPassed) {
             this.handleLevelPass();
         } else {
-            this.handleLevelPass();
-            // this.handleLevelFail();
+            // this.handleLevelPass(); test UI
+            this.handleLevelFail();
         }
     }
 
@@ -411,7 +420,7 @@ export default class Scene1 extends Phaser.Scene {
                 if (uiScene?.hideScorePopup) uiScene.hideScorePopup();
                 
                 this.currentLevelId = 2;
-                this.loadLevel(2);
+                this.loadLevel(2, true); // Play instruction cho level 2
                 game.startQuestionTimer();
             });
         } else if (this.currentLevelId === 2) {
@@ -422,7 +431,7 @@ export default class Scene1 extends Phaser.Scene {
                 if (uiScene?.hideScorePopup) uiScene.hideScorePopup();
                 
                 this.currentLevelId = 3;
-                this.loadLevel(3);
+                this.loadLevel(3, true); // Play instruction cho level 3
                 game.startQuestionTimer();
             });
         } else if (this.currentLevelId === 3) {
@@ -449,6 +458,8 @@ export default class Scene1 extends Phaser.Scene {
             // Reload level hiện tại
             this.loadLevel(this.currentLevelId);
             game.startQuestionTimer();
+
+            AudioManager.play('sfx-retry');
         });
     }
 
@@ -687,8 +698,9 @@ export default class Scene1 extends Phaser.Scene {
         // Dừng idle manager trong lúc intro
         if (this.idleManager) this.idleManager.stop();
 
-        // Play intro voice
-        playVoiceLocked(null, 'voice_intro_s2');
+        // Play instruction audio theo level hiện tại
+        const instructionKey = GameConstants.LEVEL_AUDIO[this.currentLevelId]?.instruction || 'instruction';
+        playVoiceLocked(null, instructionKey);
         
         // Đợi một chút rồi chạy animation tay hướng dẫn
         this.time.delayedCall(GameConstants.SCENE1.TIMING.INTRO_DELAY, () => {

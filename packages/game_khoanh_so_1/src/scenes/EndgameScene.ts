@@ -90,7 +90,7 @@ export default class EndGameScene extends Phaser.Scene {
             showGameButtons();
              // SDK: Reset attempt
             game.retryFromStart();
-            this.scene.start('Scene1', { isRestart: true });
+            this.scene.start('Scene1', { isRestart: true, fromEndGame: true });
         });
 
         // 4. Nút Exit

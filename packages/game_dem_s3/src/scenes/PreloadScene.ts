@@ -68,8 +68,17 @@ export default class PreloadScene extends Phaser.Scene {
         // this.load.image(TextureKeys.End_BannerCongrat, 'assets/images/bg/banner_congrat.png');
 
         // 5. Audio (Phaser)
-        // Lưu ý: Key BgmNen đã được define trong Keys.ts, và file âm thanh này dùng chung
+        // BGM (Background Music)
         this.load.audio(AudioKeys.BgmNen, 'assets/audio/sfx/nhac_nen.mp3');
+        
+        // Instructions
+        this.load.audio(AudioKeys.Instruction, 'assets/audio/prompt/instruction.mp3');
+        this.load.audio(AudioKeys.Instruction3, 'assets/audio/prompt/instruction3.mp3');
+        
+        // Voice Feedback
+        this.load.audio(AudioKeys.Voice1, 'assets/audio/prompt/voice1.mp3');
+        this.load.audio(AudioKeys.Voice2, 'assets/audio/prompt/voice2.mp3');
+        this.load.audio(AudioKeys.Voice3, 'assets/audio/prompt/voice3.mp3');
     }
 
     create() {

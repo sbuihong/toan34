@@ -43,6 +43,24 @@ export const GameConstants = {
     },
 
     // =========================================
+    // CẤU HÌNH AUDIO THEO LEVEL
+    // =========================================
+    LEVEL_AUDIO: {
+        1: {
+            instruction: 'instruction',
+            voiceFeedback: 'voice_1'
+        },
+        2: {
+            instruction: 'instruction',
+            voiceFeedback: 'voice_2'
+        },
+        3: {
+            instruction: 'instruction3',
+            voiceFeedback: 'voice_3'
+        }
+    } as Record<number, { instruction: string; voiceFeedback: string }>,
+
+    // =========================================
     // SCENE 1: 
     // =========================================
     SCENE1: {

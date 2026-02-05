@@ -58,7 +58,7 @@ export default class Scene1 extends Phaser.Scene {
      * Khởi tạo lại dữ liệu khi Scene bắt đầu (hoặc Restart)
      * QUAN TRỌNG: Phải clear các Map/Set để tránh lỗi "Zombie Object" (tham chiếu đến object cũ đã bị destroy)
      */
-    init(data?: { isRestart: boolean }) {
+    init(data?: { isRestart: boolean; fromEndGame?: boolean }) {
         this.unfinishedPartsMap.clear();
         this.finishedParts.clear();
         this.totalParts = 0;
@@ -66,7 +66,9 @@ export default class Scene1 extends Phaser.Scene {
 
         if (data?.isRestart) {
             this.isWaitingForIntroStart = false;
-            game.retryFromStart();
+            if (!data.fromEndGame) {
+                game.retryFromStart();
+            }
         } else {
             this.isWaitingForIntroStart = true;
         }
@@ -377,9 +379,7 @@ export default class Scene1 extends Phaser.Scene {
             total: 3
         });
         game.finishQuestionTimer();
-        if (this.finishedParts.size < this.totalParts) {
-            game.startQuestionTimer();
-        }
+
 
         // --- LOGIC AUTO-FILL THÔNG MINH ---
         // Nếu bé chỉ dùng ĐÚNG 1 MÀU -> Game tự động fill màu đó cho đẹp (khen thưởng)

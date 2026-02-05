@@ -11,12 +11,7 @@ export default class PreloadScene extends Phaser.Scene {
         // 1. UI Chung
         this.load.image(TextureKeys.BtnExit, 'assets/images/ui/btn_exit.png');
         this.load.image(TextureKeys.BtnReset, 'assets/images/ui/btn_reset.png');
-        this.load.image(TextureKeys.BtnEraser, 'assets/images/ui/btn_eraser.png');
         this.load.image(TextureKeys.HandHint, 'assets/images/ui/hand.png');
-        
-        this.load.image(TextureKeys.Decor, 'assets/images/ui/decor.png');
-        this.load.image(TextureKeys.So1, 'assets/images/ui/so1.png');
-        this.load.image(TextureKeys.Dice, 'assets/images/ui/dice.png');
 
         // --- Scene 1 (Crocodile) Assets ---
         this.load.image(TextureKeys.S1_Banner, 'assets/images/S1/banner.png');
