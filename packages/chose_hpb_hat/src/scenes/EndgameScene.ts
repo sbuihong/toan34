@@ -118,7 +118,7 @@ export default class EndGameScene extends Phaser.Scene {
                 extras: { reason: "user_exit", stats: game.prepareSubmitData() },
             });
 
-            this.scene.start('EndGameScene');
+            //this.scene.start('EndGameScene');
         });
 
         // === optional: hover effect ===
