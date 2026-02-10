@@ -26,7 +26,6 @@ export default class Scene1 extends Phaser.Scene {
     // --- QUẢN LÝ LOGIC (MANAGERS) ---
     private paintManager!: PaintManager; // Quản lý việc tô màu, cọ vẽ, canvas
     private idleManager!: IdleManager; // Quản lý thời gian rảnh để hiện gợi ý
-    private fpsCounter!: FPSCounter; // ✅ FPS Counter
 
     // --- QUẢN LÝ TRẠNG THÁI GAME (GAME STATE) ---
     // Map lưu các bộ phận chưa tô xong (Key: ID, Value: Image Object) -> Dùng để random gợi ý
@@ -109,9 +108,6 @@ export default class Scene1 extends Phaser.Scene {
             if (this.input.keyboard) this.input.keyboard.enabled = true;
         });
 
-        // ✅ HIỂN THỊ FPS
-        // this.fpsCounter = new FPSCounter(this);
-
         // Nếu là restart (không cần chờ tap), chạy intro luôn
         if (!this.isWaitingForIntroStart) {
             const soundManager = this.sound as Phaser.Sound.WebAudioSoundManager;
@@ -135,11 +131,6 @@ export default class Scene1 extends Phaser.Scene {
             this.finishedParts.size < this.totalParts
         ) {
             this.idleManager.update(delta);
-        }
-
-        // Cập nhật FPS
-        if (this.fpsCounter) {
-            this.fpsCounter.update();
         }
     }
 
@@ -511,18 +502,6 @@ export default class Scene1 extends Phaser.Scene {
         if (this.finishedParts.size >= this.totalParts) {
             console.log('WIN!');
 
-            // --- GAME HUB COMPLETE ---
-            game.finalizeAttempt();
-            sdk.requestSave({
-                score: this.score,
-                levelIndex: 0,
-            });
-            sdk.progress({
-                levelIndex: 0,
-                total: 1,
-                score: this.score,
-            });
-
             AudioManager.play('sfx-correct_s2');
             
             // Xóa UI (Nút màu & Banner)
@@ -535,6 +514,17 @@ export default class Scene1 extends Phaser.Scene {
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
                 this.scene.start(SceneKeys.EndGame);
             });
+            // --- GAME HUB COMPLETE ---
+            sdk.requestSave({
+                score: this.score,
+                levelIndex: 0,
+            });
+            sdk.progress({
+                levelIndex: 0,
+                total: 1,
+                score: this.score,
+            });
+            game.finalizeAttempt();
         }
     }
 

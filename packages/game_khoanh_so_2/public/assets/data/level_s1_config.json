@@ -1,0 +1,26 @@
+{
+    "background": {
+        "textureKey": "s1",
+        "scale": 0.7,
+        "baseX_pct": 0.5,
+        "baseY_pct": 0.5
+    },
+    "targets": [
+        {
+            "id": 1,
+            "x_pct": 0.415,
+            "y_pct": 0.7,
+            "radius": 130,
+            "role": "correct",
+            "activity": false
+        },
+        {
+            "id": 2,
+            "x_pct": 0.648,
+            "y_pct": 0.725,
+            "radius": 180,
+            "role": "correct",
+            "activity": false
+        }
+    ]
+}

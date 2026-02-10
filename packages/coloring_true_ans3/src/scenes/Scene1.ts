@@ -255,16 +255,6 @@ export default class Scene1 extends Phaser.Scene {
         this.add.rectangle(board.x, board.y + board.displayHeight / 2, 5, dividerHeight, 0x000000)
             .setOrigin(0.5, 0.5)
             .setDepth(1);
-
-        
-
-        const boardRightX = board.x + board.displayWidth / 2;
-        const boardCenterY = board.y + board.displayHeight / 2;
-        // const rightBoard = this.add
-        //     .image(boardRightX - 8, boardCenterY, TextureKeys.BoardRight)
-        //     .setOrigin(1, 0.5)
-        //     .setScale(scl[0], scl[1])
-        //     .setDepth(10);
     }
 
     // --- LOGIC TẠO LEVEL THEO STAGE ---
@@ -295,47 +285,6 @@ export default class Scene1 extends Phaser.Scene {
              }
         }
     }
-
-    // private createDecorativeLetter(config: any) {
-    //     if (!config) return;
-    //     const cx = GameUtils.pctX(this, config.baseX_pct);
-    //     const cy = GameUtils.pctY(this, config.baseY_pct);
-        
-    //     // Vẽ Frame (Khung) nếu có
-    //     if (config.frameKey) {
-    //         // Vẽ frame ở dưới (depth thấp hơn outline)
-    //         this.add.image(cx, cy, config.frameKey)
-    //             .setOrigin(0.55, 0.5)
-    //             .setScale(config.baseScale)
-    //             .setDepth(5);
-    //     }
-
-    //     // Chỉ hiện outline
-    //     this.add.image(cx, cy, config.outlineKey)
-    //         .setOrigin(0.56, 0.5)
-    //         .setScale(config.baseScale * 1.3).setDepth(100);
-    // }
-
-    // private createDecorativeObject(config: any) {
-    //     if (!config) return;
-    //     const cx = GameUtils.pctX(this, config.baseX_pct);
-    //     const cy = GameUtils.pctY(this, config.baseY_pct);
-        
-    //     // Vẽ Frame (Khung) nếu có
-    //     if (config.frameKey && config.frameKey !== "") {
-    //         this.add.image(cx, cy, config.frameKey)
-    //             .setOrigin(0.5)
-    //             .setScale(config.baseScale)
-    //             .setDepth(5);
-    //     }
-
-    //     // Chỉ hiện outline (hình ảnh chính)
-    //     if (config.outlineKey) {
-    //         this.add.image(cx, cy, config.outlineKey)
-    //             .setScale(config.baseScale)
-    //             .setDepth(100);
-    //     }
-    // }
 
     private spawnCharacter(config: any, objectIndex: number = 0) {
         const cx = GameUtils.pctX(this, config.baseX_pct);
@@ -525,6 +474,7 @@ export default class Scene1 extends Phaser.Scene {
         
         if (isCorrect === false) {
              // ĐÁP ÁN SAI
+             game.recordWrong();
              console.log('WRONG ANSWER!');
              AudioManager.play('sfx-wrong'); // Cần đảm bảo có file âm thanh này, hoặc dùng âm thanh tương tự
              
@@ -573,6 +523,7 @@ export default class Scene1 extends Phaser.Scene {
         // Xóa khỏi danh sách chưa tô -> Để gợi ý không chỉ vào cái này nữa
         this.unfinishedPartsMap.delete(id);
 
+        AudioManager.stopAll();
         AudioManager.play('sfx-ting');
 
         // Hiệu ứng nhấp nháy báo hiệu hoàn thành

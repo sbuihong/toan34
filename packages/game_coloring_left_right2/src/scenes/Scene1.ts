@@ -247,14 +247,6 @@ export default class Scene1 extends Phaser.Scene {
             .setDepth(0);
 
         board.displayWidth = GameUtils.getW(this) * 0.8;
-
-        const boardRightX = board.x + board.displayWidth / 2;
-        const boardCenterY = board.y + board.displayHeight / 2;
-        // const rightBoard = this.add
-        //     .image(boardRightX - 8, boardCenterY, TextureKeys.BoardRight)
-        //     .setOrigin(1, 0.5)
-        //     .setScale(scl[0], scl[1])
-        //     .setDepth(10);
     }
 
     // --- LOGIC TẠO LEVEL THEO STAGE ---

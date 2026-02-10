@@ -17,8 +17,6 @@ import AudioManager from '../audio/AudioManager';
 import { showGameButtons, sdk } from '../main';
 import { game } from "@iruka-edu/mini-game-sdk";
 
-import FPSCounter from '../utils/FPSCounter';
-
 export default class Scene2 extends Phaser.Scene {
     // Đối tượng âm thanh nền (Background Music)
     private bgm!: Phaser.Sound.BaseSound;
@@ -26,7 +24,6 @@ export default class Scene2 extends Phaser.Scene {
     // --- QUẢN LÝ LOGIC (MANAGERS) ---
     private paintManager!: PaintManager; // Quản lý việc tô màu, cọ vẽ, canvas
     private idleManager!: IdleManager; // Quản lý thời gian rảnh để hiện gợi ý
-    private fpsCounter!: FPSCounter; // ✅ FPS Counter
 
     // --- QUẢN LÝ TRẠNG THÁI GAME (GAME STATE) ---
     // Map lưu các bộ phận chưa tô xong (Key: ID, Value: Image Object) -> Dùng để random gợi ý
@@ -50,7 +47,7 @@ export default class Scene2 extends Phaser.Scene {
     // Tween đang chạy cho gợi ý (lưu lại để stop khi cần)
     private activeHintTween: Phaser.Tweens.Tween | null = null;
     private activeHintTarget: Phaser.GameObjects.Image | null = null;
-
+    
     constructor() {
         super(SceneKeys.Scene2);
     }
@@ -135,11 +132,6 @@ export default class Scene2 extends Phaser.Scene {
             this.finishedParts.size < this.totalParts
         ) {
             this.idleManager.update(delta);
-        }
-
-        // Cập nhật FPS
-        if (this.fpsCounter) {
-            this.fpsCounter.update();
         }
     }
 
@@ -350,15 +342,6 @@ export default class Scene2 extends Phaser.Scene {
         if (this.finishedParts.size >= this.totalParts) {
             console.log('SCENE 2 WIN!');
 
-            // --- GAME HUB COMPLETE ---
-            game.finalizeAttempt();
-            
-            sdk.progress({
-                levelIndex: this.currentLevelIndex, 
-                total: 5,
-                score: this.score,
-            });
-
             AudioManager.play('sfx-correct_s2');
             
             // Xóa UI (Nút màu & Banner) -> Scene 2 Xong thì có thể xóa hoặc sang EndGame
@@ -371,13 +354,17 @@ export default class Scene2 extends Phaser.Scene {
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
                 this.scene.start(SceneKeys.EndGame);
             });
-        } else {
-             // If not complete, just update progress
-             sdk.progress({
-                levelIndex: this.currentLevelIndex,
+            // --- GAME HUB COMPLETE ---
+            sdk.requestSave({
                 score: this.score,
-                total: 5
+                levelIndex: this.currentLevelIndex,
             });
+            sdk.progress({
+                levelIndex: this.currentLevelIndex, 
+                total: 5,
+                score: this.score,
+            });
+            game.finalizeAttempt();
         }
     }
 

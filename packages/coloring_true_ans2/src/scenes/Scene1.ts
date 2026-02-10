@@ -359,7 +359,7 @@ export default class Scene1 extends Phaser.Scene {
         rt: Phaser.GameObjects.RenderTexture,
         usedColors: Set<number>
     ) {
-        // --- LOGIC KIỂM TRA ĐÁP ÁN (NEW) ---
+        // --- LOGIC KIỂM TRA ĐÁP ÁN ---
         // Lấy hitArea tương ứng từ map (hoặc tìm cách truy xuất data)
         const hitArea = this.unfinishedPartsMap.get(id);
         const isCorrect = hitArea?.getData('isCorrectAnswer');
@@ -369,6 +369,7 @@ export default class Scene1 extends Phaser.Scene {
         
         if (isCorrect === false) {
              // ĐÁP ÁN SAI
+             game.recordWrong();
              console.log('WRONG ANSWER!');
              AudioManager.play('sfx-wrong'); // Cần đảm bảo có file âm thanh này, hoặc dùng âm thanh tương tự
              
@@ -416,6 +417,7 @@ export default class Scene1 extends Phaser.Scene {
         // Xóa khỏi danh sách chưa tô -> Để gợi ý không chỉ vào cái này nữa
         this.unfinishedPartsMap.delete(id);
 
+        AudioManager.stopAll();
         AudioManager.play('sfx-ting');
 
         // Hiệu ứng nhấp nháy báo hiệu hoàn thành
@@ -450,7 +452,14 @@ export default class Scene1 extends Phaser.Scene {
                 score: this.score,
             });
 
-            AudioManager.play('sfx-correct_s2');
+            AudioManager.play('sfx-correct');
+
+            // Xóa UI (Nút màu & Banner)
+            const uiScene = this.scene.get(SceneKeys.UI) as any;
+            if (uiScene) {
+                if (uiScene.hidePalette) uiScene.hidePalette();
+                if (uiScene.hideBanners) uiScene.hideBanners();
+            }
             
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
                 this.scene.start(SceneKeys.EndGame);
@@ -570,8 +579,18 @@ export default class Scene1 extends Phaser.Scene {
         const items = Array.from(this.unfinishedPartsMap.values());
         if (items.length === 0) return;
         
-        // Random 1 bộ phận
-        const target = items[Math.floor(Math.random() * items.length)];
+        // Lọc ra các bộ phận là ĐÁP ÁN ĐÚNG
+        const correctItems = items.filter(item => item.getData('isCorrectAnswer') === true);
+        
+        let target: Phaser.GameObjects.Image;
+
+        if (correctItems.length > 0) {
+            // Chỉ random trong các đáp án đúng
+            target = correctItems[Math.floor(Math.random() * correctItems.length)];
+        } else {
+            // Fallback (chỉ xảy ra nếu config sai hoặc logic game có vấn đề): random tất cả
+            target = items[Math.floor(Math.random() * items.length)];
+        }
 
         AudioManager.play('hint');
         

@@ -95,7 +95,8 @@ export default class Scene2 extends Phaser.Scene {
         this.createLevel(); // Tạo nhân vật và các vùng tô màu
         
         // SDK Integration
-        game.setTotal(1);
+        // SDK Integration
+        // game.setTotal(4); // Defined in Scene 1
         (window as any).irukaGameState = {
             startTime: Date.now(),
             currentScore: 0,
@@ -487,13 +488,15 @@ export default class Scene2 extends Phaser.Scene {
             AudioManager.play('sfx-correct_s2');
 
             // --- Scene 2 Complete -> Next is Scene 3 ---
-            
-            // Xóa UI (Nút màu & Banner) -> REMOVED for transition
-            // const uiScene = this.scene.get(SceneKeys.UI) as any;
-            // if (uiScene) {
-            //     if (uiScene.hidePalette) uiScene.hidePalette();
-            //     if (uiScene.hideBanners) uiScene.hideBanners();
-            // }
+            sdk.requestSave({
+                score: this.score,
+                levelIndex: 1,
+            });
+            sdk.progress({
+                levelIndex: 1, 
+                total: 4,
+                score: this.score,
+            });
 
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
                 this.scene.start(SceneKeys.Scene3);

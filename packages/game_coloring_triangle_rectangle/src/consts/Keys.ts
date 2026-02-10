@@ -18,7 +18,7 @@ export enum TextureKeys {
     HandHint = 'hand_hint',
     // BoardRight = 'board_right',
 
-    // --- Scene 1 (New Crocodile) ---
+    // --- Scene 1 ---
     S1_Banner = 'banner_s2',
     S1_BannerText = 'text_banner_s1',
     S1_Board = 'board_s2',

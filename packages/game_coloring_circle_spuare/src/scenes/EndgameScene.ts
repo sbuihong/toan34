@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import { hideGameButtons, showGameButtons, sdk } from '../main';
+import { SceneKeys } from '../consts/Keys';
 import { game } from "@iruka-edu/mini-game-sdk";
 import AudioManager from '../audio/AudioManager';
-import { changeBackground } from '../utils/BackgroundManager';
 import { resetVoiceState } from '../utils/rotateOrientation';
 
 export default class EndGameScene extends Phaser.Scene {
@@ -10,9 +10,14 @@ export default class EndGameScene extends Phaser.Scene {
     private confettiEvent?: Phaser.Time.TimerEvent;
     StopAllSounds: any;
 
-    constructor() { super('EndGameScene'); }
+    constructor() { super(SceneKeys.EndGame); }
 
-    
+    init(){
+        const uiScene = this.scene.get(SceneKeys.UI) as any;
+        if (uiScene) {
+            uiScene.hideDecor();
+        }
+    }    
 
     preload() {
         this.load.image('icon', 'assets/images/ui/icon_end.png');

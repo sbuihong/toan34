@@ -1,0 +1,50 @@
+[
+    {
+        "id": 1,
+        "correctKey": "right",
+        "left": {
+            "textureKey": "1",
+            "baseX_pct": 0.3,
+            "baseY_pct": 0.5,
+            "baseScale": 0.7
+        },
+        "right": {
+            "textureKey": "2",
+            "baseX_pct": 0.7,
+            "baseY_pct": 0.5,
+            "baseScale": 0.7
+        }
+    },
+    {
+        "id": 2,
+        "correctKey": "left",
+        "left": {
+            "textureKey": "3",
+            "baseX_pct": 0.3,
+            "baseY_pct": 0.5,
+            "baseScale": 0.7
+        },
+        "right": {
+            "textureKey": "4",
+            "baseX_pct": 0.7,
+            "baseY_pct": 0.5,
+            "baseScale": 0.7
+        }
+    },
+    {
+        "id": 3,
+        "correctKey": "right",
+        "left": {
+            "textureKey": "5",
+            "baseX_pct": 0.3,
+            "baseY_pct": 0.5,
+            "baseScale": 0.7
+        },
+        "right": {
+            "textureKey": "6",
+            "baseX_pct": 0.7,
+            "baseY_pct": 0.5,
+            "baseScale": 0.7
+        }
+    }
+]

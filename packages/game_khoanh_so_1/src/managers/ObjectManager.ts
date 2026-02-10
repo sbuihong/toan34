@@ -1,4 +1,3 @@
-
 import Phaser from 'phaser';
 
 /**
@@ -11,8 +10,7 @@ import Phaser from 'phaser';
 export class ObjectManager {
     private scene: Phaser.Scene;
     private objects: Phaser.GameObjects.Image[] = [];
-    private correctObjectIndex: number = 0; // Index của object đáp án đúng
-    private wrongObjectIndex: number = 1;   // Index của object đáp án sai
+    private correctKey: string = ''; 
 
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
@@ -35,6 +33,9 @@ export class ObjectManager {
             console.warn("ObjectManager: Không tìm thấy config objects.");
             return;
         }
+        
+        // Lưu key đáp án đúng
+        this.correctKey = configData.correctKey || '';
 
         configData.images.forEach((def: any) => {
              // Xử lý texture key. Fallback nếu thiếu
@@ -51,6 +52,9 @@ export class ObjectManager {
              
              const img = this.scene.add.image(x, y, key);
              
+             // Setup Data
+             img.setData('textureKey', key);
+             
              // Scale
              if (def.baseScale) {
                  img.setScale(def.baseScale);
@@ -62,7 +66,7 @@ export class ObjectManager {
              this.objects.push(img);
         });
 
-        console.log(`ObjectManager: Đã tạo ${this.objects.length} đối tượng.`);
+        console.log(`ObjectManager: Đã tạo ${this.objects.length} đối tượng. Correct Key: ${this.correctKey}`);
     }
     
     /**
@@ -135,28 +139,28 @@ export class ObjectManager {
      * Lấy object đáp án đúng
      */
     public getCorrectObject(): Phaser.GameObjects.Image | undefined {
-        return this.objects[this.correctObjectIndex];
+        return this.objects.find(obj => this.isCorrectAnswer(obj));
     }
 
     /**
      * Lấy object đáp án sai
      */
     public getWrongObject(): Phaser.GameObjects.Image | undefined {
-        return this.objects[this.wrongObjectIndex];
+        return this.objects.find(obj => this.isWrongAnswer(obj));
     }
 
     /**
      * Kiểm tra xem object có phải đáp án sai không
      */
     public isWrongAnswer(object: Phaser.GameObjects.Image): boolean {
-        return this.objects[this.wrongObjectIndex] === object;
+        return object.getData('textureKey') !== this.correctKey;
     }
 
     /**
      * Kiểm tra xem object có phải đáp án đúng không
      */
     public isCorrectAnswer(object: Phaser.GameObjects.Image): boolean {
-        return this.objects[this.correctObjectIndex] === object;
+        return object.getData('textureKey') === this.correctKey;
     }
 
     /**

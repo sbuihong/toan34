@@ -13,7 +13,6 @@ export enum TextureKeys {
     // --- UI Dùng Chung ---
     BtnExit = 'btn_exit',
     BtnReset = 'btn_reset',
-    BtnEraser = 'btn_eraser',
     HandHint = 'hand_hint',
     S1_Banner = 'banner',
     S1_Board = 'board',

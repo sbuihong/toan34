@@ -90,13 +90,13 @@ export default class Scene1 extends Phaser.Scene {
         this.createLevel(); // Tạo nhân vật và các vùng tô màu
         
         // SDK Integration
-        game.setTotal(3);
+        game.setTotal(1);
         (window as any).irukaGameState = {
             startTime: Date.now(),
             currentScore: 0,
         };
         sdk.score(this.score, 0);
-        sdk.progress({ levelIndex: 0, total: 3 });
+        sdk.progress({ levelIndex: 0, total: 1 });
         game.startQuestionTimer();
 
         this.setupInput(); // Cài đặt sự kiện chạm/vuốt
@@ -268,47 +268,6 @@ export default class Scene1 extends Phaser.Scene {
         }
     }
 
-    // private createDecorativeLetter(config: any) {
-    //     if (!config) return;
-    //     const cx = GameUtils.pctX(this, config.baseX_pct);
-    //     const cy = GameUtils.pctY(this, config.baseY_pct);
-        
-    //     // Vẽ Frame (Khung) nếu có
-    //     if (config.frameKey) {
-    //         // Vẽ frame ở dưới (depth thấp hơn outline)
-    //         this.add.image(cx, cy, config.frameKey)
-    //             .setOrigin(0.55, 0.5)
-    //             .setScale(config.baseScale)
-    //             .setDepth(5);
-    //     }
-
-    //     // Chỉ hiện outline
-    //     this.add.image(cx, cy, config.outlineKey)
-    //         .setOrigin(0.56, 0.5)
-    //         .setScale(config.baseScale * 1.3).setDepth(100);
-    // }
-
-    // private createDecorativeObject(config: any) {
-    //     if (!config) return;
-    //     const cx = GameUtils.pctX(this, config.baseX_pct);
-    //     const cy = GameUtils.pctY(this, config.baseY_pct);
-        
-    //     // Vẽ Frame (Khung) nếu có
-    //     if (config.frameKey && config.frameKey !== "") {
-    //         this.add.image(cx, cy, config.frameKey)
-    //             .setOrigin(0.5)
-    //             .setScale(config.baseScale)
-    //             .setDepth(5);
-    //     }
-
-    //     // Chỉ hiện outline (hình ảnh chính)
-    //     if (config.outlineKey) {
-    //         this.add.image(cx, cy, config.outlineKey)
-    //             .setScale(config.baseScale)
-    //             .setDepth(100);
-    //     }
-    // }
-
     private spawnCharacter(config: any) {
         const cx = GameUtils.pctX(this, config.baseX_pct);
         const cy = GameUtils.pctY(this, config.baseY_pct);
@@ -411,16 +370,6 @@ export default class Scene1 extends Phaser.Scene {
         if (this.finishedParts.size >= this.totalParts) {
             console.log('WIN!');
 
-            // --- GAME HUB COMPLETE ---
-            game.finalizeAttempt();
-            
-            sdk.progress({
-                levelIndex: 0, // Level complete -> set index + 1 if multi-level, here just complete
-                total: 3,
-                score: this.score,
-            });
-
-
             AudioManager.play('sfx-correct_s2');
             
             // Xóa UI (Nút màu & Banner)
@@ -433,6 +382,18 @@ export default class Scene1 extends Phaser.Scene {
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
                 this.scene.start(SceneKeys.EndGame);
             });
+            // --- GAME HUB COMPLETE ---
+            sdk.requestSave({
+                score: this.score,
+                levelIndex: 0,
+            });
+            sdk.progress({
+                levelIndex: 0,
+                total: 1,
+                score: this.score,
+            });
+
+            game.finalizeAttempt();
         }
     }
 

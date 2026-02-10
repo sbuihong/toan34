@@ -1,0 +1,56 @@
+{
+    "levels": [
+        {
+            "id": 1,
+            "image": {
+                "textureKey": "image_level1",
+                "x_pct": 0.5,
+                "y_pct": 0.5,
+                "scale": 0.65
+            },
+            "targetText": {
+                "start": 4,
+                "end": 4
+            }
+        },
+        {
+            "id": 2,
+            "image": {
+                "textureKey": "image_level2",
+                "x_pct": 0.5,
+                "y_pct": 0.5,
+                "scale": 0.65
+            },
+            "targetText": {
+                "start": 2,
+                "end": 2
+            }
+        },
+        {
+            "id": 3,
+            "image": {
+                "textureKey": "image_level3",
+                "x_pct": 0.5,
+                "y_pct": 0.5,
+                "scale": 0.65
+            },
+            "targetText": {
+                "start": 4,
+                "end": 4
+            }
+        },
+        {
+            "id": 4,
+            "image": {
+                "textureKey": "image_level4",
+                "x_pct": 0.5,
+                "y_pct": 0.5,
+                "scale": 0.65
+            },
+            "targetText": {
+                "start": 1,
+                "end": 1
+            }
+        }
+    ]
+}

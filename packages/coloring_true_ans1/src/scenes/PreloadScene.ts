@@ -35,9 +35,10 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.json(DataKeys.LevelS2Config, 'assets/data/level_s2_config.json');
         this.load.json(DataKeys.LevelS3Config, 'assets/data/level_s3_config.json');
 
-        // 4. End Game Assets
-        this.load.image(TextureKeys.End_Icon, 'assets/images/ui/icon_end.png');
-        this.load.image(TextureKeys.End_BannerCongrat, 'assets/images/bg/banner_congrat.png');
+        // 4. Audio đầu game
+        this.load.audio('voice_intro_s1', 'assets/audio/prompt/instruction1.mp3');
+        // this.load.image(TextureKeys.End_Icon, 'assets/images/ui/icon_end.png');
+        // this.load.image(TextureKeys.End_BannerCongrat, 'assets/images/bg/banner_congrat.png');
 
         // 5. Audio (Phaser)
         // Lưu ý: Key BgmNen đã được define trong Keys.ts, và file âm thanh này dùng chung

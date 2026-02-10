@@ -105,8 +105,6 @@ export default class Scene1 extends Phaser.Scene {
         };
         sdk.score(this.score, 0);
         sdk.progress({ levelIndex: 0, total: 4 });
-        sdk.score(this.score, 0);
-        sdk.progress({ levelIndex: 0, total: 1 });
         game.startQuestionTimer();
 
         this.setupInput(); // Cài đặt sự kiện chạm/vuốt
@@ -540,13 +538,6 @@ export default class Scene1 extends Phaser.Scene {
             });
 
             AudioManager.play('sfx-correct_s2');
-            
-            // Xóa UI (Nút màu & Banner) -> REMOVED for transition
-            // const uiScene = this.scene.get(SceneKeys.UI) as any;
-            // if (uiScene) {
-            //     if (uiScene.hidePalette) uiScene.hidePalette();
-            //     if (uiScene.hideBanners) uiScene.hideBanners();
-            // }
 
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
                 this.scene.start(SceneKeys.Scene2);

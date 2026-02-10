@@ -24,9 +24,6 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image(TextureKeys.S1_Outline, 'assets/images/S1/outline.png');
         this.load.image(TextureKeys.S1_1, 'assets/images/S1/1.png');
         this.load.image(TextureKeys.S1_2, 'assets/images/S1/2.png');
-        this.load.image(TextureKeys.S1_3, 'assets/images/S1/3.png');
-        this.load.image(TextureKeys.S1_4, 'assets/images/S1/4.png');
-        this.load.image(TextureKeys.S1_5, 'assets/images/S1/5.png');
 
         // Bảng màu Scene 1 (Crocodile Colors)
         this.load.image(TextureKeys.BtnS1_1, 'assets/images/color/cl1.png');

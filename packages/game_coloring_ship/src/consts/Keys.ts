@@ -15,22 +15,16 @@ export enum TextureKeys {
     BtnReset = 'btn_reset',
     BtnEraser = 'btn_eraser',
     HandHint = 'hand_hint',
-    // BoardRight = 'board_right',
-    Decor = 'decor',
+
+    // --- UI ---
     So1 = 'so1',
     Dice = 'dice',
 
-    // --- Scene 1 (New Crocodile) ---
+    // --- Scene 1 ---
     S1_Banner = 'banner_s2',
     S1_BannerText = 'text_banner_s2',
     S1_Board = 'board_s2',
-    
-    // Tô màu Cá Sấu (Mapped to Scene 1 logic)
-    S1_Casau_Template = 'ca_sau_template',
-    S1_Frame = 'frame',
-    
-    S1_Name = 'name',
-    S1_Name_Bg = 'name_bg',
+
     S1_Outline = 'outline',
     S1_1 = '1',
     S1_2 = '2',

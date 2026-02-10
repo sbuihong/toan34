@@ -325,8 +325,11 @@ export default class Scene1 extends Phaser.Scene {
 
             // Âm thanh đúng
             AudioManager.stopAll();
-            AudioManager.play('sfx-correct_s2');
+            AudioManager.play('sfx-answer');
             AudioManager.play('sfx-ting');
+            this.time.delayedCall(1000, () => {
+                AudioManager.play('sfx-correct');
+            })
 
             this.stopActiveHint();
 
@@ -381,7 +384,7 @@ export default class Scene1 extends Phaser.Scene {
             if (uiScene.hideBanners) uiScene.hideBanners();
         }
 
-        this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY || 2000, () => {
+        this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY , () => {
             this.scene.start(SceneKeys.EndGame);
         });
     }
@@ -507,8 +510,10 @@ export default class Scene1 extends Phaser.Scene {
         if (!this.handHint) return;
         this.handHint.setOrigin(0, 0);
 
-        // Sort Left -> Right
-        const sortedAnswers = [...this.answers].sort((a, b) => a.x - b.x);
+        // Filter only correct answers and Sort Left -> Right
+        const sortedAnswers = this.answers
+            .filter(ans => ans.getData('correct') === true)
+            .sort((a, b) => a.x - b.x);
 
         if (sortedAnswers.length === 0) return;
 

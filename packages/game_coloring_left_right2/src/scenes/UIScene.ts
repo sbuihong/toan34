@@ -26,9 +26,6 @@ export default class UIScene extends Phaser.Scene {
 
     private bannerImage!: Phaser.GameObjects.Image;
     private bannerText!: Phaser.GameObjects.Image;
-    private decorImage!: Phaser.GameObjects.Image;
-    private so1Image!: Phaser.GameObjects.Image;
-    private diceImage!: Phaser.GameObjects.Image;
 
     private createUI() {
         const UI = GameConstants.SCENE1.UI;
@@ -44,11 +41,6 @@ export default class UIScene extends Phaser.Scene {
         this.bannerImage = this.add.image(cx, bannerY, bannerKey).setScale(0.9,0.7).setOrigin(0.5, -0.1);
         this.bannerText = this.add.image(cx, bannerY, textBannerKey).setScale(0.9).setOrigin(0.5, -1);
 
-        // Hiển thị Decor
-        // this.decorImage = this.add.image(cx * 1.79, bannerY + 290, TextureKeys.Decor).setScale(1).setOrigin(0.5, 0.5);
-        // this.so1Image = this.add.image(cx * 0.145, bannerY + 180, TextureKeys.So1).setScale(0.9).setOrigin(0.5, -0.1);
-        // this.diceImage = this.add.image(cx * 0.275, bannerY + 170, TextureKeys.Dice).setScale(0.9).setOrigin(0.5, -0.1);
-        
         // Tạo bàn tay gợi ý (ẩn đi, set depth cao nhất để đè lên mọi thứ)
         this.handHint = this.add
             .image(0, 0, TextureKeys.HandHint)
@@ -81,10 +73,10 @@ export default class UIScene extends Phaser.Scene {
             // Logic visual: Nút đầu tiên to hơn (đang chọn)
             if (i === 0) {
                 this.firstColorBtn = btn;
-                btn.setScale(0.9).setAlpha(1);
+                btn.setScale(0.8).setAlpha(1);
                 this.paintManager.setColor(item.color); // ✅ Sync màu cọ với nút đầu tiên
             } else {
-                btn.setAlpha(0.8).setScale(0.7);
+                btn.setAlpha(0.8).setScale(0.6);
             }
 
             btn.on('pointerdown', () => {
@@ -103,7 +95,7 @@ export default class UIScene extends Phaser.Scene {
             .image(eraserX, eraserY, TextureKeys.BtnEraser)
             .setInteractive()
             .setAlpha(0.8)
-            .setScale(0.7)
+            .setScale(0.6)
             .setDepth(1);
         eraser.on('pointerdown', () => {
             this.updatePaletteVisuals(eraser);
@@ -114,8 +106,8 @@ export default class UIScene extends Phaser.Scene {
 
     // Cập nhật hiệu ứng to/nhỏ của các nút màu khi được chọn
     private updatePaletteVisuals(activeBtn: Phaser.GameObjects.Image) {
-        this.paletteButtons.forEach((b) => b.setScale(0.7).setAlpha(0.8));
-        activeBtn.setScale(0.9).setAlpha(1);
+        this.paletteButtons.forEach((b) => b.setScale(0.6).setAlpha(0.8));
+        activeBtn.setScale(0.8).setAlpha(1);
     }
 
     public hidePalette() {
@@ -131,8 +123,5 @@ export default class UIScene extends Phaser.Scene {
     public hideBanners() {
         if (this.bannerImage) this.bannerImage.destroy();
         if (this.bannerText) this.bannerText.destroy();
-        if (this.decorImage) this.decorImage.destroy();
-        if (this.so1Image) this.so1Image.destroy();
-        if (this.diceImage) this.diceImage.destroy();
     }
 }

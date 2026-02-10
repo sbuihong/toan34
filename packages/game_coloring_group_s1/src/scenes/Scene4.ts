@@ -77,8 +77,6 @@ export default class Scene4 extends Phaser.Scene {
         }
 
         this.createLevel();
-        
-        game.setTotal(1);
         (window as any).irukaGameState = {
             startTime: Date.now(),
             currentScore: 0,
@@ -434,13 +432,13 @@ export default class Scene4 extends Phaser.Scene {
                 score: this.score,
             });
 
-
             AudioManager.play('sfx-correct_s2');
             
             const uiScene = this.scene.get(SceneKeys.UI) as any;
             if (uiScene) {
                 if (uiScene.hidePalette) uiScene.hidePalette();
                 if (uiScene.hideBanners) uiScene.hideBanners();
+                if (uiScene.hideDecor) uiScene.hideDecor();
             }
 
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {

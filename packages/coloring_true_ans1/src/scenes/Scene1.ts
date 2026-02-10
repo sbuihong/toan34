@@ -109,9 +109,6 @@ export default class Scene1 extends Phaser.Scene {
             if (this.input.keyboard) this.input.keyboard.enabled = true;
         });
 
-        // ✅ HIỂN THỊ FPS
-        // this.fpsCounter = new FPSCounter(this);
-
         // Nếu là restart (không cần chờ tap), chạy intro luôn
         if (!this.isWaitingForIntroStart) {
             const soundManager = this.sound as Phaser.Sound.WebAudioSoundManager;
@@ -135,11 +132,6 @@ export default class Scene1 extends Phaser.Scene {
             this.finishedParts.size < this.totalParts
         ) {
             this.idleManager.update(delta);
-        }
-
-        // Cập nhật FPS
-        if (this.fpsCounter) {
-            this.fpsCounter.update();
         }
     }
 

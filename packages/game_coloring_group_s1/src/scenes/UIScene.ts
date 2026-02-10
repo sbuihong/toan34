@@ -165,6 +165,9 @@ export default class UIScene extends Phaser.Scene {
     public hideBanners() {
         if (this.bannerImage) this.bannerImage.destroy();
         if (this.bannerText) this.bannerText.destroy();
+    }
+
+    public hideDecor() {
         if (this.decorImage) this.decorImage.destroy();
         if (this.so1Image) this.so1Image.destroy();
         if (this.diceImage) this.diceImage.destroy();

@@ -38,10 +38,16 @@ export class PaintManager {
 
     // Callback trả về cả Set màu thay vì 1 màu lẻ
     private onPartComplete: (id: string, rt: Phaser.GameObjects.RenderTexture, usedColors: Set<number>) => void;
+    private onWrong?: () => void;
 
-    constructor(scene: Phaser.Scene, onComplete: (id: string, rt: Phaser.GameObjects.RenderTexture, usedColors: Set<number>) => void) {
+    constructor(
+        scene: Phaser.Scene, 
+        onComplete: (id: string, rt: Phaser.GameObjects.RenderTexture, usedColors: Set<number>) => void,
+        onWrong?: () => void
+    ) {
         this.scene = scene;
         this.onPartComplete = onComplete;
+        this.onWrong = onWrong;
         this.scene.input.topOnly = false;
         
         // Khởi tạo Canvas tạm 1 lần duy nhất
@@ -395,7 +401,9 @@ export class PaintManager {
             // 1. Check điều kiện thua (Tô sai > 5%)
             if (wrongPercentage > 0.00000001) {
                 console.log(`Wrong color detected! Wrong: ${(wrongPercentage*100).toFixed(1)}%`);
-                AudioManager.play('sfx-wrong');
+                if (this.onWrong) {
+                    this.onWrong();
+                }
 
                 rt.clear();
                 

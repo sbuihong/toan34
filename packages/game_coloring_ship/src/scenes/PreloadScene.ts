@@ -13,21 +13,15 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.image(TextureKeys.BtnReset, 'assets/images/ui/btn_reset.png');
         this.load.image(TextureKeys.BtnEraser, 'assets/images/ui/btn_eraser.png');
         this.load.image(TextureKeys.HandHint, 'assets/images/ui/hand.png');
-        
-        this.load.image(TextureKeys.Decor, 'assets/images/ui/decor.png');
-        this.load.image(TextureKeys.So1, 'assets/images/ui/so1.png');
-        this.load.image(TextureKeys.Dice, 'assets/images/ui/dice.png');
 
-        // --- Scene 1 (Crocodile) Assets ---
+        this.load.image(TextureKeys.Dice, 'assets/images/ui/dice.png');
+        this.load.image(TextureKeys.So1, 'assets/images/ui/so1.png');
+
+        // --- Scene 1 Assets ---
         this.load.image(TextureKeys.S1_Banner, 'assets/images/S1/banner_s2.png');
         this.load.image(TextureKeys.S1_BannerText, 'assets/images/S1/banner_text.png');
         this.load.image(TextureKeys.S1_Board, 'assets/images/bg/board_scene_2.png');
 
-        // - Con Cá Sấu (Mapped to S1 Keys)
-        // this.load.image(TextureKeys.S1_Template, 'assets/images/S1/ca_sau_template.png');
-        this.load.image(TextureKeys.S1_Frame, 'assets/images/S1/frame.png');
-        // this.load.image(TextureKeys.S1_Name, 'assets/images/S1/name.png');
-        // this.load.image(TextureKeys.S1_Name_Bg, 'assets/images/S1/name_bg.png');
         this.load.image(TextureKeys.S1_Outline, 'assets/images/S1/outline.png');
         this.load.image(TextureKeys.S1_1, 'assets/images/S1/1.png');
         this.load.image(TextureKeys.S1_2, 'assets/images/S1/2.png');
@@ -52,8 +46,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.json(DataKeys.LevelS1Config, 'assets/data/level_s1_config.json');
 
         // 4. End Game Assets
-        this.load.image(TextureKeys.End_Icon, 'assets/images/ui/icon_end.png');
-        this.load.image(TextureKeys.End_BannerCongrat, 'assets/images/bg/banner_congrat.png');
+        // this.load.image(TextureKeys.End_Icon, 'assets/images/ui/icon_end.png');
+        // this.load.image(TextureKeys.End_BannerCongrat, 'assets/images/bg/banner_congrat.png');
 
         // 5. Audio (Phaser)
         // Lưu ý: Key BgmNen đã được define trong Keys.ts, và file âm thanh này dùng chung

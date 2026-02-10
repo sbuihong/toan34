@@ -17,8 +17,6 @@ import AudioManager from '../audio/AudioManager';
 import { showGameButtons, sdk } from '../main';
 import { game } from "@iruka-edu/mini-game-sdk";
 
-import FPSCounter from '../utils/FPSCounter';
-
 export default class Scene1 extends Phaser.Scene {
     // Đối tượng âm thanh nền (Background Music)
     private bgm!: Phaser.Sound.BaseSound;
@@ -26,7 +24,6 @@ export default class Scene1 extends Phaser.Scene {
     // --- QUẢN LÝ LOGIC (MANAGERS) ---
     private paintManager!: PaintManager; // Quản lý việc tô màu, cọ vẽ, canvas
     private idleManager!: IdleManager; // Quản lý thời gian rảnh để hiện gợi ý
-    private fpsCounter!: FPSCounter; // ✅ FPS Counter
 
     // --- QUẢN LÝ TRẠNG THÁI GAME (GAME STATE) ---
     // Map lưu các bộ phận chưa tô xong (Key: ID, Value: Image Object) -> Dùng để random gợi ý
@@ -109,9 +106,6 @@ export default class Scene1 extends Phaser.Scene {
             if (this.input.keyboard) this.input.keyboard.enabled = true;
         });
 
-        // ✅ HIỂN THỊ FPS
-        // this.fpsCounter = new FPSCounter(this);
-
         // Nếu là restart (không cần chờ tap), chạy intro luôn
         if (!this.isWaitingForIntroStart) {
             const soundManager = this.sound as Phaser.Sound.WebAudioSoundManager;
@@ -136,11 +130,6 @@ export default class Scene1 extends Phaser.Scene {
         ) {
             this.idleManager.update(delta);
         }
-
-        // Cập nhật FPS
-        if (this.fpsCounter) {
-            this.fpsCounter.update();
-        }
     }
 
     shutdown() {
@@ -164,9 +153,16 @@ export default class Scene1 extends Phaser.Scene {
 
         // Khởi tạo PaintManager
         // Callback nhận về: id, renderTexture, và DANH SÁCH MÀU ĐÃ DÙNG (Set<number>)
-        this.paintManager = new PaintManager(this, (id, rt, usedColors) => {
-            this.handlePartComplete(id, rt, usedColors);
-        });
+        this.paintManager = new PaintManager(
+            this, 
+            (id, rt, usedColors) => {
+                this.handlePartComplete(id, rt, usedColors);
+            },
+            () => {
+                game.recordWrong();
+                AudioManager.play('sfx-wrong');
+            }
+        );
 
         // Cài đặt Idle Manager: Khi rảnh quá lâu thì gọi showHint()
         this.idleManager = new IdleManager(GameConstants.IDLE.THRESHOLD, () =>
@@ -247,14 +243,6 @@ export default class Scene1 extends Phaser.Scene {
             .setDepth(0);
 
         board.displayWidth = GameUtils.getW(this) * 0.8;
-
-        const boardRightX = board.x + board.displayWidth / 2;
-        const boardCenterY = board.y + board.displayHeight / 2;
-        // const rightBoard = this.add
-        //     .image(boardRightX - 8, boardCenterY, TextureKeys.BoardRight)
-        //     .setOrigin(1, 0.5)
-        //     .setScale(scl[0], scl[1])
-        //     .setDepth(10);
     }
 
     // --- LOGIC TẠO LEVEL THEO STAGE ---
@@ -267,47 +255,6 @@ export default class Scene1 extends Phaser.Scene {
             // this.createDecorativeObject(data.name);
         }
     }
-
-    // private createDecorativeLetter(config: any) {
-    //     if (!config) return;
-    //     const cx = GameUtils.pctX(this, config.baseX_pct);
-    //     const cy = GameUtils.pctY(this, config.baseY_pct);
-        
-    //     // Vẽ Frame (Khung) nếu có
-    //     if (config.frameKey) {
-    //         // Vẽ frame ở dưới (depth thấp hơn outline)
-    //         this.add.image(cx, cy, config.frameKey)
-    //             .setOrigin(0.55, 0.5)
-    //             .setScale(config.baseScale)
-    //             .setDepth(5);
-    //     }
-
-    //     // Chỉ hiện outline
-    //     this.add.image(cx, cy, config.outlineKey)
-    //         .setOrigin(0.56, 0.5)
-    //         .setScale(config.baseScale * 1.3).setDepth(100);
-    // }
-
-    // private createDecorativeObject(config: any) {
-    //     if (!config) return;
-    //     const cx = GameUtils.pctX(this, config.baseX_pct);
-    //     const cy = GameUtils.pctY(this, config.baseY_pct);
-        
-    //     // Vẽ Frame (Khung) nếu có
-    //     if (config.frameKey && config.frameKey !== "") {
-    //         this.add.image(cx, cy, config.frameKey)
-    //             .setOrigin(0.5)
-    //             .setScale(config.baseScale)
-    //             .setDepth(5);
-    //     }
-
-    //     // Chỉ hiện outline (hình ảnh chính)
-    //     if (config.outlineKey) {
-    //         this.add.image(cx, cy, config.outlineKey)
-    //             .setScale(config.baseScale)
-    //             .setDepth(100);
-    //     }
-    // }
 
     private spawnCharacter(config: any) {
         const cx = GameUtils.pctX(this, config.baseX_pct);
@@ -362,104 +309,6 @@ export default class Scene1 extends Phaser.Scene {
 
         // --- DEBUG: VẼ TRỤC TỌA ĐỘ ---
         // this.drawDebugAxes(outline);
-    }
-
-    /**
-     * Vẽ trục tọa độ (Debug) cho ảnh
-     * Trục X: Màu đỏ, kèm số đo
-     * Trục Y: Màu xanh lá, kèm số đo
-     */
-    private drawDebugAxes(image: Phaser.GameObjects.Image) {
-        const graphics = this.add.graphics();
-        graphics.setDepth(1000); // Vẽ đè lên mọi thứ
-
-        const x = image.x;
-        const y = image.y;
-        
-        // Lấy kích thước hiển thị thực tế (đã nhân scale)
-        const w = image.displayWidth;
-        const h = image.displayHeight;
-
-        // Trục X (Red)
-        graphics.lineStyle(2, 0xff0000, 1);
-        graphics.beginPath();
-        graphics.moveTo(x - w / 2, y);
-        graphics.lineTo(x + w / 2, y);
-        graphics.strokePath();
-
-         // Trục Y (Green)
-        graphics.lineStyle(2, 0x00ff00, 1);
-        graphics.beginPath();
-        graphics.moveTo(x, y - h / 2);
-        graphics.lineTo(x, y + h / 2);
-        graphics.strokePath();
-        
-        // Tâm (Blue Dot)
-        graphics.fillStyle(0x0000ff, 1);
-        graphics.fillCircle(x, y, 4);
-
-        // --- DRAW TICKS & LABELS ---
-        const step = 50; 
-        const tickSize = 5;
-
-        // X-Axis Ticks
-        for (let i = step; i <= w / 2; i += step) {
-             // Positive X (Right)
-             this.drawTick(graphics, x + i, y, tickSize, 0xff0000, i.toString());
-             // Negative X (Left)
-             this.drawTick(graphics, x - i, y, tickSize, 0xff0000, (-i).toString());
-        }
-
-        // Y-Axis Ticks
-        for (let i = step; i <= h / 2; i += step) {
-             // Positive Y (Down)
-             this.drawTick(graphics, x, y + i, tickSize, 0x00ff00, i.toString());
-             // Negative Y (Up)
-             this.drawTick(graphics, x, y - i, tickSize, 0x00ff00, (-i).toString());
-        }
-    }
-
-    private drawTick(graphics: Phaser.GameObjects.Graphics, cx: number, cy: number, size: number, color: number, text: string) {
-        // Draw tick line (vertical for X-axis usage, horizontal for Y-axis usage - simplified to cross for visibility)
-        graphics.lineStyle(1, color, 1);
-        graphics.beginPath();
-        graphics.moveTo(cx - 2, cy - 2);
-        graphics.lineTo(cx + 2, cy + 2);
-        graphics.moveTo(cx + 2, cy - 2);
-        graphics.lineTo(cx - 2, cy + 2);
-        graphics.strokePath();
-        
-        // Draw text
-        this.add.text(cx, cy, text, { 
-            fontSize: '9px', 
-            color: '#ffffff',
-            backgroundColor: '#000000AA'
-        }).setOrigin(0.5).setDepth(1001);
-    }
-
-    private drawHintDebug(image: Phaser.GameObjects.Image, hintPoints: any[]) {
-        const graphics = this.add.graphics();
-        graphics.setDepth(1001); // On top of axes
-
-        const baseX = image.x;
-        const baseY = image.y;
-        const scale = image.getData('originScale') || 1;
-
-        hintPoints.forEach((p) => {
-            const wx = baseX + p.x * scale;
-            const wy = baseY + p.y * scale;
-
-            // Draw Point (Yellow)
-            graphics.fillStyle(0x539BD7, 1);
-            graphics.fillCircle(wx, wy, 10);
-
-            // Draw Text (Coordinates)
-            this.add.text(wx + 5, wy + 5, `(${p.x}, ${p.y})`, {
-                fontSize: '15px',
-                color: '#ffff00',
-                backgroundColor: '#000000'
-            }).setDepth(1002);
-        });
     }
 
     // =================================================================

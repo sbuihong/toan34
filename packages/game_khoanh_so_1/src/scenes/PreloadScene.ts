@@ -11,7 +11,6 @@ export default class PreloadScene extends Phaser.Scene {
         // 1. UI Chung
         this.load.image(TextureKeys.BtnExit, 'assets/images/ui/btn_exit.png');
         this.load.image(TextureKeys.BtnReset, 'assets/images/ui/btn_reset.png');
-        this.load.image(TextureKeys.BtnEraser, 'assets/images/ui/btn_eraser.png');
         this.load.image(TextureKeys.HandHint, 'assets/images/ui/hand.png');
         this.load.image(TextureKeys.S1_Banner, 'assets/images/S1/banner.png');
         this.load.image(TextureKeys.S1_Board, 'assets/images/bg/board_scene.png');
@@ -21,7 +20,6 @@ export default class PreloadScene extends Phaser.Scene {
 
         // --- Scene 1 Assets 1 ---
         this.load.image(TextureKeys.S1_Ball, 'assets/images/S1/bong1.png');
-        // this.load.image(TextureKeys.Mic, 'assets/images/S1/microphone.png');
         this.load.image(TextureKeys.Title1, 'assets/images/S1/questionTitle.png');
         this.load.image(TextureKeys.S2_Ball, 'assets/images/S1/bong2.png');
 
@@ -30,8 +28,8 @@ export default class PreloadScene extends Phaser.Scene {
         this.load.json(DataKeys.LevelS1Config, 'assets/data/level_s1_config.json');
 
         // 4. End Game Assets
-        this.load.image(TextureKeys.End_Icon, 'assets/images/ui/icon_end.png');
-        this.load.image(TextureKeys.End_BannerCongrat, 'assets/images/bg/banner_congrat.png');
+        // this.load.image(TextureKeys.End_Icon, 'assets/images/ui/icon_end.png');
+        // this.load.image(TextureKeys.End_BannerCongrat, 'assets/images/bg/banner_congrat.png');
 
         // 5. Audio (Phaser)
         // Lưu ý: Key BgmNen đã được define trong Keys.ts, và file âm thanh này dùng chung
@@ -39,10 +37,6 @@ export default class PreloadScene extends Phaser.Scene {
     }
 
     create() {
-        // Chiến thuật: Tải file QUAN TRỌNG nhất (Lời dẫn + SFX cơ bản) trước.
-        // NHƯNG để giống game_dem_s1, ta sẽ vào Game ngay lập tức.
-        // Việc load essentials sẽ chạy ngầm hoặc để Scene1 tự xử lý (nếu cần).
-        
         // Start Scene1 ngay
         this.scene.start(SceneKeys.Scene1);
         

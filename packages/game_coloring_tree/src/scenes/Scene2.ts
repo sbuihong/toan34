@@ -17,7 +17,6 @@ import AudioManager from '../audio/AudioManager';
 import { showGameButtons, sdk } from '../main';
 import { game } from "@iruka-edu/mini-game-sdk";
 
-import FPSCounter from '../utils/FPSCounter';
 
 export default class Scene2 extends Phaser.Scene {
     // Đối tượng âm thanh nền (Background Music)
@@ -26,7 +25,6 @@ export default class Scene2 extends Phaser.Scene {
     // --- QUẢN LÝ LOGIC (MANAGERS) ---
     private paintManager!: PaintManager; // Quản lý việc tô màu, cọ vẽ, canvas
     private idleManager!: IdleManager; // Quản lý thời gian rảnh để hiện gợi ý
-    private fpsCounter!: FPSCounter; // ✅ FPS Counter
 
     // --- QUẢN LÝ TRẠNG THÁI GAME (GAME STATE) ---
     // Map lưu các bộ phận chưa tô xong (Key: ID, Value: Image Object) -> Dùng để random gợi ý
@@ -125,11 +123,6 @@ export default class Scene2 extends Phaser.Scene {
             this.finishedParts.size < this.totalParts
         ) {
             this.idleManager.update(delta);
-        }
-
-        // Cập nhật FPS
-        if (this.fpsCounter) {
-            this.fpsCounter.update();
         }
     }
 
@@ -340,7 +333,6 @@ export default class Scene2 extends Phaser.Scene {
         if (this.finishedParts.size >= this.totalParts) {
             console.log('SCENE 2 WIN!');
 
-            // --- GAME HUB COMPLETE ---
             // --- GAME HUB COMPLETE ---
             game.finalizeAttempt();
             sdk.requestSave({

@@ -521,13 +521,12 @@ export default class Scene1 extends Phaser.Scene {
             console.log('WIN!');
 
             // --- GAME HUB COMPLETE ---
-            // game.finalizeAttempt(); // Not yet
             sdk.requestSave({
                 score: this.score,
                 levelIndex: 0,
             });
             sdk.progress({
-                levelIndex: 0, // Level complete -> set index + 1 if multi-level, here just complete
+                levelIndex: 0,
                 total: 1,
                 score: this.score,
             });

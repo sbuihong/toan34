@@ -26,7 +26,6 @@ export default class Scene1 extends Phaser.Scene {
     // --- QUẢN LÝ LOGIC (MANAGERS) ---
     private paintManager!: PaintManager; // Quản lý việc tô màu, cọ vẽ, canvas
     private idleManager!: IdleManager; // Quản lý thời gian rảnh để hiện gợi ý
-    private fpsCounter!: FPSCounter; // ✅ FPS Counter
 
     // --- QUẢN LÝ TRẠNG THÁI GAME (GAME STATE) ---
     // Map lưu các bộ phận chưa tô xong (Key: ID, Value: Image Object) -> Dùng để random gợi ý
@@ -40,7 +39,6 @@ export default class Scene1 extends Phaser.Scene {
     private isWaitingForIntroStart: boolean = true; // Cờ chờ người dùng chạm lần đầu
 
     // --- UI COMPONENTS ---
-    
     private get handHint(): Phaser.GameObjects.Image | undefined {
          const uiScene = this.scene.get(SceneKeys.UI) as any;
          return uiScene?.handHint;
@@ -49,6 +47,8 @@ export default class Scene1 extends Phaser.Scene {
     // Tween đang chạy cho gợi ý (lưu lại để stop khi cần)
     private activeHintTween: Phaser.Tweens.Tween | null = null;
     private activeHintTarget: Phaser.GameObjects.Image | null = null;
+
+
 
     constructor() {
         super(SceneKeys.Scene1);
@@ -135,11 +135,6 @@ export default class Scene1 extends Phaser.Scene {
             this.finishedParts.size < this.totalParts
         ) {
             this.idleManager.update(delta);
-        }
-
-        // Cập nhật FPS
-        if (this.fpsCounter) {
-            this.fpsCounter.update();
         }
     }
 
@@ -247,14 +242,6 @@ export default class Scene1 extends Phaser.Scene {
             .setDepth(0);
 
         board.displayWidth = GameUtils.getW(this) * 0.8;
-
-        const boardRightX = board.x + board.displayWidth / 2;
-        const boardCenterY = board.y + board.displayHeight / 2;
-        // const rightBoard = this.add
-        //     .image(boardRightX - 8, boardCenterY, TextureKeys.BoardRight)
-        //     .setOrigin(1, 0.5)
-        //     .setScale(scl[0], scl[1])
-        //     .setDepth(10);
     }
 
     // --- LOGIC TẠO LEVEL THEO STAGE ---
@@ -268,26 +255,6 @@ export default class Scene1 extends Phaser.Scene {
             // this.createDecorativeObject(data.name);
         }
     }
-
-    // private createDecorativeLetter(config: any) {
-    //     if (!config) return;
-    //     const cx = GameUtils.pctX(this, config.baseX_pct);
-    //     const cy = GameUtils.pctY(this, config.baseY_pct);
-        
-    //     // Vẽ Frame (Khung) nếu có
-    //     if (config.frameKey) {
-    //         // Vẽ frame ở dưới (depth thấp hơn outline)
-    //         this.add.image(cx, cy, config.frameKey)
-    //             .setOrigin(0.55, 0.5)
-    //             .setScale(config.baseScale)
-    //             .setDepth(5);
-    //     }
-
-    //     // Chỉ hiện outline
-    //     this.add.image(cx, cy, config.outlineKey)
-    //         .setOrigin(0.56, 0.5)
-    //         .setScale(config.baseScale * 1.3).setDepth(100);
-    // }
 
     private createDecorativeObject(config: any) {
         if (!config) return;
@@ -518,18 +485,6 @@ export default class Scene1 extends Phaser.Scene {
         if (this.finishedParts.size >= this.totalParts) {
             console.log('WIN!');
 
-            // --- GAME HUB COMPLETE ---
-            game.finalizeAttempt();
-            sdk.requestSave({
-                score: this.score,
-                levelIndex: 0,
-            });
-            sdk.progress({
-                levelIndex: 0,
-                total: 1,
-                score: this.score,
-            });
-
             AudioManager.play('sfx-correct_s2');
             
             // Xóa UI (Nút màu & Banner)
@@ -542,6 +497,17 @@ export default class Scene1 extends Phaser.Scene {
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
                 this.scene.start(SceneKeys.EndGame);
             });
+            // --- GAME HUB COMPLETE ---
+             sdk.requestSave({
+                score: this.score,
+                levelIndex: 0,
+            });
+            sdk.progress({
+                levelIndex: 0,
+                total: 1,
+                score: this.score,
+            });
+            game.finalizeAttempt();
         }
     }
 

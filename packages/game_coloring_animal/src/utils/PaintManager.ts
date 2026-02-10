@@ -17,8 +17,6 @@ export class PaintManager {
     // ✅ FIX LAG: Biến lưu vị trí cũ để vẽ LERP
     private lastX: number = 0;
     private lastY: number = 0;
-    // ✅ OPTIMIZATION: Thời gian lần check cuối
-    private lastCheckTime: number = 0;
 
     // Config camera filter
     private ignoreCameraId: number = 0;
@@ -31,7 +29,7 @@ export class PaintManager {
     // ✅ OPTIMIZATION: Cache mask data to avoid redundant draw calls and readback
     private maskCache: Map<string, Uint8ClampedArray> = new Map();
     
-    private readonly CHECK_THRESHOLD: number = 800; // Check progress every ~800px of painting
+    private readonly CHECK_THRESHOLD: number = 300; // Check progress every ~300px of painting
 
     // ✅ TỐI ƯU RAM: Tạo sẵn Canvas tạm để tái sử dụng, không new mới liên tục
     private helperCanvasPaint: HTMLCanvasElement;
@@ -263,9 +261,9 @@ export class PaintManager {
         this.partUncheckedMetrics.set(id, currentDist + distance);
 
         // 3. Thuật toán LERP (Nội suy)
-        const stepSize = this.brushSize * 0.85; // Tăng stepSize để giảm số lần draw (0.65 -> 0.85)
+        const stepSize = this.brushSize * 0.65;
         let steps = Math.ceil(distance / stepSize);
-        if (steps > 30) steps = 30; // Giới hạn số steps tối đa (50 -> 30)
+        if (steps > 50) steps = 50;
         const offset = this.brushSize / 2;
 
         for (let i = 0; i < steps; i++) {
@@ -307,21 +305,13 @@ export class PaintManager {
         const id = rt.getData('id');
         const key = rt.getData('key');
 
-        // ✅ OPTIMIZATION: Throttle check thời gian (Max 1 lần / giây)
-        const now = Date.now();
-        if (now - this.lastCheckTime < 1000) {
-             return;
-        }
-        this.lastCheckTime = now;
-
         rt.snapshot((snapshot) => {
             if (!(snapshot instanceof HTMLImageElement)) return;
             
             const w = snapshot.width;
             const h = snapshot.height;
-            // ✅ OPTIMIZATION: Downsample mạnh hơn (/10 thay vì /4) để giảm tải CPU loop
-            const checkW = Math.floor(w / 10);
-            const checkH = Math.floor(h / 10);
+            const checkW = Math.floor(w / 4);
+            const checkH = Math.floor(h / 4);
 
             // ✅ TÁI SỬ DỤNG CANVAS (Không tạo mới)
             const ctxPaint = this.getRecycledContext(this.helperCanvasPaint, snapshot, checkW, checkH);

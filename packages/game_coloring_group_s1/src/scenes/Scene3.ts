@@ -77,8 +77,7 @@ export default class Scene3 extends Phaser.Scene {
         }
 
         this.createLevel();
-        
-        game.setTotal(1);
+
         (window as any).irukaGameState = {
             startTime: Date.now(),
             currentScore: 0,
@@ -425,12 +424,15 @@ export default class Scene3 extends Phaser.Scene {
 
             AudioManager.play('sfx-correct_s2');
             
-            // Xóa UI (Nút màu & Banner) -> REMOVED for transition
-            // const uiScene = this.scene.get(SceneKeys.UI) as any;
-            // if (uiScene) {
-            //     if (uiScene.hidePalette) uiScene.hidePalette();
-            //     if (uiScene.hideBanners) uiScene.hideBanners();
-            // }
+            sdk.requestSave({
+                score: this.score,
+                levelIndex: 2,
+            });
+            sdk.progress({
+                levelIndex: 2, 
+                total: 4,
+                score: this.score,
+            });
 
             this.time.delayedCall(GameConstants.SCENE1.TIMING.WIN_DELAY, () => {
                 this.scene.start(SceneKeys.Scene4);

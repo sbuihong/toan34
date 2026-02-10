@@ -5,12 +5,13 @@ import { GameUtils } from '../utils/GameUtils';
 import { changeBackground } from '../utils/BackgroundManager';
 import AudioManager from '../audio/AudioManager';
 import { showGameButtons } from '../main';
-import { setGameSceneReference, resetVoiceState } from '../utils/rotateOrientation';
+import { setGameSceneReference, resetVoiceState, playVoiceLocked } from '../utils/rotateOrientation';
 import { IdleManager } from '../utils/IdleManager';
 
 // Managers
 import { LassoManager } from '../managers/LassoManager';
 import { ObjectManager } from '../managers/ObjectManager';
+import { LassoValidation } from '../utils/LassoValidation';
 import { game } from "@iruka-edu/mini-game-sdk";
 import { sdk } from '../main';
 
@@ -19,74 +20,51 @@ export default class Scene1 extends Phaser.Scene {
     private lassoManager!: LassoManager;
     private objectManager!: ObjectManager;
 
-    // UI Elements
-    private btnMic!: Phaser.GameObjects.Image; // Giữ lại reference UI nếu cần
-    
     // Logic States
     private isIntroductionPlayed: boolean = false;
     private idleManager!: IdleManager;
     private handHint!: Phaser.GameObjects.Image;
-    private static hasInteracted: boolean = false; // Cờ kiểm tra lần đầu vào game
+    private isWaitingForIntroStart: boolean = true;
+    
+    // Tutorial & Hint States
+    private isIntroActive: boolean = false;
+    private activeHintTween: Phaser.Tweens.Tween | null = null;
+    private activeHintTarget: Phaser.GameObjects.Image | null = null;
 
     constructor() {
         super(SceneKeys.Scene1);
     }
 
-    init() {
+    init(data?: { isRestart: boolean; fromEndGame?: boolean }) {
         resetVoiceState();
+        
+        // Reset Logic States
+        this.isIntroActive = false;
+        this.activeHintTween = null;
+        this.activeHintTarget = null;
+        this.handHint = undefined as any; // Force reset reference
+
+        if (data?.isRestart) {
+            this.isWaitingForIntroStart = false;
+            if (!data.fromEndGame) {
+                game.retryFromStart(); 
+            }
+        } else {
+            this.isWaitingForIntroStart = true;
+        }
     }
 
     create() {
-        window.gameScene = this;
-        setGameSceneReference(this);
         showGameButtons();
         
-        // 2. Setup Managers
-        this.lassoManager = new LassoManager(this);
-        this.objectManager = new ObjectManager(this);
-        
-        this.idleManager = new IdleManager(GameConstants.IDLE.THRESHOLD, () => {
-            this.showHint();
-        });
-        
-        // 3. Create UI (Static elements)
+        this.setupSystem();
+        this.setupBackgroundAndAudio();
         this.createUI();
 
         // 4. Load Level Data & Spawn Objects
         const levelConfig = this.cache.json.get(DataKeys.LevelS1Config);
         this.objectManager.spawnObjectsFromConfig(levelConfig);
 
-        // 5. Start Logic (Conditional)
-        this.setupBackgroundAndAudio();
-
-        // B. Game logic + Voice Intro (Cần touch để browser không chặn AudioContext của voice/sfx)
-        if (!Scene1.hasInteracted) {
-            // Lần đầu vào game: Cần Tap để unlock Audio
-            console.log("First time entry: Waiting for interaction...");
-            
-            this.input.once('pointerdown', () => {
-                console.log("User interacted. Starting game flow...");
-                Scene1.hasInteracted = true;
-                
-                // Resume Audio Context (cho chắc chắn với browser chặn)
-                const soundManager = this.sound as Phaser.Sound.WebAudioSoundManager;
-                if (soundManager.context && soundManager.context.state === 'suspended') {
-                    soundManager.context.resume();
-                }
-                
-                this.startIntroAndGameplay();
-            });
-        } else {
-            // Các lần sau (Replay): Vào thẳng
-            this.startIntroAndGameplay();
-        }
-
-        // 6. Launch UI Overlay
-        if (!this.scene.get(SceneKeys.UI).scene.isActive()) {
-            this.scene.launch(SceneKeys.UI, { sceneKey: SceneKeys.Scene1 });
-            this.scene.bringToTop(SceneKeys.UI);
-        }
-        
         // SDK Integration
         game.setTotal(1);
         (window as any).irukaGameState = {
@@ -96,9 +74,24 @@ export default class Scene1 extends Phaser.Scene {
         sdk.score(0, 0);
         sdk.progress({ levelIndex: 0, total: 1 });
         game.startQuestionTimer();
+
+        this.setupInput();
+
+        // Nếu là restart (không cần chờ tap), chạy intro luôn
+        if (!this.isWaitingForIntroStart) {
+            const soundManager = this.sound as Phaser.Sound.WebAudioSoundManager;
+            if (soundManager.context && soundManager.context.state === 'suspended') {
+                soundManager.context.resume();
+            }
+            this.playIntroSequence();
+        }
+
+        // 6. Launch UI Overlay
+        if (!this.scene.get(SceneKeys.UI).scene.isActive()) {
+            this.scene.launch(SceneKeys.UI, { sceneKey: SceneKeys.Scene1 });
+            this.scene.bringToTop(SceneKeys.UI);
+        }
     }
-
-
 
     update(time: number, delta: number) {
         if (this.idleManager) {
@@ -122,6 +115,11 @@ export default class Scene1 extends Phaser.Scene {
         if (this.idleManager) {
             this.idleManager.stop();
         }
+        
+        // Reset references to destroyed objects
+        this.handHint = undefined as any;
+        this.activeHintTarget = null;
+        this.activeHintTween = null;
 
         // 3. Dọn dẹp hệ thống (System Cleanup)
         this.tweens.killAll(); // Dừng mọi animation đang chạy
@@ -139,30 +137,88 @@ export default class Scene1 extends Phaser.Scene {
     // PHẦN 1: CÀI ĐẶT HỆ THỐNG (SYSTEM SETUP)
     // =================================================================
 
+    private setupSystem() {
+        resetVoiceState();
+        (window as any).gameScene = this;
+        setGameSceneReference(this);
+
+        this.lassoManager = new LassoManager(this);
+        this.lassoManager.onLassoComplete = (polygon: Phaser.Geom.Polygon) => {
+            this.handleLassoSelection(polygon);
+        };
+
+        this.objectManager = new ObjectManager(this);
+
+        this.idleManager = new IdleManager(GameConstants.IDLE.THRESHOLD, () => {
+            this.showHint();
+        });
+    }
+
+    private setupInput() {
+        this.input.on('pointerdown', () => {
+            if (this.isWaitingForIntroStart) {
+                this.isWaitingForIntroStart = false;
+                
+                const soundManager = this.sound as Phaser.Sound.WebAudioSoundManager;
+                if (soundManager.context && soundManager.context.state === 'suspended') {
+                    soundManager.context.resume();
+                }
+
+                this.playIntroSequence();
+                return;
+            }
+
+            this.idleManager.reset();
+            this.stopIntro();
+            this.stopActiveHint();
+        });
+    }
+
     private setupBackgroundAndAudio() {
         // 1. Đổi Background
         changeBackground('assets/images/bg/background.jpg');
 
         // 2. Phát nhạc nền (BGM)
-        try {
-            if (this.sound.get(AudioKeys.BgmNen)) {
-                this.sound.stopByKey(AudioKeys.BgmNen);
-            }
-            this.bgm = this.sound.add(AudioKeys.BgmNen, {
-                loop: true,
-                volume: 0.25,
-            });
-            this.bgm.play();
-            
-        } catch (e) {
-            console.warn("Audio Context issue:", e);
+        if (this.sound.get(AudioKeys.BgmNen)) {
+            this.sound.stopByKey(AudioKeys.BgmNen);
         }
+        this.bgm = this.sound.add(AudioKeys.BgmNen, {
+            loop: true,
+            volume: 0.25,
+        });
+        this.bgm.play();
     }
 
-    private startIntroAndGameplay() {
-        // Đọc hướng dẫn
-        AudioManager.play(AudioKeys.VoiceIntro);
-        this.setupGameplay();
+    public restartIntro() {
+        this.stopIntro();
+        this.time.delayedCall(GameConstants.SCENE1.TIMING.RESTART_INTRO, () =>
+            this.playIntroSequence()
+        );
+    }
+
+    private playIntroSequence() {
+        this.isIntroActive = true;
+        
+        // Sử dụng hàm playVoiceLocked nếu có (từ utils/rotateOrientation), hoặc fallback
+        playVoiceLocked(this.sound, AudioKeys.VoiceIntro);
+
+        // Đợi 1 chút rồi chạy animation tay hướng dẫn
+        this.time.delayedCall(GameConstants.SCENE1.TIMING.INTRO_DELAY, () => {
+            if (this.isIntroActive) {
+               this.setupGameplay(); // Kích hoạt gameplay (enable lasso)
+               this.runHandTutorial();
+            }
+        });
+    }
+
+    private stopIntro() {
+        this.isIntroActive = false;
+        this.idleManager.start();
+
+        if (this.handHint) {
+            this.handHint.setAlpha(0).setPosition(-200, -200);
+            this.tweens.killTweensOf(this.handHint);
+        }
     }
 
     // =================================================================
@@ -227,58 +283,17 @@ export default class Scene1 extends Phaser.Scene {
         this.input.on('pointerdown', () => {
             // Chỉ reset khi game đã bắt đầu (IdleManager đã chạy)
             this.idleManager.reset();
-            this.hideHint();
+            this.stopActiveHint();
         });
-
-        // Lắng nghe sự kiện khi khoanh xong
-        this.lassoManager.onLassoComplete = (polygon: Phaser.Geom.Polygon) => {
-            this.handleLassoSelection(polygon);
-        };
     }
 
     private handleLassoSelection(polygon: Phaser.Geom.Polygon) {
-        // 1. Lấy danh sách đối tượng trong vùng chọn
-        const selectedObjects = this.objectManager.getObjectsInPolygon(polygon);
+        // 1. Validate Selection using Utility Class
+        const result = LassoValidation.validateSelection(polygon, this.objectManager);
         
-        console.log(`Đã khoanh trúng: ${selectedObjects.length} đối tượng.`);
-
-        // 2. Kiểm tra điều kiện Đúng/Sai
-        const correctObject = this.objectManager.getCorrectObject();
-        const wrongObject = this.objectManager.getWrongObject();
-
-        let isSuccess = false;
-        let failureReason = "";
-
-        // Điều kiện thành công:
-        // - Khoanh đúng 1 hình
-        // - Hình đó phải là đáp án đúng
-        // - Lấn qua hình sai không quá 1/5
-        if (selectedObjects.length === 1) {
-            const selectedObj = selectedObjects[0];
-            
-            if (this.objectManager.isCorrectAnswer(selectedObj)) {
-                // Kiểm tra lấn qua hình sai
-                if (wrongObject) {
-                    const overlapWithWrong = this.objectManager.getOverlapPercentage(polygon, wrongObject);
-                    
-                    console.log(`Overlap với hình sai: ${(overlapWithWrong * 100).toFixed(1)}%`);
-                    
-                    if (overlapWithWrong > 0.2) { // 1/5 = 0.2
-                        failureReason = `Vẽ lấn quá hình sai (${(overlapWithWrong * 100).toFixed(1)}% > 20%)`;
-                    } else {
-                        isSuccess = true;
-                    }
-                } else {
-                    isSuccess = true;
-                }
-            } else {
-                failureReason = "Khoanh sai đáp án!";
-            }
-        } else if (selectedObjects.length > 1) {
-            failureReason = "Khoanh quá nhiều hình! Chỉ khoanh 1 hình thôi!";
-        } else {
-            failureReason = "Khoanh sai hoặc không trúng!";
-        }
+        const selectedObjects = result.selectedObjects;
+        const isSuccess = result.success;
+        const failureReason = result.failureReason;
 
         if (isSuccess) {
             // --- SUCCESS CASE ---
@@ -295,7 +310,7 @@ export default class Scene1 extends Phaser.Scene {
             console.log("✅ Khoanh ĐÚNG!");
             AudioManager.play("sfx-correct");
             AudioManager.play("sfx-ting");
-            this.objectManager.highlightObjects(selectedObjects, true);
+            this.objectManager.highlightObjects(selectedObjects as Phaser.GameObjects.Image[], true);
             
             // SDK: Record Score
             game.recordCorrect({ scoreDelta: 1 });
@@ -303,7 +318,7 @@ export default class Scene1 extends Phaser.Scene {
             sdk.progress({ levelIndex: 0, total: 1, score: 1 });
 
             // Ẩn gợi ý nếu đang hiện
-            this.hideHint();
+            this.stopActiveHint();
             
             // Vô hiệu hóa input để tránh spam
             this.lassoManager.disable();
@@ -349,69 +364,154 @@ export default class Scene1 extends Phaser.Scene {
     // =================================================================
     // PHẦN 4: HƯỚNG DẪN & GỢI Ý (TUTORIAL & HINT)
     // =================================================================
-
     /**
-     * Hiển thị gợi ý bàn tay xoay vòng tròn
-     * (Callback của IdleManager)
+     * Tutorial đầu game: Hiển thị gợi ý bàn tay xoay vòng tròn
+     * tay khoanh tròn mẫu quanh đáp án đúng
      */
-    private showHint() {
-        // 1. Tìm quả bóng đúng
-        game.addHint();
-        const ball = this.objectManager.getAllObjects().find(obj => obj.texture.key === TextureKeys.S1_Ball);
-        if (!ball) return; // Không tìm thấy bóng thì thôi
+    private runHandTutorial() {
+        if (!this.isIntroActive) return;
 
-        // 2. Tính bán kính vòng tròn (giống logic khoanh đúng)
-        // Lấy cạnh lớn nhất / 2 * 1.3
+        // 1. Tìm quả bóng đúng
+        const ball = this.objectManager.getAllObjects().find(obj => obj.texture.key === TextureKeys.S1_Ball);
+        if (!ball) return;
+
         const image = ball as Phaser.GameObjects.Image;
         const radius = (Math.max(image.displayWidth, image.displayHeight) / 2) * 1.3;
-        
-        // 3. Tạo bàn tay (nếu chưa có)
-        // Dùng ảnh hand.png từ TextureKeys.HandHint (đã khai báo trong Keys.ts)
+
+        // 2. Tạo bàn tay (nếu chưa có)
         if (!this.handHint) {
             this.handHint = this.add.image(0, 0, TextureKeys.HandHint)
-                .setDepth(100) // Cao hơn vật thể
-                .setOrigin(0.15, 0.15) // Góc trên bên trái
+                .setDepth(100)
+                .setOrigin(0.15, 0.15)
                 .setVisible(false);
         }
 
-        // Hiện bàn tay
         this.handHint.setVisible(true);
-        this.handHint.setAlpha(1);
+        this.handHint.setAlpha(0);
 
-        // 4. Tạo hiệu ứng xoay tròn
-        // Ta dùng 1 object tạm để tween góc từ 0 -> 360 (2*PI)
         const circleData = { angle: 0 };
+        const startX = image.x + radius * Math.cos(-Phaser.Math.PI2 / 4);
+        const startY = image.y + radius * Math.sin(-Phaser.Math.PI2 / 4);
         
-        // Dừng tween cũ nếu đang chạy
-        this.tweens.killTweensOf(circleData);
-        // Dừng luôn cả tween trên handHint nếu có
-        this.tweens.killTweensOf(this.handHint);
+        this.handHint.setPosition(startX, startY);
 
+        const tweensChain: any[] = [];
+        
+        // 1. Hiện ra
+        tweensChain.push({
+            targets: this.handHint,
+            alpha: 1,
+            duration: 500
+        });
+
+        // 2. Xoay 2 vòng
+        // REWRITE: Dùng logic đơn giản hơn cho Tutorial:
+        // Move to start -> Fade In -> Circle Tween -> Fade Out -> Loop
+        
+        this.handHint.setAlpha(1);
+        
         // Tween thay đổi góc
         this.tweens.add({
             targets: circleData,
-            angle: Phaser.Math.PI2, // 360 độ (radians)
+            angle: Phaser.Math.PI2,
             duration: 2000,
-            repeat: 1, // Chạy chính + Lặp 1 lần = 2 vòng
+            repeat: 1, 
             onUpdate: () => {
-                // Tính tọa độ mới dựa trên góc
-                // x = cx + r * cos(a)
-                // y = cy + r * sin(a)
-                // Lưu ý: -PI/2 để bắt đầu từ đỉnh trên cùng (12h) nếu muốn
                 const a = circleData.angle - Phaser.Math.PI2 / 4; 
-                
                 this.handHint.x = image.x + radius * Math.cos(a);
                 this.handHint.y = image.y + radius * Math.sin(a);
             },
             onComplete: () => {
-                this.hideHint();
-                // Bắt đầu đếm lại Idle để hiện tiếp nếu người chơi vẫn không tương tác
+                // Sau khi xoay xong 2 vòng
+                this.tweens.add({
+                    targets: this.handHint,
+                    alpha: 0,
+                    duration: 500,
+                    onComplete: () => {
+                        this.handHint.setPosition(-200, -200);
+                        // Lặp lại nếu Intro chưa kết thúc
+                        if (this.isIntroActive) {
+                            this.time.delayedCall(1000, () => {
+                                circleData.angle = 0; // Reset angle
+                                this.runHandTutorial();
+                            });
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Gợi ý khi rảnh (Idle Hint)
+     */
+    private showHint() {
+        game.addHint();
+        const ball = this.objectManager.getAllObjects().find(obj => obj.texture.key === TextureKeys.S1_Ball);
+        if (!ball) return; 
+
+        AudioManager.play('hint');
+
+        // Visual 1: Nhấp nháy bộ phận đó
+        this.activeHintTarget = ball as Phaser.GameObjects.Image;
+        this.activeHintTween = this.tweens.add({
+            targets: this.activeHintTarget,
+            scale: { from: this.activeHintTarget.scale, to: this.activeHintTarget.scale * 1.1 },
+            duration: 500,
+            yoyo: true,
+            repeat: 2,
+            onComplete: () => {
+                this.activeHintTween = null;
+                this.activeHintTarget = null;
+                this.idleManager.reset();
+            }
+        });
+
+        // Visual 2: Bàn tay chỉ vào (xoay tròn)
+        
+        const image = ball as Phaser.GameObjects.Image;
+        const radius = (Math.max(image.displayWidth, image.displayHeight) / 2) * 1.3;
+        
+        if (!this.handHint) {
+            this.handHint = this.add.image(0, 0, TextureKeys.HandHint)
+                .setDepth(100)
+                .setOrigin(0.15, 0.15)
+                .setVisible(false);
+        }
+
+        this.handHint.setVisible(true);
+        this.handHint.setAlpha(1);
+
+        const circleData = { angle: 0 };
+        this.tweens.add({
+            targets: circleData,
+            angle: Phaser.Math.PI2,
+            duration: 2000,
+            repeat: 1, 
+            onUpdate: () => {
+                const a = circleData.angle - Phaser.Math.PI2 / 4; 
+                this.handHint.x = image.x + radius * Math.cos(a);
+                this.handHint.y = image.y + radius * Math.sin(a);
+            },
+            onComplete: () => {
+                this.stopActiveHint();
                 this.idleManager.start();
             }
         });
     }
 
-    private hideHint() {
+    private stopActiveHint() {
+        if (this.activeHintTween) {
+            this.activeHintTween.stop();
+            this.activeHintTween = null;
+        }
+
+        if (this.activeHintTarget) {
+            this.tweens.killTweensOf(this.activeHintTarget);
+            this.activeHintTarget.setScale(this.activeHintTarget.scale);
+            this.activeHintTarget = null;
+        }
+
         if (this.handHint) {
             this.handHint.setVisible(false);
             this.handHint.setAlpha(0);

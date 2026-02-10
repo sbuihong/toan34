@@ -146,7 +146,9 @@ function attachGlobalBlockInputListeners() {
         if (typeof (ev as any).stopImmediatePropagation === 'function') {
             (ev as any).stopImmediatePropagation();
         }
-        ev.preventDefault();
+        if (ev.cancelable) {
+            ev.preventDefault();
+        }
 
         // 2) Gọi phát voice-rotate (đã có cooldown bên trong playVoiceLocked)
         try {
