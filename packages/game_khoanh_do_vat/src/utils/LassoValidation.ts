@@ -18,7 +18,7 @@ export class LassoValidation {
         // 1. Lấy danh sách đối tượng trong vùng chọn
         const selectedObjects = objectManager.getObjectsInPolygon(polygon);
         
-        console.log(`[LassoValidation] Đã khoanh trúng: ${selectedObjects.length} đối tượng.`);
+        // console.log(`[LassoValidation] Đã khoanh trúng: ${selectedObjects.length} đối tượng.`);
 
         // 2. Kiểm tra điều kiện Đúng/Sai
         const wrongObject = objectManager.getWrongObject();
@@ -38,7 +38,7 @@ export class LassoValidation {
                 if (wrongObject) {
                     const overlapWithWrong = objectManager.getOverlapPercentage(polygon, wrongObject);
                     
-                    console.log(`[LassoValidation] Overlap với hình sai: ${(overlapWithWrong * 100).toFixed(1)}%`);
+                    // console.log(`[LassoValidation] Overlap với hình sai: ${(overlapWithWrong * 100).toFixed(1)}%`);
                     
                     if (overlapWithWrong > 0.2) { // 1/5 = 0.2
                         failureReason = `Vẽ lấn quá hình sai (${(overlapWithWrong * 100).toFixed(1)}% > 20%)`;

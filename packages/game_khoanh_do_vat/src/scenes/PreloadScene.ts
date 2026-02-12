@@ -49,7 +49,7 @@ export default class PreloadScene extends Phaser.Scene {
             'sfx-wrong'
         ];
         AudioManager.loadEssentials(essentials).then(() => {
-             console.log("Essential audio pre-loaded in background.");
+            //  console.log("Essential audio pre-loaded in background.");
              AudioManager.loadRest();
         });
     }

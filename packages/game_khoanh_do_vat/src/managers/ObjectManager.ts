@@ -79,7 +79,7 @@ export class ObjectManager {
             }
         });
 
-        console.log(`ObjectManager: Đã tạo ${this.objects.length} đối tượng từ ${configs.length} config(s).`);
+        // console.log(`ObjectManager: Đã tạo ${this.objects.length} đối tượng từ ${configs.length} config(s).`);
     }
     
     /**
@@ -215,7 +215,7 @@ export class ObjectManager {
         this.objects.forEach(obj => obj.destroy());
         this.objects = [];
         this.correctKeys = [];
-        console.log("ObjectManager: Đã xóa tất cả objects.");
+        // console.log("ObjectManager: Đã xóa tất cả objects.");
     }
 
     public clearObjects() {

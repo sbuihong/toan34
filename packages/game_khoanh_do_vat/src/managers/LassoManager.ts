@@ -152,4 +152,16 @@ export class LassoManager {
         this.points = [];
         this.isDrawing = false;
     }
+
+    public getPathLengthPx(): number {
+        if (this.points.length < 2) return 0;
+        
+        let length = 0;
+        for (let i = 1; i < this.points.length; i++) {
+            const dx = this.points[i].x - this.points[i - 1].x;
+            const dy = this.points[i].y - this.points[i - 1].y;
+            length += Math.sqrt(dx * dx + dy * dy);
+        }
+        return length;
+    }
 }

@@ -1,56 +1,22 @@
-# 🌈 Game tô màu cho bé các động vật hoang dã 
+# Love Math - Game Tô Màu Hình Học Phức Tạp (game_coloring_geometry)
 
-**Game giáo dục cho trẻ 3-4 tuổi, giúp rèn kỹ năng nhận diện các động vật thông qua các màn chơi tương tác, trực quan bằng Phaser 3 + TypeScript.**
+## 1. Mô tả & Luật chơi
 
----
+- **Mục tiêu**: Tô màu các hình học phức tạp hơn hoặc tổ hợp hình.
+- **Cơ chế**:
+  - Khác với `circle_spuare`, game này có thể chứa tam giác, lục giác, hoặc các hình ghép.
 
-## 🧩 Tech Stack
+## 2. Config & Dữ liệu
 
-- **Phaser 3** – game engine canvas chính để dựng Scene, tween và âm thanh.  
-- **TypeScript** – đảm bảo định kiểu trong toàn bộ scene, helper và audio manager.  
-- **Vite** – bundler nhanh, hỗ trợ `assetsInclude` cho `png/jpg/mp3/json`, reload tức thì.  
-- **Asset pipeline** – `public/assets/{images,audio,data}` đi kèm `TextureKeys`, `AudioKeys`, `DataKeys` để preload tập trung trong `PreloadScene`.  
-- **Các helper riêng**: `PaintManager`, `IdleManager`, `GameUtils`, `AudioManager`, `BackgroundManager`, `rotateOrientation`.
+- **File**: `public/assets/data/level_s1_config.json`
+- **Parts**: Các mảnh ghép của hình học.
 
----
+## 3. Hướng dẫn Test
 
-## 📷 Ảnh demo
----
+- **Happy Path**: Tô hết các mảnh ghép.
+- **Audio**: Kiểm tra âm thanh `sfx-ting` khi tô xong 1 mảng và `sfx-correct` khi thắng.
 
-## 🛠️ Cài đặt
+## 4. Checklist Pre-merge
 
-1. Clone repository:
-   ```bash
-   git clone <repo-url>
-   cd listen-color-14-game
-   ```
-2. Cài phụ thuộc:
-   ```bash
-   npm install
-   ```
-3. Kiểm tra thư mục asset:
-   - `public/assets/images/`: chứa UI, Scene1, Scene2, bg.  
-   - `public/assets/audio/`: các SFX/voice.  
-   - `public/assets/data/level_s2_config.json`: config phần tô màu.
-
----
-
-## ▶️ Chạy game
-
-- **Dev**: `npm run dev` → mở `http://localhost:5173`.  
-- **Build production**: `npm run build`.  
-- **Preview sau build**: `npm run preview`.  
-- **Tương tác UI**:
-  - `btn-reset`: dừng âm thanh, reset music + restart `Scene1`.  
-  - `btn-exit`: khi chạy trong host (Iruka), gọi `host.complete()` kèm trạng thái.  
-- **Flow**: Preload → Scene1 (tô màu con hà mã) → Scene2 (tô màu tô màu con cá sấu) → EndGame.
-
----
-
-## 📚 Tài liệu tham khảo
-- [Algorithms & Problem Solving](docs/ALGORITHMS.md) – logic cấp cao, tween, hint, idle.  
-- [Gameplay Mechanics](docs/GAME_MECHANICS.md) – luật chơi, điểm, win/lose, spawn.  
-- [Development Guide](docs/DEVELOPMENT.md) – cấu trúc thư mục, quy trình đóng góp, build/deploy.  
-- README này là entry point; mở rộng trong `/docs` khi cần deep dive.
-
----
+- [ ] **SDK**: `sdk.requestSave` và `game.finalizeAttempt` được gọi đúng lúc Win.
+- [ ] **Responsive**: Check hiển thị trên màn hình dọc/ngang (GameUtils pct logic).

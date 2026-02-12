@@ -87,7 +87,7 @@ class AudioManager {
         });
 
         return Promise.all(promises).then(() => {
-            console.log('[AudioManager] Essentials loaded:', keys);
+            // console.log('[AudioManager] Essentials loaded:', keys);
         });
     }
 
@@ -109,7 +109,7 @@ class AudioManager {
             }
         });
         this.isLoaded = true;
-        console.log('[AudioManager] Background loading started for remaining assets.');
+        // console.log('[AudioManager] Background loading started for remaining assets.');
     }
 
     /**
@@ -206,7 +206,7 @@ class AudioManager {
         });
         dummySound.once('play', () => {
             dummySound.stop();
-            console.log('[Howler] Audio context unlocked manually.');
+            // console.log('[Howler] Audio context unlocked manually.');
         });
 
         // Chỉ play nếu context đang ở trạng thái suspended/locked

@@ -25,6 +25,11 @@ export default class Scene1 extends Phaser.Scene {
     private isIntroductionPlayed: boolean = false;
     private idleManager!: IdleManager;
     private isWaitingForIntroStart: boolean = true;
+
+    // SDK theo dõi trạng thái
+    private runSeq = 1;
+    private itemSeq = 0;
+    private circleTracker: ReturnType<typeof game.createCircleSelectTracker> | null = null;
     
     // Getter tiện ích cho UIScene
     private get uiScene(): UIScene {
@@ -66,6 +71,10 @@ export default class Scene1 extends Phaser.Scene {
         this.totalLevels = 0;
 
         if (data?.isRestart) {
+            this.__sdkFinalizeAsQuit();
+            this.runSeq += 1; // Tăng lượt chơi lên
+            this.itemSeq = 0; // Reset câu hỏi
+
             this.isWaitingForIntroStart = false;
             // Nếu không phải restart từ màn hình kết thúc (mà là nút replay trong game), gọi SDK retry
             if (!data.fromEndGame) {
@@ -83,10 +92,10 @@ export default class Scene1 extends Phaser.Scene {
         this.setupBackgroundAndAudio();
         this.createUI();
 
-        // 4. Load All Level Configs
+        // Load All Level Configs
         this.levelConfigs = this.cache.json.get(DataKeys.LevelS1Config);
         this.totalLevels = this.levelConfigs.length; // = 3
-        console.log(`[Scene1] Tổng số level: ${this.totalLevels}`);
+        //console.log(`[Scene1] Tổng số level: ${this.totalLevels}`);
 
         // Tích hợp SDK
         game.setTotal(this.totalLevels);
@@ -155,7 +164,10 @@ export default class Scene1 extends Phaser.Scene {
             window.gameScene = undefined;
         }
 
-        console.log("Scene1: Đã dọn dẹp tài nguyên.");
+        // 5. Dọn dẹp SDK
+        this.__sdkFinalizeAsQuit();
+
+        //console.log("Scene1: Đã dọn dẹp tài nguyên.");
     }
 
     // =================================================================
@@ -193,9 +205,13 @@ export default class Scene1 extends Phaser.Scene {
                 return;
             }
 
+            console.log(`[SDK Stroke] ⏱️ START at ${Date.now()}`);
+            this.circleTracker?.onStrokeStart?.(Date.now());
+
             this.idleManager.reset();
             this.stopIntro();
             this.stopActiveHint();
+
         });
     }
 
@@ -286,7 +302,7 @@ export default class Scene1 extends Phaser.Scene {
         // Truyền bounds vào LassoManager
         this.lassoManager.setBoardBounds(boardBounds);
         
-        console.log(`Board Bounds: x=${boardX}, y=${boardY_start}, w=${boardWidth}, h=${boardHeight}`);
+        //console.log(`Board Bounds: x=${boardX}, y=${boardY_start}, w=${boardWidth}, h=${boardHeight}`);
     }
 
     // =================================================================
@@ -305,12 +321,12 @@ export default class Scene1 extends Phaser.Scene {
             // Nếu đang intro, stopIntro() sẽ start IdleManager sau khi user chạm
             if (!this.isIntroActive) {
                 this.idleManager.start();
-                console.log("IdleManager started (no intro).");
+                //console.log("IdleManager started (no intro).");
             } else {
-                console.log("IdleManager NOT started (intro active, will start on stopIntro).");
+                //console.log("IdleManager NOT started (intro active, will start on stopIntro).");
             }
             
-            console.log("Gameplay enabled after delay.");
+            //console.log("Gameplay enabled after delay.");
         });
 
         // Khi người chơi chạm vào màn hình -> Reset Idle + Ẩn gợi ý
@@ -329,21 +345,51 @@ export default class Scene1 extends Phaser.Scene {
         const isSuccess = result.success;
         const failureReason = result.failureReason;
 
+        const path_length_px = this.lassoManager.getPathLengthPx();
+        const ts = Date.now();
+
+        // ===== SDK TRACKING (PHẢI GỌI TRƯỚC KHI RETURN) =====
+        // 1. Lấy ID các vật đã khoanh trúng
+        const enclosed_ids = (result.selectedObjects ?? []).map((obj: any) => {
+            const side = obj.getData('side');
+            const textureKey = obj.getData('textureKey');
+            return side ? `${side}_${textureKey}` : 'unknown';
+        });
+
+        // 2. Giả lập ratio
+        const enclosure_ratio: Record<string, number> = {};
+        for (const id of enclosed_ids) enclosure_ratio[id] = 1;
+
+        // 3. Gửi kết quả cho SDK (LUÔN GỌI dù đúng hay sai)
+        console.log(`[SDK Stroke] 🛑 END with:`, { enclosed_ids, isSuccess, ts });
+        this.circleTracker?.onStrokeEnd?.(
+            { 
+                path_length_px: path_length_px,
+                enclosed_ids, 
+                enclosure_ratio 
+            },
+            ts,
+            isSuccess ? { isCorrect: true, errorCode: null } : { isCorrect: false, errorCode: "WRONG_TARGET" as any }
+        );
+        console.log(`[SDK Stroke] ✅ onStrokeEnd called`);
+        // ===== END SDK TRACKING =====
+
+        // ===== GAME LOGIC =====
         // Phải chọn đúng 1 object
         if (!isSuccess || selectedObjects.length !== 1) {
-            console.log(`❌ Khoanh SAI: ${failureReason}`);
+            //console.log(`❌ Khoanh SAI: ${failureReason}`);
             this.onWrongAnswer();
             return;
         }
 
         const target = selectedObjects[0] as Phaser.GameObjects.Image;
         
-        // LOGIC MỚI: Kiểm tra side thay vì check foundTargets
+        // Kiểm tra side
         const selectedSide = this.objectManager.getSideOfObject(target);
         const correctKey = this.currentLevelConfig.correctKey;
 
         if (!selectedSide) {
-            console.log("❌ Không xác định được side của object");
+            //console.log("❌ Không xác định được side của object");
             this.onWrongAnswer();
             return;
         }
@@ -355,7 +401,7 @@ export default class Scene1 extends Phaser.Scene {
             AudioManager.play(`sfx-${randomSFX}`);
         } else {
             // ❌ SAI
-            console.log(`❌ Khoanh SAI: Chọn ${selectedSide} nhưng đáp án là ${correctKey}`);
+            //console.log(`❌ Khoanh SAI: Chọn ${selectedSide} nhưng đáp án là ${correctKey}`);
             this.onWrongAnswer();
         }
     }
@@ -364,7 +410,7 @@ export default class Scene1 extends Phaser.Scene {
      * Xử lý khi người chơi khoanh ĐÚNG
      */
     private onCorrectAnswer(target: Phaser.GameObjects.Image) {
-        console.log("✅ Khoanh ĐÚNG!");
+        //console.log("✅ Khoanh ĐÚNG!");
         
         // Xóa nét vẽ lasso
         this.lassoManager.clear();
@@ -402,10 +448,15 @@ export default class Scene1 extends Phaser.Scene {
             const nextLevelIndex = this.currentLevelIndex + 1;
             
             if (nextLevelIndex >= this.totalLevels) {
-                // Hoàn thành tất cả level
+                // ✅ Hoàn thành tất cả level - Finalize sẽ gọi trong onGameComplete()
+                console.log(`[SDK Finalize] 🎉 All levels complete, moving to onGameComplete...`);
                 this.onGameComplete();
             } else {
-                // Chuyển level tiếp theo
+                // ✅ Chuyển level tiếp theo - Finalize item hiện tại trước
+                console.log(`[SDK Finalize] ➡️ Level ${nextLevelIndex + 1}, finalizing current item...`);
+                this.circleTracker?.finalize?.();
+                this.circleTracker = null;
+                
                 this.loadLevel(nextLevelIndex);
                 this.lassoManager.enable();
             }
@@ -444,11 +495,14 @@ export default class Scene1 extends Phaser.Scene {
      * Xử lý khi hoàn thành game (3 level)
      */
     private onGameComplete() {
-        console.log("🎉 HOÀN THÀNH TẤT CẢ LEVEL!");
+        console.log(`[SDK Finalize] 🎉 Final level complete, finalizing...`);
         AudioManager.stopAll();
-        // AudioManager.play("sfx-correct");
 
-        // SDK finalize
+        // ✅ SDK finalize item cuối cùng (level 3)
+        this.circleTracker?.finalize?.();
+        this.circleTracker = null;
+
+        // ✅ SDK finalize session
         game.finalizeAttempt();
         game.finishQuestionTimer();
 
@@ -474,6 +528,7 @@ export default class Scene1 extends Phaser.Scene {
         resetVoiceState();
         
         // Phát voice intro cho level mới
+        if(levelIndex == 1 || levelIndex == 2)
         playVoiceLocked(this.sound, AudioKeys.VoiceIntro);
 
         // Xóa vòng tròn xanh từ level trước (nếu có)
@@ -489,10 +544,13 @@ export default class Scene1 extends Phaser.Scene {
         this.currentLevelIndex = levelIndex;
         this.currentLevelConfig = this.levelConfigs[levelIndex];
 
-        console.log(`📌 Load Level ${levelIndex + 1}/${this.totalLevels}`, this.currentLevelConfig);
+        //console.log(`📌 Load Level ${levelIndex + 1}/${this.totalLevels}`, this.currentLevelConfig);
 
         // Spawn 2 objects (left/right)
         this.objectManager.spawnObjectsFromConfig([this.currentLevelConfig]);
+
+        // SDK Tạo tracker mới cho mỗi level
+        this.__sdkInitCircleSelectItem();
 
         // Cập nhật SDK progress
         sdk.progress({ 
@@ -562,6 +620,10 @@ export default class Scene1 extends Phaser.Scene {
         this.stopActiveHint();
         
         game.addHint();
+
+        console.log(`[SDK Hint] 💡 Hint shown`);
+        this.circleTracker?.hint?.(1);
+        console.log(`[SDK Hint] ✅ Tracker.hint(1) called`);
         
         // Tìm object đúng của level hiện tại
         const correctTarget = this.objectManager.getAllObjects().find(obj => 
@@ -665,5 +727,77 @@ export default class Scene1 extends Phaser.Scene {
             this.uiScene.handHint.setVisible(false);
             this.uiScene.handHint.setAlpha(0);
         }
+    }
+
+    // =============================================
+    // Phần 5: SDK
+    // =============================================
+
+    // Hàm khởi tạo 1 câu hỏi
+    private __sdkInitCircleSelectItem() {
+        this.__sdkFinalizeAsQuit();
+        this.itemSeq += 1;
+
+        const allObjects = this.objectManager.getAllObjects();
+        
+        // ✅ FIX: Tạo ID dựa trên getData('side') + getData('textureKey')
+        const selectables = allObjects.map((obj, idx) => {
+            const side = (obj as any).getData('side'); // "left" hoặc "right"
+            const textureKey = (obj as any).getData('textureKey'); // "1", "2", "3"...
+            const id = side ? `${side}_${textureKey}` : `obj_${idx}`;
+            
+            console.log(`[SDK Init] Object ${idx}: ID="${id}", side="${side}", texture="${textureKey}"`);
+            return id;
+        });
+
+        // ✅ FIX: Tìm object đúng dựa trên correctKey
+        const correctObj = allObjects.find(obj => 
+            this.objectManager.getSideOfObject(obj) === this.currentLevelConfig.correctKey
+        );
+        
+        const correct_targets = correctObj 
+            ? (() => {
+                const side = (correctObj as any).getData('side');
+                const textureKey = (correctObj as any).getData('textureKey');
+                return [`${side}_${textureKey}`];
+              })()
+            : [];
+
+        console.log(`[SDK Init] Level ${this.currentLevelIndex + 1}`);
+        console.log(`  ✅ Selectables:`, selectables);
+        console.log(`  🎯 Correct Targets:`, correct_targets);
+        console.log(`  📌 Correct Key:`, this.currentLevelConfig.correctKey);
+
+        this.circleTracker = game.createCircleSelectTracker({
+            meta: {
+                item_id: `CIRCLE_SELECT_L${this.currentLevelIndex + 1}_${this.itemSeq}`,
+                item_type: "circle_select",
+                seq: this.itemSeq,
+                run_seq: this.runSeq,
+                difficulty: 1,
+                scene_id: "SCN_CIRCLE_01",
+                scene_seq: 1,
+                scene_type: "circle_select",
+                skill_ids: ["khoanh_chon_34_math_004"],
+            },
+            expected: {
+                selectables,
+                correct_targets, // ✅ Dùng giá trị động
+                min_enclosure_ratio: 0.8,
+            },
+        });
+        console.log(`[SDK Init] Tracker created: itemSeq=${this.itemSeq}, runSeq=${this.runSeq}`);
+    }
+
+    // Hàm đóng tracker khi người chơi quit hoặc restart
+    private __sdkFinalizeAsQuit() {
+        const ts = Date.now();
+        if (this.circleTracker) {
+            console.log(`[SDK Finalize] 🚪 Quitting item...`);
+            this.circleTracker.onQuit?.(ts);
+            const result = this.circleTracker.finalize?.();
+            console.log(`[SDK Output] 📊 Item Result:`, JSON.stringify(result, null, 2));
+        }
+        this.circleTracker = null;
     }
 }
